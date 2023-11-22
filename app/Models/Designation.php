@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Designation extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'name',
+        'status'
+    ];
+    protected $table = 'designation';
+    protected $key = 'id';
+    public $timestamps = false;
+}

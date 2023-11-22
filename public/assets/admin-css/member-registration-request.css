@@ -1,0 +1,9 @@
+.team-view-section .info-card {border-radius: 15px; background: var(--white, #FFF);box-shadow: 0px 8px 13px 0px rgba(35, 53, 111, 0.12);margin-bottom: 1rem; padding: 10px;}
+.info-card img{height: 80px;width: 80px;border-radius: 7px;object-fit: cover;}
+.info-card p{color: var(--gray, #505667); font-size: 14px; font-style: normal; font-weight: 700; line-height: 20px;letter-spacing: 0.25px; padding: 0; margin: 0;}
+.info-card h6{color: var(--gray1, #8F93A0);font-size: 12px;font-style: normal; font-weight: 400; line-height: 16px;letter-spacing: 0.4px; margin: 0;padding: 0;}
+.name-info p{font-size: 16px;}
+.info-card .account-status svg{color: #f2a44e;}
+.view-btn, .view-btn:hover{padding: 12px 22px; background-color: var(--green, #7BC043); text-align: center; color: var(--white, #FFF);  border-radius: 7px; box-shadow: 0px 8px 13px 0px rgba(35, 53, 111, 0.12); font-weight: 700;  font-size: 14px;}
+.total-count { color: var(--gray, #4F5168); text-align: center; font-size: 16px; font-style: normal; font-weight: 400; line-height: 20px; margin: 0;  padding: 0;  }
+.total-count b { font-size: 20px; }

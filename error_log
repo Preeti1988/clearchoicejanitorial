@@ -1,0 +1,36 @@
+[10-Nov-2023 06:52:46 UTC] PHP Warning:  require(/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:52:46 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php:34
+Stack trace:
+#0 /home/dlayy048i7m0/public_html/clearchoice-janitorial/index.php(21): require_once()
+#1 {main}
+  thrown in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:52:49 UTC] PHP Warning:  require(/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:52:49 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php:34
+Stack trace:
+#0 /home/dlayy048i7m0/public_html/clearchoice-janitorial/index.php(21): require_once()
+#1 {main}
+  thrown in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:52:52 UTC] PHP Warning:  require(/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:52:52 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php:34
+Stack trace:
+#0 /home/dlayy048i7m0/public_html/clearchoice-janitorial/index.php(21): require_once()
+#1 {main}
+  thrown in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:53:47 UTC] PHP Warning:  require(/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:53:47 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php:34
+Stack trace:
+#0 /home/dlayy048i7m0/public_html/clearchoice-janitorial/index.php(21): require_once()
+#1 {main}
+  thrown in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:53:50 UTC] PHP Warning:  require(/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:53:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php:34
+Stack trace:
+#0 /home/dlayy048i7m0/public_html/clearchoice-janitorial/index.php(21): require_once()
+#1 {main}
+  thrown in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:53:52 UTC] PHP Warning:  require(/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
+[10-Nov-2023 06:53:52 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/dlayy048i7m0/public_html/clearchoice-janitorial/public/vendor/autoload.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php:34
+Stack trace:
+#0 /home/dlayy048i7m0/public_html/clearchoice-janitorial/index.php(21): require_once()
+#1 {main}
+  thrown in /home/dlayy048i7m0/public_html/clearchoice-janitorial/public/index.php on line 34
