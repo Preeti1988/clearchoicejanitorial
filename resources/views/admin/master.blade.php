@@ -123,9 +123,16 @@
                                         <a href="{{ url('delete-master-item/2/' . encryptDecrypt('encrypt', $val->id)) }}"><img
                                                 src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
+
+                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
+                                        <div class="cancel-bg">
+                                            <a href="#"><img
+                                                    src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
+                                                    alt=""></a>
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -146,6 +153,10 @@
                 <div class="add-new-master">
                     <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
                         onclick='Get_Tag_Name("Add Designation","4")'>Add Designation</a>
+
+                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
+                        onclick='Get_Tag_Name("Add Designation","4")'>Add Designation</a>
+
                 </div>
             </div>
             <div class="master-item-body">
@@ -162,18 +173,25 @@
                                 <div class="master-list-bg d-flex justify-content-between align-items-center">
                                     <p class="mb-0">{{ $val->name ?? '' }}</p>
                                     <div class="cancel-bg">
-                                        <<<<<<< HEAD <a
+                                        <a
                                             href="{{ url('delete-master-item/4/' . encryptDecrypt('encrypt', $val->id)) }}">
                                             <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
-                                            =======
+
+                                        <a href="#"><img
+                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
+                                                alt=""></a>
+
+
+                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
+                                        <div class="cancel-bg">
                                             <a href="#"><img
                                                     src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                     alt=""></a>
-                                            >>>>>>> 6a525aa1cd40943f9fda182bf0d1eb4be2f77158
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -193,7 +211,13 @@
                 </div>
                 <div class="add-new-master">
                     <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
-                        onclick='Get_Tag_Name("Add Marital Status","5")'>Add Marital Status</a>
+                        onclick='Get_Tag_Name("Add Marital Status","5")'>Add Marital
+                        Status</a>
+
+                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
+                        onclick='Get_Tag_Name("Add Marital Status","5")'>Add Marital
+                        Status</a>
+
                 </div>
             </div>
             <div class="master-item-body">
@@ -210,18 +234,25 @@
                                 <div class="master-list-bg d-flex justify-content-between align-items-center">
                                     <p class="mb-0">{{ $val->name ?? '' }}</p>
                                     <div class="cancel-bg">
-                                        <<<<<<< HEAD <a
+                                        <a
                                             href="{{ url('delete-master-item/5/' . encryptDecrypt('encrypt', $val->id)) }}">
                                             <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
-                                            =======
+
+                                        <a href="#"><img
+                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
+                                                alt=""></a>
+
+
+                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
+                                        <div class="cancel-bg">
                                             <a href="#"><img
                                                     src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                     alt=""></a>
-                                            >>>>>>> 6a525aa1cd40943f9fda182bf0d1eb4be2f77158
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -242,15 +273,23 @@
                     <form action="{{ route('SaveMaster') }}" method="POST">
                         @csrf
                         <input type="hidden" id="tag_id" name="tag_id" value="">
-                        <<<<<<< HEAD <input type="text" class="form-control mt-4" name="name" id="value"
+                        <input type="text" class="form-control mt-4" name="name" id="value"
                             placeholder="Type here" required>
-                            =======
-                            <input type="text" class="form-control mt-4" name="name" id="value"
-                                placeholder="Type here">
-                            >>>>>>> 6a525aa1cd40943f9fda182bf0d1eb4be2f77158
-                            <div class="text-center">
-                                <button class="add-new-value-btn mt-3" type="submit">Add</button>
-                            </div>
+
+                        <input type="text" class="form-control mt-4" name="name" id="value"
+                            placeholder="Type here">
+
+                        <div class="text-center">
+                            <button class="add-new-value-btn mt-3" type="submit">Add</button>
+                        </div>
+
+                        <input type="hidden" id="tag_id" name="tag_id" value="">
+                        <input type="text" class="form-control mt-4" name="name" id="value"
+                            placeholder="Type here">
+                        <div class="text-center">
+                            <button class="add-new-value-btn mt-3" type="submit">Add</button>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -270,18 +309,25 @@
                     <form action="{{ route('SaveMaster') }}" method="POST">
                         @csrf
                         <input type="hidden" id="tag_id_ser" name="tag_id" value="3">
-                        <<<<<<< HEAD <input type="text" class="form-control mt-4" name="name"
-                            placeholder="Type name here" required>
-                            <input type="number" class="form-control mt-4" name="price" placeholder="Type price here"
-                                required>
-                            =======
-                            <input type="text" class="form-control mt-4" name="name" placeholder="Type name here">
-                            <input type="number" class="form-control mt-4" name="price"
-                                placeholder="Type price here">
-                            >>>>>>> 6a525aa1cd40943f9fda182bf0d1eb4be2f77158
-                            <div class="text-center">
-                                <button class="add-new-value-btn mt-3" type="submit">Add</button>
-                            </div>
+                        <input type="text" class="form-control mt-4" name="name" placeholder="Type name here"
+                            required>
+                        <input type="number" class="form-control mt-4" name="price" placeholder="Type price here"
+                            required>
+
+                        <input type="text" class="form-control mt-4" name="name" placeholder="Type name here">
+                        <input type="number" class="form-control mt-4" name="price" placeholder="Type price here">
+
+                        <div class="text-center">
+                            <button class="add-new-value-btn mt-3" type="submit">Add</button>
+                        </div>
+
+                        <input type="hidden" id="tag_id_ser" name="tag_id" value="3">
+                        <input type="text" class="form-control mt-4" name="name" placeholder="Type name here">
+                        <input type="number" class="form-control mt-4" name="price" placeholder="Type price here">
+                        <div class="text-center">
+                            <button class="add-new-value-btn mt-3" type="submit">Add</button>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -290,10 +336,23 @@
 
     <!-------------------- Approval-Product-Jquery -------------------->
     <script>
+        << << << < HEAD
+
+        function Get_Tag_Name(Tag_name, Tag_id) {
+            document.getElementById("tag_name").innerText = Tag_name;
+            document.getElementById("tag_id").value = Tag_id;
+        } ===
+        ===
+        =
         function Get_Tag_Name(Tag_name, Tag_id) {
             document.getElementById("tag_name").innerText = Tag_name;
             document.getElementById("tag_id").value = Tag_id;
         }
+
+        >>>
+        >>>
+        >
+        6 a525aa1cd40943f9fda182bf0d1eb4be2f77158
     </script>
 
 @endsection

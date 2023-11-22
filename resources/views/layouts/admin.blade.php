@@ -59,6 +59,9 @@
                             </a>
                         </li>
                         <li class="nav-item @if ($currentURL == 'Clients' || $currentURL == 'ClientDetails' || $currentURL == 'Addclient') active @endif">
+
+                        <li class="nav-item @if ($currentURL == 'Clients' || $currentURL == 'ClientDetails') active @endif">
+
                             <a class="nav-link" href="{{ url('/client') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -91,6 +94,9 @@
                                 $currentURL == 'MemberRequest' ||
                                 $currentURL == 'AddMember' ||
                                 $currentURL == 'TeamDetail') active @endif">
+
+                        <li class="nav-item @if ($currentURL == 'TeamActive' || $currentURL == 'TeamInactive' || $currentURL == 'MemberRequest') active @endif">
+
                             <a class="nav-link" href="{{ url('/teams-active') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -290,11 +296,10 @@
                                         Save Client
                                     @elseif($currentURL == 'team')
                                         Team
-                                    @elseif($currentURL == 'Addclient')
-                                        Add New Client
-                                    @elseif($currentURL == 'AddMember')
-                                        Add New Team Members
-                                    @else
+                                    <<<<<<< HEAD @elseif($currentURL == 'Addclient') Add New Client
+                                        @elseif($currentURL == 'AddMember') Add New Team Members=======>>>>>>>
+                                            6a525aa1cd40943f9fda182bf0d1eb4be2f77158
+                                        @else
                                     @endif
                                 </div>
                             </li>
@@ -374,6 +379,8 @@
         integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @stack('js')
+
+
 </body>
 
 </html>

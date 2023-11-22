@@ -24,10 +24,10 @@
                     type="video/mp4">
             </video>
         </div>
-        <<<<<<< HEAD <div class="auth-content-card">
-            =======
+        <div class="auth-content-card">
+
             <div class="auth-content-card">
-                >>>>>>> 6a525aa1cd40943f9fda182bf0d1eb4be2f77158
+
                 <div class="container">
                     <div class="auth-card">
                         <div class="row">
@@ -67,21 +67,21 @@
                                             @enderror
                                         </div>
                                         <div class="form-group">
-                                            <<<<<<< HEAD <input type="password"
+                                            <input type="password"
                                                 class="form-control @error('password') is-invalid @enderror"
                                                 name="password" required autocomplete="current-password"
                                                 placeholder="Password">
-                                                =======
-                                                <input type="password"
-                                                    class="form-control @error('password') is-invalid @enderror"
-                                                    name="password" required autocomplete="current-password"
-                                                    placeholder="Password">
-                                                >>>>>>> 6a525aa1cd40943f9fda182bf0d1eb4be2f77158
-                                                @error('password')
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $message }}</strong>
-                                                    </span>
-                                                @enderror
+
+                                            <input type="password"
+                                                class="form-control @error('password') is-invalid @enderror"
+                                                name="password" required autocomplete="current-password"
+                                                placeholder="Password">
+
+                                            @error('password')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
                                         </div>
                                         <div class="form-group">
                                             <button class="auth-form-btn">Login</button>
@@ -97,6 +97,9 @@
                     </div>
                 </div>
             </div>
+
+        </div>
+
     </div>
     </div>
 </body>

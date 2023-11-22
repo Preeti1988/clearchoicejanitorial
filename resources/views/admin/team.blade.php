@@ -67,7 +67,8 @@
                                                             <a href="{{ url('/teams-active') }}">
                                                                 <div class="form-check">
                                                                     <input class="form-check-input" type="radio"
-                                                                        name="flexRadioDefault" @if ($type == 1) checked @endif 
+                                                                        name="flexRadioDefault"
+                                                                        @if ($type == 1) checked @endif
                                                                         id="flexRadioDefault1">
                                                                     <label class="form-check-label" for="flexRadioDefault1">
                                                                         Active
@@ -79,7 +80,8 @@
                                                             <a href="{{ url('/teams-inactive') }}">
                                                                 <div class="form-check ms-3">
                                                                     <input class="form-check-input" type="radio"
-                                                                        name="flexRadioDefault" id="flexRadioDefault2" @if ($type == 2) checked @endif>
+                                                                        name="flexRadioDefault" id="flexRadioDefault2"
+                                                                        @if ($type == 2) checked @endif>
                                                                     <label class="form-check-label" for="flexRadioDefault2">
                                                                         Inactive
                                                                     </label>
@@ -100,54 +102,76 @@
                                                 </td>
                                             </tr>
                                         @elseif(!$datas->isEmpty())
-                                            @foreach ($datas as $val)  
-                                                <div class="team-info-box mb-2">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-md-1">
-                                                            <p class="mb-0">Emp ID</p>
-                                                            <h6 class="mt-1">{{ $val->userid }}</h6>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="profile-img">
-                                                                    <img src="{{ asset('public/assets/admin-images/profile-img.jpg') }}"
-                                                                        alt="image" class="img-fluid">
-                                                                </div>
-                                                                <h6 class="ms-2 mt-0 mb-0">{{ ($val->fullname) ?? '' }}
-                                                                </h6>
+                                            @foreach ($datas as $val)
+
+                                                @foreach ($datas as $val)
+                                                    <?php $sno = 1; ?>
+
+                                                    <div class="team-info-box mb-2">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-md-1">
+                                                                <p class="mb-0">Emp ID</p>
+                                                                <h6 class="mt-1">{{ $val->userid }}</h6>
+
+                                                                <h6 class="mt-1">{{ $sno }}</h6>
+
                                                             </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <p class="mb-0">Email Id</p>
-                                                            <h6 class="mt-1">{{ ($val->email) ?? '' }}</h6>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <p class="mb-0">Phone no.</p>
-                                                            <h6 class="mt-1">+{{ CountryCode($val->country_id) }}
-                                                                {{ ($val->phonenumber) ?? '' }}</h6>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <p class="mb-0">Mark as Inactive</p>
-                                                            <input class='input-switch justify-content-end'
-                                                                type="checkbox" id="demo" />
-                                                            <label class="label-switch" for="demo"></label>
-                                                            <span class="info-text"></span>
-                                                        </div>
-                                                        <div class="col-md-1 ">
-                                                            <div class="view-btn">
-                                                                <a
-                                                                    href="{{ url('team-detail/' . encryptDecrypt('encrypt', $val->userid)) }}">
-                                                                    <h6><i class="fa fa-eye me-1"></i>View</h6>
-                                                                </a>
+                                                            <div class="col-md-3">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="profile-img">
+                                                                        <img src="{{ asset('public/assets/admin-images/profile-img.jpg') }}"
+                                                                            alt="image" class="img-fluid">
+                                                                    </div>
+                                                                    <h6 class="ms-2 mt-0 mb-0">
+                                                                        {{ $val->fullname ?? '' }}
+
+                                                                        <h6 class="ms-2 mt-0 mb-0">
+                                                                            {{ $val->fullname ?? '' }}
+
+                                                                        </h6>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <p class="mb-0">Email Id</p>
+                                                                <h6 class="mt-1">{{ $val->email ?? '' }}
+                                                                </h6>
+
+                                                                <h6 class="mt-1">{{ $val->email }}</h6>
+
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <p class="mb-0">Phone no.</p>
+                                                                <h6 class="mt-1">+{{ CountryCode($val->country_id) }}
+                                                                    {{ $val->phonenumber ?? '' }}</h6>
+
+                                                                {{ $val->phonenumber }}
+                                                                </h6>
+
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <p class="mb-0">Mark as Inactive</p>
+                                                                <input class='input-switch justify-content-end'
+                                                                    type="checkbox" id="demo" />
+                                                                <label class="label-switch" for="demo"></label>
+                                                                <span class="info-text"></span>
+                                                            </div>
+                                                            <div class="col-md-1 ">
+                                                                <div class="view-btn">
+                                                                    <a
+                                                                        href="{{ url('team-detail/' . encryptDecrypt('encrypt', $val->userid)) }}">
+                                                                        <h6><i class="fa fa-eye me-1"></i>View</h6>
+                                                                    </a>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                        <div class="d-flex justify-content-left">
-                                            {{ $datas->links('pagination::bootstrap-4') }}
-                                        </div>
+                                                    <?php $sno++; ?>>>>>>>>
+                                                    6a525aa1cd40943f9fda182bf0d1eb4be2f77158
+                                                @endforeach
+                                            @endif
+                                            <div class="d-flex justify-content-left">
+                                                {{ $datas->links('pagination::bootstrap-4') }}
+                                            </div>
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +245,7 @@
                                 d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
                         </svg>Add New Team Member </h5>
                     <form action="{{ route('search.team-member') }}" method="POST">
-                            @csrf
+                        @csrf
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
