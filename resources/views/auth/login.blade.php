@@ -67,10 +67,6 @@
                                             @enderror
                                         </div>
                                         <div class="form-group">
-                                            <input type="password"
-                                                class="form-control @error('password') is-invalid @enderror"
-                                                name="password" required autocomplete="current-password"
-                                                placeholder="Password">
 
                                             <input type="password"
                                                 class="form-control @error('password') is-invalid @enderror"

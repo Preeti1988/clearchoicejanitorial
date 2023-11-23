@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <div class="add-new-master">
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
+                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addInScope"
                         onclick='Get_Tag_Name("Add In Scope","1")'>Add In Scope</a>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                     </div>
                 </div>
                 <div class="add-new-master">
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
+                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addOutScope"
                         onclick='Get_Tag_Name("Add Out of Scope","2")'>Add Out of Scope</a>
                 </div>
             </div>
@@ -124,13 +124,7 @@
                                                 src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
 
-                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
-                                        <div class="cancel-bg">
-                                            <a href="#"><img
-                                                    src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                    alt=""></a>
 
-                                        </div>
                                     </div>
                                 </div>
                         @endforeach
@@ -260,8 +254,8 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="addNewValue" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    <!-- In Scope Modal -->
+    <div class="modal fade" id="addInScope" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -269,26 +263,47 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h5 class="text-center" id="tag_name"></h5>
+                    <h5 class="text-center" id="tag_name">Add In Scope</h5>
                     <form action="{{ route('SaveMaster') }}" method="POST">
                         @csrf
-                        <input type="hidden" id="tag_id" name="tag_id" value="">
+                        <input type="hidden" id="tag_id" name="tag_id" value="1">
                         <input type="text" class="form-control mt-4" name="name" id="value"
                             placeholder="Type here" required>
 
-                        <input type="text" class="form-control mt-4" name="name" id="value"
-                            placeholder="Type here">
 
                         <div class="text-center">
                             <button class="add-new-value-btn mt-3" type="submit">Add</button>
                         </div>
 
-                        <input type="hidden" id="tag_id" name="tag_id" value="">
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Out Scope Modal -->
+    <div class="modal fade" id="addOutScope" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center" id="tag_name">Add Out Scope</h5>
+                    <form action="{{ route('SaveMaster') }}" method="POST">
+                        @csrf
+                        <input type="hidden" id="tag_id" name="tag_id" value="2">
                         <input type="text" class="form-control mt-4" name="name" id="value"
-                            placeholder="Type here">
+                            placeholder="Type here" required>
+
+
                         <div class="text-center">
                             <button class="add-new-value-btn mt-3" type="submit">Add</button>
                         </div>
+
+
 
                     </form>
                 </div>
@@ -296,7 +311,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Service Items Modal -->
     <div class="modal fade" id="addNewValueServices" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -314,19 +329,12 @@
                         <input type="number" class="form-control mt-4" name="price" placeholder="Type price here"
                             required>
 
-                        <input type="text" class="form-control mt-4" name="name" placeholder="Type name here">
-                        <input type="number" class="form-control mt-4" name="price" placeholder="Type price here">
 
                         <div class="text-center">
                             <button class="add-new-value-btn mt-3" type="submit">Add</button>
                         </div>
 
-                        <input type="hidden" id="tag_id_ser" name="tag_id" value="3">
-                        <input type="text" class="form-control mt-4" name="name" placeholder="Type name here">
-                        <input type="number" class="form-control mt-4" name="price" placeholder="Type price here">
-                        <div class="text-center">
-                            <button class="add-new-value-btn mt-3" type="submit">Add</button>
-                        </div>
+
 
                     </form>
                 </div>

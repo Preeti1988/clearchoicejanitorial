@@ -9,8 +9,8 @@ class ServicesValue extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name' ,
-        'price'.
+        'name',
+        'price',
         'status',
     ];
     protected $table = 'services_value';

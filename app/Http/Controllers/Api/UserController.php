@@ -43,10 +43,10 @@ class UserController extends Controller
                 $success['marital_status'] = ($user->marital_status) ?? '';
                 $success['dependents'] = ($user->dependents) ?? '';
                 $success['address'] = ($user->address) ?? '';
-                $success['city'] = ($user->city) ??'';
+                $success['city'] = ($user->city) ?? '';
                 $success['state_id'] = ($user->state_id) ?? '';
                 $success['country_id'] = ($user->country_id) ?? '';
-                $success['zipcode'] = ($user->zipcode) ??'';
+                $success['zipcode'] = ($user->zipcode) ?? '';
                 $success['resume'] = ($user->resume) ?? '';
                 $success['applying_letter'] = ($user->applying_letter) ?? '';
                 $success['status'] = $user->status;
@@ -102,10 +102,10 @@ class UserController extends Controller
         $success['marital_status'] = ($user->marital_status) ?? '';
         $success['dependents'] = ($user->dependents) ?? '';
         $success['address'] = ($user->address) ?? '';
-        $success['city'] = ($user->city) ??'';
+        $success['city'] = ($user->city) ?? '';
         $success['state_id'] = ($user->state_id) ?? '';
         $success['country_id'] = ($user->country_id) ?? '';
-        $success['zipcode'] = ($user->zipcode) ??'';
+        $success['zipcode'] = ($user->zipcode) ?? '';
         $success['resume'] = ($user->resume) ?? '';
         $success['applying_letter'] = ($user->applying_letter) ?? '';
         $success['status'] = $user->status;
@@ -139,7 +139,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $state = State::where('country_id',$request->country_id)->get();
+        $state = State::where('country_id', $request->country_id)->get();
         return response()->json(["status" => true, "message" => "State list.", "data" => $state]);
     }
 
@@ -151,7 +151,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $city = City::where('state_id',$request->state_id)->get();
+        $city = City::where('state_id', $request->state_id)->get();
         return response()->json(["status" => true, "message" => "State list.", "data" => $city]);
     }
 }

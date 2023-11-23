@@ -17,6 +17,14 @@
     </script>
     <script src="{{ asset('public/assets/admin-plugins/OwlCarousel/owl.carousel.js') }}" type="text/javascript"></script>
     <script src="{{ asset('public/assets/admin-js/function.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('public/assets/admin-plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+
+    <script src="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
+    <link rel="stylesheet"href="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.css') }}"
+        type="text/css" />
+
+
+
 </head>
 
 <body class="main-site ccj-panel">
@@ -185,7 +193,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="manage-jobs.html">
+                            <a class="nav-link" href="{{ route('services.index') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none">

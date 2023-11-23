@@ -9,4 +9,8 @@ class Service extends Model
 {
     use HasFactory;
     // protected $fillable = ["*"];
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'assigned_member_id');
+    }
 }
