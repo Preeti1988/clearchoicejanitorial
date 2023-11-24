@@ -12,8 +12,9 @@
                 <h3>Create Service</h3>
             </div>
             <div class="create-service-form">
-                <form action="{{ route('services.store') }}" method="POST">
-                    @csrf
+                <form action="{{ route('services.store') }}" method="POST" id="create-service">
+                    @csrf\
+                    <input type="hidden" id="redirect_url" value="{{ route('services.index') }}">
                     <div class="create-service-form-box">
                         <h1>Client Info.</h1>
                         <div class="row">
@@ -86,6 +87,7 @@
                                 <div class="form-group">
                                     <h3>Client Home Number</h3>
                                     <input type="text" class="form-control" id="home_number" name=""
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="" />
                                 </div>
                             </div>
@@ -94,6 +96,7 @@
                                 <div class="form-group">
                                     <h3>Client mobile number</h3>
                                     <input type="text" class="form-control" name="" id="mobile_number"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="" />
                                 </div>
                             </div>
@@ -102,6 +105,7 @@
                                 <div class="form-group">
                                     <h3>Client work number</h3>
                                     <input type="text" class="form-control" name="" id="client_work_number"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="" />
                                 </div>
                             </div>
@@ -128,19 +132,21 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Discount amount</h3>
-                                    <input type="text" class="form-control" name="" placeholder="$0.00" />
+                                    <input type="text" class="form-control" name="discount_amount"
+                                        placeholder="$0.00" />
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Due amount</h3>
-                                    <input type="text" class="form-control" name="" placeholder="$0.00" />
+                                    <input type="text" class="form-control" name="due_amount" placeholder="$0.00" />
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Gross Profit</h3>
-                                    <input type="text" class="form-control" name="" placeholder="$0.00" />
+                                    <input type="text" class="form-control" name="gross_profit"
+                                        placeholder="$0.00" />
                                 </div>
                             </div>
                         </div>
@@ -164,6 +170,12 @@
                                         </option>
                                         <option>One Time</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service Name</h3>
+                                    <input type="text" class="form-control" name="name" />
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -243,7 +255,7 @@
                                     <ul class="servicetype-list">
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" name="servicetype" value="Commercial"
+                                                <input type="radio" name="servicetype" checked value="Commercial"
                                                     id="commercial" />
                                                 <label for="commercial">Commercial</label>
                                             </div>
@@ -258,31 +270,33 @@
                                     </ul>
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service Shift Start Time</h3>
+                                    <input type="time" class="form-control" name="service_start_time" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service Shift End Time</h3>
+                                    <input type="time" class="form-control" name="service_end_time" />
+                                </div>
+                            </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Items</h3>
-                                    <select class="form-control">
+                                    <select class="form-control" onchange="AddServiceItem(this.value)">
                                         <option>
                                             Select &amp; Add
                                         </option>
-                                        <option selected="">
-                                            Vacuum First
-                                        </option>
-                                        <option>Dusting</option>
-                                        <option>
-                                            Floor Cleaning
-                                        </option>
-                                        <option>
-                                            Desk Cleaning
-                                        </option>
-                                        <option>Break Room</option>
-                                        <option>
-                                            Hollways Cleaning
-                                        </option>
-                                        <option>
-                                            Escalator Cleaning
-                                        </option>
+                                        @foreach ($serviceValues as $item)
+                                            <option value="{{ json_encode($item) }}">
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+
+
                                     </select>
                                 </div>
                             </div>
@@ -290,7 +304,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Items value</h3>
-                                    <input type="text" class="form-control" name="" value="$10.00" />
+                                    <input type="text" class="form-control" id="itemValue" placeholder="$10" />
                                 </div>
                             </div>
 
@@ -299,34 +313,9 @@
                                     <h3>Service Items Added</h3>
                                     <ul class="ServiceAdded-list">
                                         <li>
-                                            <div class="ServiceAddedcheckbox">
-                                                <input type="checkbox" id="Vacuum First" />
-                                                <label for="Vacuum First">
-                                                    <span class="ServiceAddedcheckbox-circle-mark"></span>
-                                                    <span class="ServiceAddedcheckbox-content">
-                                                        <span class="ServiceAddedcheckbox-text">Vacuum
-                                                            First</span>
-                                                        <span class="ServiceAddedcheckbox-action"><a href="#"><img
-                                                                    src="images/trash.svg" /></a>
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            </div>
+                                            No Items Added
                                         </li>
-                                        <li>
-                                            <div class="ServiceAddedcheckbox">
-                                                <input type="checkbox" id="Dusting" />
-                                                <label for="Dusting">
-                                                    <span class="ServiceAddedcheckbox-circle-mark"></span>
-                                                    <span class="ServiceAddedcheckbox-content">
-                                                        <span class="ServiceAddedcheckbox-text">Dusting</span>
-                                                        <span class="ServiceAddedcheckbox-action"><a href="#"><img
-                                                                    src="images/trash.svg" /></a>
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        </li>
+
                                     </ul>
                                 </div>
                             </div>
@@ -334,7 +323,7 @@
                             <div class="col-md-12">
                                 <div class="form-group mb-0">
                                     <h3>Service description</h3>
-                                    <textarea type="text" class="form-control"></textarea>
+                                    <textarea type="text" class="form-control" name="description"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -477,15 +466,79 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <h3>In Scope</h3>
-                                    <textarea type="text" class="form-control" placeholder="In Scope"></textarea>
+                                    <h1>In Scope</h1>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <h3>In Scope Items</h3>
+                                                <select class="form-control" onchange="AddInScopeItem(this.value)">
+                                                    <option>
+                                                        Select &amp; Add
+                                                    </option>
+                                                    @foreach ($InScope as $item)
+                                                        <option value="{{ json_encode($item) }}">
+                                                            {{ $item->name }}
+                                                        </option>
+                                                    @endforeach
+
+
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <h3>Service Items Added</h3>
+                                                <ul class="InScopeAdded-list">
+                                                    <li>
+                                                        No Items Added
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <h3>Out Of Scope</h3>
-                                    <textarea type="text" class="form-control" placeholder="Out Of Scope"></textarea>
+                                    <h1>Out Of Scope</h1>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <h3>Out Of Scope Items</h3>
+                                                <select class="form-control" onchange="AddOutScopeItem(this.value)">
+                                                    <option>
+                                                        Select &amp; Add
+                                                    </option>
+                                                    @foreach ($OutScope as $item)
+                                                        <option value="{{ json_encode($item) }}">
+                                                            {{ $item->name }}
+                                                        </option>
+                                                    @endforeach
+
+
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <h3>Out Of Scope Added</h3>
+                                                <ul class="OutScopeAdded-list">
+                                                    <li>
+                                                        No Items Added
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -499,7 +552,14 @@
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
     <script>
+        $(":input").inputmask();
+        var items = [];
+        var ISitems = [];
+        var OSitems = [];
+
         function fetchClient(id) {
             $.get("{{ route('fetchClient') }}" + "?id=" + id, function(data) {
 
@@ -515,5 +575,232 @@
 
             })
         }
+
+        function AddServiceItem(val) {
+            var value = JSON.parse(val);
+
+            var exists = false;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].id === value.id) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                items.push(value);
+                $("#itemValue").val('$' + value.price)
+                renderItem('service');
+            }
+
+        }
+
+        function AddInScopeItem(val) {
+            if (val) {
+                var value = JSON.parse(val);
+
+                var exists = false;
+                for (var i = 0; i < ISitems.length; i++) {
+                    if (ISitems[i].id === value.id) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    ISitems.push(value);
+
+                    renderItem('inscope');
+                }
+            }
+
+
+        }
+
+        function AddOutScopeItem(val) {
+            if (val) {
+                var value = JSON.parse(val);
+
+                var exists = false;
+                for (var i = 0; i < OSitems.length; i++) {
+                    if (OSitems[i].id === value.id) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    OSitems.push(value);
+
+                    renderItem('outscope');
+                }
+
+            }
+
+        }
+
+        function renderItem(val) {
+
+            var htm = '';
+
+            var tempItems = items;
+            if (val == 'service') {
+                tempItems = items;
+
+            } else if (val == 'inscope') {
+                tempItems = ISitems;
+
+            } else {
+                tempItems = OSitems;
+
+            }
+            if (tempItems.length == 0) {
+                htm += '<li>No Items Added</li>';
+            }
+
+            tempItems.map(item => {
+                htm += ` <li><div class="ServiceAddedcheckbox">
+                                                <input type="checkbox" id="${item.name}" />
+                                                <label for="${item.name}">
+                                                    <span class="ServiceAddedcheckbox-circle-mark"></span>
+                                                    <span class="ServiceAddedcheckbox-content">
+                                                        <span class="ServiceAddedcheckbox-text">${item.name}</span>
+                                                        <span class="ServiceAddedcheckbox-action"  style="z-index:12"  onclick="removeItem(${item.id},'${val}')"><a href="#" ><img
+                                                                    src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </li>`;
+            })
+            if (val == 'service') {
+                $(".ServiceAdded-list").html(htm);
+
+            } else if (val == 'inscope') {
+                $(".InScopeAdded-list").html(htm);
+
+            } else {
+                $(".OutScopeAdded-list").html(htm);
+
+            }
+        }
+
+        function removeItem(id, val) {
+            console.log(id);
+            if (val == 'service') {
+                items = items.filter(item => item.id != id);
+            } else if (val == 'inscope') {
+                ISitems = ISitems.filter(item => item.id != id);
+            } else {
+                OSitems = OSitems.filter(item => item.id != id);
+            }
+
+            renderItem(val);
+
+        }
+        $(document).ready(function() {
+            $('#create-service').validate({
+                rules: {
+
+
+                },
+                errorElement: "span",
+                errorPlacement: function(error, element) {
+                    error.addClass("text-danger");
+                    element.closest(".field").append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $('.please-wait').click();
+                    $(element).addClass("text-danger");
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass("text-danger");
+                },
+                submitHandler: function(form, event) {
+
+                    event.preventDefault();
+                    let formData = new FormData(form);
+
+                    formData.append('service_items', JSON.stringify(items));
+                    formData.append('inscopes', JSON.stringify(ISitems));
+                    formData.append('outscopes', JSON.stringify(OSitems));
+
+                    $.ajax({
+                        type: 'post',
+                        url: form.action,
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+
+                        success: function(response) {
+                            if (response.status == 200) {
+
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: response.message,
+                                    icon: 'success',
+
+                                }).then((result) => {
+
+                                    var url = $('#redirect_url').val();
+                                    if (url !== undefined || url != null) {
+                                        window.location = url;
+                                    } else {
+                                        location.reload(true);
+                                    }
+                                })
+
+                                return false;
+                            }
+
+                            if (response.status == 201) {
+                                Swal.fire(
+                                    'Error',
+                                    response.message,
+                                    'error'
+                                );
+
+                                return false;
+                            }
+                        },
+                        error: function(data) {
+                            if (data.status == 422) {
+                                var form = $("#product_form");
+                                let li_htm = '';
+                                $.each(data.responseJSON.errors, function(k, v) {
+                                    const $input = form.find(
+                                        `input[name=${k}],select[name=${k}],textarea[name=${k}]`
+                                    );
+                                    if ($input.next('small').length) {
+                                        $input.next('small').html(v);
+                                        if (k == 'services' || k == 'membership') {
+                                            $('#myselect').next('small').html(v);
+                                        }
+                                    } else {
+                                        $input.after(
+                                            `<small class='text-danger'>${v}</small>`
+                                        );
+                                        if (k == 'services' || k == 'membership') {
+                                            $('#myselect').after(
+                                                `<small class='text-danger'>${v[0]}</small>`
+                                            );
+                                        }
+                                    }
+                                    li_htm += `<li>${v}</li>`;
+                                });
+
+                                return false;
+                            } else {
+                                Swal.fire(
+                                    'Error',
+                                    data.statusText,
+                                    'error'
+                                );
+                            }
+                            return false;
+
+                        }
+                    });
+                }
+            })
+        });
     </script>
 @endsection

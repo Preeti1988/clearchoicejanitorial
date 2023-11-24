@@ -45,3 +45,15 @@ Route::post('/update-password', [App\Http\Controllers\HomeController::class, 'ch
 Route::post('/save-master', [App\Http\Controllers\HomeController::class, 'Savemaster'])->name('SaveMaster');
 Route::match(['get', 'post'], '/search-team-member-active', [App\Http\Controllers\HomeController::class, 'team_active'])->name('search.team-member-active');
 Route::match(['get', 'post'], '/search-team-member-inactive', [App\Http\Controllers\HomeController::class, 'team_inactive'])->name('search.team-member-inactive');
+Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeController::class, 'team'])->name('search.team-member');
+
+
+// services all functionality
+Route::resource("services", ServiceController::class);
+Route::get("assign-member/{id}", [ServiceController::class, 'assignMember'])->name('services.assign');
+Route::post("assign-member", [ServiceController::class, 'assignMemberPost'])->name('services.assign.post');
+
+
+// Listing Ajax request
+Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');
+Route::get("search-user", [AjaxController::class, 'searchUser'])->name('searhcUser');

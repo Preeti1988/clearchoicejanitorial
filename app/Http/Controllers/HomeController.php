@@ -352,6 +352,7 @@ class HomeController extends Controller
             } elseif ($tag_id == 3) {
                 // dd($request->all());
                 $name = 'Services';
+
                 $user = ServicesValue::create([
                     'name' => $request->name,
                     'price' => $request->price,
@@ -398,13 +399,11 @@ class HomeController extends Controller
                 $name = 'Designation';
                 $data = Designation::where('id', $id)->delete();
                 return redirect('master')->with('message', $name . 'Deleted successfully');
-
             } elseif ($type == 5) {
                 $name = 'Marital Status';
                 $data = MaritalStatus::where('id', $id)->delete();
                 return redirect('master')->with('message', $name . 'Deleted successfully');
             } else {
-
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -545,7 +544,6 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
-
     }
 
     public function member_request()

@@ -46,10 +46,10 @@ class UserController extends Controller
                 $success['marital_status'] = ($user->marital_status) ?? '';
                 $success['dependents'] = ($user->dependents) ?? '';
                 $success['address'] = ($user->address) ?? '';
-                $success['city'] = ($user->city) ??'';
+                $success['city'] = ($user->city) ?? '';
                 $success['state_id'] = ($user->state_id) ?? '';
                 $success['country_id'] = ($user->country_id) ?? '';
-                $success['zipcode'] = ($user->zipcode) ??'';
+                $success['zipcode'] = ($user->zipcode) ?? '';
                 $success['resume'] = ($user->resume) ?? '';
                 $success['applying_letter'] = ($user->applying_letter) ?? '';
                 $success['status'] = $user->status;
@@ -105,10 +105,10 @@ class UserController extends Controller
         $success['marital_status'] = ($user->marital_status) ?? '';
         $success['dependents'] = ($user->dependents) ?? '';
         $success['address'] = ($user->address) ?? '';
-        $success['city'] = ($user->city) ??'';
+        $success['city'] = ($user->city) ?? '';
         $success['state_id'] = ($user->state_id) ?? '';
         $success['country_id'] = ($user->country_id) ?? '';
-        $success['zipcode'] = ($user->zipcode) ??'';
+        $success['zipcode'] = ($user->zipcode) ?? '';
         $success['resume'] = ($user->resume) ?? '';
         $success['applying_letter'] = ($user->applying_letter) ?? '';
         $success['status'] = $user->status;
