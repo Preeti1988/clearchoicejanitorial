@@ -174,6 +174,12 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <h3>Service Name</h3>
+                                    <input type="text" class="form-control" name="name" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     <h3>Service scheduled for</h3>
                                     <input type="text" class="form-control" name="scheduled_for" />
                                 </div>

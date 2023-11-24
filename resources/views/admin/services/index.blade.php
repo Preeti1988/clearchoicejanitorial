@@ -69,7 +69,7 @@
                                         <div class="ongoing-services-item-head">
                                             <div class="ongoing-services-item-title">
                                                 <div class="services-id">#{{ $item->id }}</div>
-                                                <h2>Service 1: {{ $item->scheduled_for }}</h2>
+                                                <h2>Service 1: {{ $item->name }}</h2>
                                             </div>
                                             <div class="client-info">
                                                 <div class="client-info-icon">
@@ -105,7 +105,9 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
-                                                            <p>John Doe + <a href="#">12 Employee</a></p>
+                                                            <p>John Doe + <a
+                                                                    href="{{ route('services.assign', $item->id) }}">12
+                                                                    Employee</a></p>
                                                         </div>
                                                     </div>
                                                 </div>

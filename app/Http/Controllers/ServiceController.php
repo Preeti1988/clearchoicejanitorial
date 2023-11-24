@@ -6,8 +6,10 @@ use App\Models\Client;
 use App\Models\InScope;
 use App\Models\OutScope;
 use App\Models\Service;
+use App\Models\ServiceMember;
 use App\Models\ServicesValue;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Exists;
 
 class ServiceController extends Controller
 {
@@ -42,6 +44,8 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $service = new Service();
+        $service->name = $request->name;
+
         $service->assigned_member_id = $request->assigned_member_id;
         $service->discount_amount = $request->discount_amount;
         $service->due_amount = $request->due_amount;
@@ -117,5 +121,36 @@ class ServiceController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    public function assignMember($id)
+    {
+        $service = Service::find($id);
+        foreach ($service->members as  $value) {
+            $value->fullname = $value->member->fullname;
+        }
+        return view('admin.services.assign', compact('service'));
+    }
+
+    public function assignMemberPost(Request $request)
+    {
+        $members = json_decode($request->assigned);
+        $sst = null;
+        $set = null;
+
+        foreach ($members as  $item) {
+            $serviceMember = new ServiceMember();
+            $exists = ServiceMember::where("member_id", $item->id)->where("service_id", $request->service_id)->count();
+            if ($exists) {
+                $serviceMember = ServiceMember::where("member_id", $item->id)->where("service_id", $request->service_id)->first();
+            }
+
+            $serviceMember->shift_start_time = $item->shift_start_time;
+            $serviceMember->shift_end_time = $item->shift_end_time;
+            $serviceMember->member_id = $item->id;
+            $serviceMember->service_id = $request->service_id;
+            $serviceMember->save();
+        }
+
+        return response()->json(['message' => 'Member  Assigned  Successfully', 'status' => 200]);
     }
 }

@@ -13,4 +13,8 @@ class Service extends Model
     {
         return $this->belongsTo(Client::class, 'assigned_member_id');
     }
+    public function members()
+    {
+        return $this->hasMany(ServiceMember::class);
+    }
 }
