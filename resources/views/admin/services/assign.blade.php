@@ -175,7 +175,7 @@
         var members = @json($service->members);
         members.forEach(element => {
             assigned.push({
-                id: element.member_id,
+                id: element.member_id.toString(),
                 name: element.fullname,
                 projects: '0 projects',
                 shift_start_time: element.shift_start_time,
@@ -184,6 +184,7 @@
             });
         });
         renderMembers();
+        $("#total_member").text(assigned.length)
 
         function assignMember(ele) {
             var value = {
@@ -209,6 +210,7 @@
         }
 
         function renderMembers() {
+            console.log(assigned);
             var htm = "";
             if (assigned.length == 0) {
                 htm += `   <div class="result-item" onclick="assignMember(ele)" data-name="john doe" data-empid="121"
@@ -275,11 +277,12 @@
         function removeUser(id) {
 
             for (var i = 0; i < assigned.length; i++) {
-                if (assigned[i].id === id) {
+                if (assigned[i].id === id.toString()) {
                     assigned.splice(i, 1);
                     break;
                 }
             }
+
             renderMembers();
         }
 
