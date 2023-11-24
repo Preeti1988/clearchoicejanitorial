@@ -1,8 +1,5 @@
 <?php
 
-use App\Http\Controllers\AjaxController;
-use App\Http\Controllers\ServiceController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,11 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Auth::routes();
-Route::get('/convert', function () {
-    $admin = User::find(1);
-    $admin->password = Hash::make("Beast@203");
-    $admin->save();
-});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('Home');
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('Homes');
@@ -43,13 +35,13 @@ Route::get('/approve-member/{id}', [App\Http\Controllers\HomeController::class, 
 Route::get('/reject-member/{id}', [App\Http\Controllers\HomeController::class, 'reject_member'])->name('RejectMember');
 Route::get('/member-requests', [App\Http\Controllers\HomeController::class, 'member_request'])->name('MemberRequest');
 Route::post('/save-client', [App\Http\Controllers\HomeController::class, 'SaveClient'])->name('SaveClient');
+Route::get('/edit-teammember/{id}', [App\Http\Controllers\HomeController::class, 'EditTeamMember'])->name('EditTeamMember');
+Route::get('/edit-client/{id}', [App\Http\Controllers\HomeController::class, 'EditClient'])->name('EditClient');
+Route::post('/save-teammember', [App\Http\Controllers\HomeController::class, 'SaveTeamMember'])->name('SaveTeamMember');
+Route::post('/update-teammember', [App\Http\Controllers\HomeController::class, 'UpdateTeamMember'])->name('UpdateTeamMember');
+Route::post('/update-client', [App\Http\Controllers\HomeController::class, 'UpdateClient'])->name('UpdateClient');
+Route::post('/update-user', [App\Http\Controllers\HomeController::class, 'Updateuser'])->name('UpdateUser');
+Route::post('/update-password', [App\Http\Controllers\HomeController::class, 'changeSetting'])->name('changeSetting');
 Route::post('/save-master', [App\Http\Controllers\HomeController::class, 'Savemaster'])->name('SaveMaster');
-Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeController::class, 'team'])->name('search.team-member');
-
-
-// services all functionality
-Route::resource("services", ServiceController::class);
-
-
-// Listing Ajax request
-Route::get("fetch-client}", [AjaxController::class, 'fetchClient'])->name('fetchClient');
+Route::match(['get', 'post'], '/search-team-member-active', [App\Http\Controllers\HomeController::class, 'team_active'])->name('search.team-member-active');
+Route::match(['get', 'post'], '/search-team-member-inactive', [App\Http\Controllers\HomeController::class, 'team_inactive'])->name('search.team-member-inactive');

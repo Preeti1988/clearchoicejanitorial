@@ -36,7 +36,7 @@
             <div class="sidebar-nav">
                 <nav class="sidebar">
                     <ul class="nav">
-                        <li class="nav-item @if ($currentURL == 'Homes' || $currentURL == 'Dashboard') active @endif">
+                        <li class="nav-item @if ($currentURL == 'Homes' || $currentURL == 'Dashboard' || $currentURL == 'Profile') active @endif">
                             <a class="nav-link" href="{{ url('/') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -58,9 +58,11 @@
                                 <span class="menu-title">Dashboard</span>
                             </a>
                         </li>
-                        <li class="nav-item @if ($currentURL == 'Clients' || $currentURL == 'ClientDetails' || $currentURL == 'Addclient') active @endif">
-
-                        <li class="nav-item @if ($currentURL == 'Clients' || $currentURL == 'ClientDetails') active @endif">
+                        <li class="nav-item @if (
+                            $currentURL == 'Clients' ||
+                                $currentURL == 'ClientDetails' ||
+                                $currentURL == 'Addclient' ||
+                                $currentURL == 'EditClient') active @endif">
 
                             <a class="nav-link" href="{{ url('/client') }}">
                                 <span class="menu-icon">
@@ -95,7 +97,11 @@
                                 $currentURL == 'AddMember' ||
                                 $currentURL == 'TeamDetail') active @endif">
 
-                        <li class="nav-item @if ($currentURL == 'TeamActive' || $currentURL == 'TeamInactive' || $currentURL == 'MemberRequest') active @endif">
+                        <li class="nav-item @if (
+                            $currentURL == 'TeamActive' ||
+                                $currentURL == 'TeamInactive' ||
+                                $currentURL == 'MemberRequest' ||
+                                $currentURL == 'EditTeamMember') active @endif">
 
                             <a class="nav-link" href="{{ url('/teams-active') }}">
                                 <span class="menu-icon">
@@ -296,10 +302,15 @@
                                         Save Client
                                     @elseif($currentURL == 'team')
                                         Team
-                                    <<<<<<< HEAD @elseif($currentURL == 'Addclient') Add New Client
-                                        @elseif($currentURL == 'AddMember') Add New Team Members=======>>>>>>>
-                                            6a525aa1cd40943f9fda182bf0d1eb4be2f77158
-                                        @else
+                                    @elseif($currentURL == 'Addclient')
+                                        Add New Client
+                                    @elseif($currentURL == 'AddMember')
+                                        Add New Team Members
+                                    @elseif($currentURL == 'EditTeamMember')
+                                        Edit Team Members
+                                    @elseif($currentURL == 'EditClient')
+                                        Edit Client
+                                    @else
                                     @endif
                                 </div>
                             </li>

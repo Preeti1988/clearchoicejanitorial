@@ -52,13 +52,14 @@
                                 <tr>
                                     <th>Date</th>
                                     <th>Client Name</th>
-                                    <th>Client Address</th>
+                                    <th>Email</th>
+                                    <th>Client Notes</th>
                                     <th>Lead Source</th>
-                                    <th>Amount</th>
+                                    <th>Company</th>
+                                    <th>Mobile Number</th>
+                                    <th>Work Number</th>
                                     <th>Status</th>
-                                    <th>Note</th>
-                                    <th>Employee Assigned</th>
-                                    <th>Action</th>
+                                    <th style="white-space:nowrap;">Action</th>
                                 </tr>
                             </thead>
 
@@ -77,40 +78,47 @@
                                             </td>
 
                                             <td style="white-space: nowrap;">
-                                                {{ $val->name }}======={{ $val->name }}>>>>>>>
-                                                6a525aa1cd40943f9fda182bf0d1eb4be2f77158
+                                                {{ $val->name }}
                                             </td>
 
                                             <td>
-                                                {{ $val->address }}
+                                                {{ $val->email_address }}
+                                            </td>
+                                            <td>
+                                                {{ $val->client_notes }}
                                             </td>
 
-                                            <td>
-                                                N/A
-                                            </td>
 
                                             <td>
-                                                $00.00
-                                            </td>
-
-                                            <td>
-                                                <span class="status-text grstatus">Scheduled</span>
+                                                {{ $val->lead_source }}
                                             </td>
                                             <td>
-                                                Cleaning Will Required Space Clear & Cleaning Materials
+                                                {{ $val->company }}
+                                            </td>
+                                            <td>
+                                                {{ $val->mobile_number }}
                                             </td>
                                             <td style="white-space: nowrap;">
-                                                John Doe +12 Employee
+                                                {{ $val->client_work_number }}
                                             </td>
                                             <td>
+                                                <span class="status-text grstatus">
+                                                    @if ($val->status == 1)
+                                                        Active
+                                                    @else
+                                                        Inactive
+                                                    @endif
+                                                </span>
+                                            </td>
+                                            <td style="white-space:nowrap;">
                                                 <a class="viewbtn"
                                                     href="{{ url('client-details/' . encryptDecrypt('encrypt', $val->id)) }}') }}">
-
-                                                    <a class="viewbtn"
-                                                        href="{{ url('client-details/' . encryptDecrypt('encrypt', $val->id)) }}') }}">
-
-                                                        <img src="{{ asset('public/assets/admin-images/view-icon.svg') }}">
-                                                    </a>
+                                                    <img src="{{ asset('public/assets/admin-images/view-icon.svg') }}">
+                                                </a>
+                                                <a class="viewbtn"
+                                                    href="{{ url('edit-client/' . encryptDecrypt('encrypt', $val->id)) }}') }}">
+                                                    <img src="{{ asset('public/assets/admin-images/edit-icon.svg') }}">
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach
