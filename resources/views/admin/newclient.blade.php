@@ -18,27 +18,29 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>First Name</h3>
-                                    <input type="text" class="form-control" name="" placeholder="First Name">
+                                    <input type="text" class="form-control" name="first_name" placeholder="First Name">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Last Name</h3>
-                                    <input type="text" class="form-control" name="" placeholder="Last Name">
+                                    <input type="text" class="form-control" name="last_name" placeholder="Last Name">
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Display Name</h3>
-                                    <input type="text" class="form-control" name="" placeholder="Display Name">
+                                    <input type="text" class="form-control" name="display_name"
+                                        placeholder="Display Name">
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Email Address</h3>
-                                    <input type="text" class="form-control" name="" placeholder="Display Name">
+                                    <input type="text" class="form-control" name="email_address"
+                                        placeholder="Display Name">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -113,7 +115,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h3>Address (additional addresses)</h3>
-                                    <textarea type="text" class="form-control" name="" placeholder="Address"></textarea>
+                                    <textarea type="text" class="form-control" name="address" placeholder="Address"></textarea>
                                 </div>
                             </div>
 

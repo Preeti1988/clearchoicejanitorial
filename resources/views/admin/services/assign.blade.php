@@ -151,7 +151,7 @@
     </div>
     <script type="text/javascript">
         var assigned = [];
-
+        var removedMember = [];
         var currentMember = {};
         $(function() {
             $("#EmployeesAdded").owlCarousel({
@@ -177,7 +177,7 @@
             assigned.push({
                 id: element.member_id.toString(),
                 name: element.fullname,
-                projects: '0 projects',
+                projects: element.projects,
                 shift_start_time: element.shift_start_time,
                 shift_end_time: element.shift_end_time,
 
@@ -261,7 +261,7 @@
                     }
                     data.map(item => {
                         htm += `<div class="result-item" onclick="assignMember(this)" data-name="${item.fullname}" data-empid="${item.userid}"
-                            data-projects="02 pojects">${item.fullname}</div>`;
+                            data-projects="${item.projects_count}">${item.fullname}</div>`;
                     })
                     $("#search-results").html(htm);
                     $("#search-results").show();

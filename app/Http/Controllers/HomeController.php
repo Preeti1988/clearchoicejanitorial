@@ -10,6 +10,7 @@ use App\Models\MaritalStatus;
 use App\Models\ServicesValue;
 use App\Models\InScope;
 use App\Models\OutScope;
+use App\Models\Service;
 
 class HomeController extends Controller
 {
@@ -30,7 +31,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin.dashboard');
+        $services = Service::count();
+        $members = User::where("admin", "!=", 1)->count();
+        $ongoing = Service::has("members")->with("members")->get();
+        $unassigned = Service::doesntHave("members")->get();
+
+        return view('admin.dashboard', compact('services', 'members', 'ongoing', 'unassigned'));
     }
 
     public function dashboard()

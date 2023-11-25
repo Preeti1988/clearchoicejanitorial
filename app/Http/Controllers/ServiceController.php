@@ -127,6 +127,7 @@ class ServiceController extends Controller
         $service = Service::find($id);
         foreach ($service->members as  $value) {
             $value->fullname = $value->member->fullname;
+            $value->projects = $value->member->projects->count() . " projects";
         }
         return view('admin.services.assign', compact('service'));
     }
@@ -136,7 +137,7 @@ class ServiceController extends Controller
         $members = json_decode($request->assigned);
         $sst = null;
         $set = null;
-
+        $existing_member = [];
         foreach ($members as  $item) {
             $serviceMember = new ServiceMember();
             $exists = ServiceMember::where("member_id", $item->id)->where("service_id", $request->service_id)->count();
@@ -149,8 +150,16 @@ class ServiceController extends Controller
             $serviceMember->member_id = $item->id;
             $serviceMember->service_id = $request->service_id;
             $serviceMember->save();
+            $existing_member[] = $item->id;
         }
 
+        $deleteRepose =  ServiceMember::where("service_id", $request->service_id)->whereNOtIn("member_id", $existing_member)->delete();
+
         return response()->json(['message' => 'Member  Assigned  Successfully', 'status' => 200]);
+    }
+    public function serviceScheduler()
+    {
+        $services = Service::doesntHave("members")->get();
+        return view("admin.services.scheduler", compact('services'));
     }
 }

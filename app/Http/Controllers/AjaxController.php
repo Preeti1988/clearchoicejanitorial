@@ -17,7 +17,11 @@ class AjaxController extends Controller
     {
         if (request()->has('search')) {
             $key = request("search");
-            $members = User::where("fullname", "LIKE", "%$key%")->get();
+            $members = User::where("fullname", "LIKE", "%$key%")->where("admin", "!=", 1)->get();
+            foreach ($members as  $value) {
+
+                $value->projects_count = $value->projects->count() . " projects";
+            }
             return $members;
         } else {
             return [];

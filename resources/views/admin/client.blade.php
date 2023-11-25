@@ -77,8 +77,7 @@
                                             </td>
 
                                             <td style="white-space: nowrap;">
-                                                {{ $val->name }}======={{ $val->name }}>>>>>>>
-                                                6a525aa1cd40943f9fda182bf0d1eb4be2f77158
+                                                {{ $val->name }}
                                             </td>
 
                                             <td>
