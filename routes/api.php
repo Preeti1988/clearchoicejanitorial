@@ -23,4 +23,8 @@ Route::post('city', [UserController::class, 'city']);
  
 Route::middleware('auth:sanctum')->group(function () {
  Route::get('profile', [UserController::class, 'userDetails']);
+ Route::post('update-profile', [UserController::class, 'updateProfile']);
+ Route::get('home', [UserController::class, 'home']);
+ Route::post('service-details', [UserController::class, 'service_details']);
+ Route::post('submit-review', [UserController::class, 'submit_review']);
 });

@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Country;
+use App\Models\Designation;
+use App\Models\MaritalStatus;
 
 if (!function_exists('successMsg')) {
     function successMsg($msg, $data = [])
@@ -59,7 +61,28 @@ if (!function_exists('TotalYear')) {
 if (!function_exists('Designation')) {
     function Designation($id)
     {
-        $designation_id = $id;
-        return 'Service Technician';
+        $Designation = Designation::where('id',$id)->first();
+        if(!empty($Designation))
+        {
+            return $Designation->name;
+        }else{
+            return '';
+        }
+        
+    }
+}
+
+if (!function_exists('MaritalStatus')) {
+    function MaritalStatus($id)
+    {
+        
+        $MaritalStatus = MaritalStatus::where('id',$id)->first();
+        if(!empty($Designation))
+        {
+            return $MaritalStatus->name;
+        }else{
+            return '';
+        }
+        
     }
 }

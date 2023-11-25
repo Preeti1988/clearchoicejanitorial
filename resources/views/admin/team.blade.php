@@ -38,26 +38,32 @@
                                     <div class="ongoing-services-item-head">
                                         <div class="row align-items-center">
                                             <div class="col-md-8">
-                                                <form action="{{ route('search.team-member') }}" method="POST">
-                                                    @csrf
-                                                    <div class="search-input">
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control"
-                                                                placeholder="Search by Employee Name, Employee Id, Email or Phone No."
-                                                                name="search" value="{{ $search ?? '' }}"
-                                                                aria-label="Recipient's username"
-                                                                aria-describedby="button-addon2">
-                                                            <button class="btn btn-outline-secondary" type="submit"
-                                                                id="button-addon2">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                    height="16" fill="white" class="bi bi-search"
-                                                                    viewBox="0 0 16 16">
-                                                                    <path
-                                                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                                                                </svg>
-                                                            </button>
-                                                        </div>
+                                                @if ($type == 1)
+                                                    <form action="{{ route('search.team-member-active') }}" method="POST">
+                                                    @else
+                                                        <form action="{{ route('search.team-member-inactive') }}"
+                                                            method="POST">
+                                                @endif
+
+                                                @csrf
+                                                <div class="search-input">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Search by Employee Name, Employee Id, Email or Phone No."
+                                                            name="search" value="{{ $search ?? '' }}"
+                                                            aria-label="Recipient's username"
+                                                            aria-describedby="button-addon2">
+                                                        <button class="btn btn-outline-secondary" type="submit"
+                                                            id="button-addon2">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                height="16" fill="white" class="bi bi-search"
+                                                                viewBox="0 0 16 16">
+                                                                <path
+                                                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                                            </svg>
+                                                        </button>
                                                     </div>
+                                                </div>
                                                 </form>
                                             </div>
                                             <div class="col-md-4 active-btns justify-content-end">
@@ -103,75 +109,70 @@
                                             </tr>
                                         @elseif(!$datas->isEmpty())
                                             @foreach ($datas as $val)
-
-                                                @foreach ($datas as $val)
-                                                    <?php $sno = 1; ?>
-
-                                                    <div class="team-info-box mb-2">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-md-1">
-                                                                <p class="mb-0">Emp ID</p>
-                                                                <h6 class="mt-1">{{ $val->userid }}</h6>
-
-                                                                <h6 class="mt-1">{{ $sno }}</h6>
-
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="d-flex align-items-center">
-                                                                    <div class="profile-img">
-                                                                        <img src="{{ asset('public/assets/admin-images/profile-img.jpg') }}"
-                                                                            alt="image" class="img-fluid">
-                                                                    </div>
-                                                                    <h6 class="ms-2 mt-0 mb-0">
-                                                                        {{ $val->fullname ?? '' }}
-
-                                                                        <h6 class="ms-2 mt-0 mb-0">
-                                                                            {{ $val->fullname ?? '' }}
-
-                                                                        </h6>
+                                                <div class="team-info-box mb-2">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-1">
+                                                            <p class="mb-0">Emp ID</p>
+                                                            <h6 class="mt-1">{{ $val->userid }}</h6>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="profile-img">
+                                                                    <img src="{{ asset('public/assets/admin-images/profile-img.jpg') }}"
+                                                                        alt="image" class="img-fluid">
                                                                 </div>
+                                                                <h6 class="ms-2 mt-0 mb-0">
+                                                                    {{ $val->fullname ?? '' }}
                                                             </div>
-                                                            <div class="col-md-3">
-                                                                <p class="mb-0">Email Id</p>
-                                                                <h6 class="mt-1">{{ $val->email ?? '' }}
-                                                                </h6>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <p class="mb-0">Email Id</p>
+                                                            <h6 class="mt-1">{{ $val->email ?? '' }}
+                                                            </h6>
 
-                                                                <h6 class="mt-1">{{ $val->email }}</h6>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <p class="mb-0">Phone no.</p>
+                                                            <h6 class="mt-1">+{{ CountryCode($val->country_id) }}
+                                                                {{ $val->phonenumber ?? '' }}
+                                                            </h6>
 
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <p class="mb-0">Status</p>
+                                                            <div class="form-check form-switch">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="flexSwitchCheckChecked"
+                                                                    @if ($val->status == 1) checked @endif>
                                                             </div>
-                                                            <div class="col-md-2">
-                                                                <p class="mb-0">Phone no.</p>
-                                                                <h6 class="mt-1">+{{ CountryCode($val->country_id) }}
-                                                                    {{ $val->phonenumber ?? '' }}</h6>
+                                                        </div>
+                                                        {{-- <div class="col-md-2">
+                                                            <p class="mb-0">Mark as Inactive</p> <input
+                                                                class='input-switch justify-content-end' type="checkbox"
+                                                                id="demo" />
+                                                            <label class="label-switch" for="demo"></label>
+                                                            <span class="info-text"></span>
+                                                        </div> --}}
+                                                        <div class="col-md-1 ">
+                                                            <div class="view-btn">
+                                                                <a
+                                                                    href="{{ url('team-detail/' . encryptDecrypt('encrypt', $val->userid)) }}">
+                                                                    <h6><i class="fa fa-eye me-1"></i>View</h6>
+                                                                </a>
+                                                                <a
+                                                                    href="{{ url('edit-teammember/' . encryptDecrypt('encrypt', $val->userid)) }}">
+                                                                    <h6><i class="fa fa-pencil me-1"></i>edit</h6>
+                                                                </a>
 
-                                                                {{ $val->phonenumber }}
-                                                                </h6>
-
-                                                            </div>
-                                                            <div class="col-md-2">
-                                                                <p class="mb-0">Mark as Inactive</p>
-                                                                <input class='input-switch justify-content-end'
-                                                                    type="checkbox" id="demo" />
-                                                                <label class="label-switch" for="demo"></label>
-                                                                <span class="info-text"></span>
-                                                            </div>
-                                                            <div class="col-md-1 ">
-                                                                <div class="view-btn">
-                                                                    <a
-                                                                        href="{{ url('team-detail/' . encryptDecrypt('encrypt', $val->userid)) }}">
-                                                                        <h6><i class="fa fa-eye me-1"></i>View</h6>
-                                                                    </a>
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <?php $sno++; ?>>>>>>>>
-                                                    6a525aa1cd40943f9fda182bf0d1eb4be2f77158
-                                                @endforeach
-                                            @endif
-                                            <div class="d-flex justify-content-left">
-                                                {{ $datas->links('pagination::bootstrap-4') }}
-                                            </div>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                        <div class="d-flex justify-content-left">
+                                            {{ $datas->links('pagination::bootstrap-4') }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -251,7 +252,8 @@
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput"
                                         placeholder="Emter employee full name">
-                                    <label for="floatingInput" class="text-capitalize">Employee full name</label>
+                                    <label for="floatingInput" class="text-capitalize">Employee full
+                                        name</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -272,7 +274,8 @@
                                 <div class="form-floating mb-3">
                                     <input type="tel" class="form-control" id="floatingInput"
                                         placeholder="Enter additional phone Number">
-                                    <label for="floatingInput" class="text-capitalize">Additional phone Number</label>
+                                    <label for="floatingInput" class="text-capitalize">Additional phone
+                                        Number</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -286,7 +289,8 @@
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput"
                                         placeholder="Enter job">
-                                    <label for="floatingInput" class="text-capitalize">For which job employee will work
+                                    <label for="floatingInput" class="text-capitalize">For which job employee
+                                        will work
                                         for</label>
                                 </div>
                             </div>
@@ -294,7 +298,8 @@
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput"
                                         placeholder="Enter previous company">
-                                    <label for="floatingInput" class="text-capitalize">Previous company</label>
+                                    <label for="floatingInput" class="text-capitalize">Previous
+                                        company</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -317,7 +322,8 @@
                                 <div class="form-floating mb-3">
                                     <input type="number" class="form-control" id="floatingInput"
                                         placeholder="Enter previous company">
-                                    <label for="floatingInput" class="text-capitalize">No.of Dependents</label>
+                                    <label for="floatingInput" class="text-capitalize">No.of
+                                        Dependents</label>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -326,7 +332,8 @@
                             <div class="col-md-12">
                                 <div class="form-floating mb-3">
                                     <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" rows="4"></textarea>
-                                    <label for="floatingTextarea" class="text-capitalize">Street Address</label>
+                                    <label for="floatingTextarea" class="text-capitalize">Street
+                                        Address</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -387,14 +394,16 @@
                                 <div class="form-floating mb-3">
                                     <input type="password" class="form-control" id="floatingInput"
                                         placeholder="Enter previous company">
-                                    <label for="floatingInput" class="text-capitalize">Create New Password</label>
+                                    <label for="floatingInput" class="text-capitalize">Create New
+                                        Password</label>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-floating mb-3">
                                     <input type="password" class="form-control" id="floatingInput"
                                         placeholder="Enter previous company">
-                                    <label for="floatingInput" class="text-capitalize">Confirm New Password</label>
+                                    <label for="floatingInput" class="text-capitalize">Confirm New
+                                        Password</label>
                                 </div>
                             </div>
                         </div>
@@ -402,7 +411,8 @@
                             <div class="modal-footer justify-content-center">
                                 <div class="text-center">
                                     <a href="#" class="btn save-account" data-bs-toggle="modal"
-                                        data-bs-target="#createTeamMemberAccount">Save & Create Team Members Account</a>
+                                        data-bs-target="#createTeamMemberAccount">Save & Create Team Members
+                                        Account</a>
                                     <p class="mt-2 mb-0 pb-0">Or</p>
                                     <a href="#" class="send-link text-capitalize" data-bs-target="#sendLinkTo"
                                         data-bs-toggle="modal" data-bs-dismiss="modal">Send <svg
@@ -444,7 +454,8 @@
                             <path
                                 d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z" />
                         </svg>Link to Download App</a>
-                    <p class="text-capitalize send-link mt-2 mb-5">With created password on employee registered email id
+                    <p class="text-capitalize send-link mt-2 mb-5">With created password on employee registered
+                        email id
                     </p>
                 </div>
             </div>
@@ -480,7 +491,8 @@
                             <div class="modal-card">
                                 <img src="images/new-team-member.svg" alt="image" class="img-fluid">
                                 <p class="text-center mb-2">Once Approved by Admin</p>
-                                <h6 class="text-center mt-0 pt-0 mb-0 pb-0">New Team member will be Onboarded</h6>
+                                <h6 class="text-center mt-0 pt-0 mb-0 pb-0">New Team member will be Onboarded
+                                </h6>
                             </div>
                         </div>
                         <div class="col-md-12 mt-4">
