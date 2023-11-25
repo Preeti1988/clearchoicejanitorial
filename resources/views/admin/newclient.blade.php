@@ -55,6 +55,7 @@
                                 <div class="form-group">
                                     <h3>Mobile phone</h3>
                                     <input type="text" class="form-control" name="mobile_number"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('mobile_number') }}" placeholder="Mobile phone" required>
                                 </div>
                             </div>
@@ -62,6 +63,7 @@
                                 <div class="form-group">
                                     <h3>Home phone</h3>
                                     <input type="text" class="form-control" name="home_number"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('home_number') }}" placeholder="Home phone">
                                 </div>
                             </div>
@@ -69,6 +71,7 @@
                                 <div class="form-group">
                                     <h3>Work phone</h3>
                                     <input type="text" class="form-control" name="client_work_number"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('client_work_number') }}" placeholder="Work phone">
                                 </div>
                             </div>
