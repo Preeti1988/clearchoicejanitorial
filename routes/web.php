@@ -49,7 +49,7 @@ Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeC
 
 
 // services all functionality
-Route::resource("services", ServiceController::class);
+Route::resource("services", App\Http\Controllers\ServiceController::class);
 Route::get("assign-member/{id}", [ServiceController::class, 'assignMember'])->name('services.assign');
 Route::post("assign-member", [ServiceController::class, 'assignMemberPost'])->name('services.assign.post');
 

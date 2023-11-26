@@ -186,7 +186,7 @@ class UserController extends Controller
         return response()->json(["status" => true, "message" => "Service Details", "data" => $success]);
     }
     
-    public function service_details(Request $request)
+    public function save_rating(Request $request)
     {
         $user = Auth::user();
         $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
