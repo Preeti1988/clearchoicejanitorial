@@ -166,7 +166,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="service-scheduler.html">
+                            <a class="nav-link" href="{{ route('services.scheduler') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none">
@@ -222,7 +222,7 @@
                                             stroke-linejoin="round" />
                                     </svg>
                                 </span>
-                                <span class="menu-title">Manage Jobs</span>
+                                <span class="menu-title">Manage Services</span>
                             </a>
                         </li>
 
@@ -375,6 +375,8 @@
             @yield('content')
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
     <script>
         var base_url = "{{ url('/') }}";
 
@@ -392,11 +394,13 @@
         $(document).ready(function() {
             $("#preloader").hide();
         });
+        $(":input").inputmask();
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
         integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     @stack('js')
 
 

@@ -25,6 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
  Route::get('profile', [UserController::class, 'userDetails']);
  Route::post('update-profile', [UserController::class, 'updateProfile']);
  Route::get('home', [UserController::class, 'home']);
+ Route::get('services', [UserController::class, 'services']);
  Route::post('service-details', [UserController::class, 'service_details']);
+ Route::post('update-status', [UserController::class, 'UpdateStatus']);
  Route::post('submit-review', [UserController::class, 'submit_review']);
 });

@@ -11,6 +11,8 @@ use App\Models\City;
 use App\Models\InScope;
 use App\Models\OutScope;
 use App\Models\ServicesValue;
+use App\Models\ServiceMember;
+use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -54,6 +56,14 @@ class UserController extends Controller
                 $success['applying_letter'] = ($user->applying_letter) ?? '';
                 $success['status'] = $user->status;
                 $success['created_date'] = $user->created_date;
+                if ($user->resume) {
+                    $success['resume'] = asset('public/assets/admin-images/').$user->resume;
+                } else {
+                    $success['resume'] = '';
+                }
+                
+                
+                $success['resume_file_name'] = $user->resume_file_name;
                 return response()->json(["status" => true, "message" => "Logged in successfully.", "data" => $success]);
             } else {
                 return response()->json(['error' => 'Unauthorised'], 401);
@@ -113,6 +123,19 @@ class UserController extends Controller
         $success['applying_letter'] = ($user->applying_letter) ?? '';
         $success['status'] = $user->status;
         $success['created_date'] = $user->created_date;
+        if ($request->file('resume')) {
+            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();  
+            $request->resume->move(public_path('upload/resume'), $imageName);
+            $resume = $imageName;
+            $resume_file_name = $request->resume->getClientOriginalName();
+            $success['resume'] = asset('public/assets/admin-images/').$imageName;
+            $success['resume_file_name'] = $resume_file_name;
+            User::where('userid',$user->userid)->update(['resume'=>$imageName,'resume_file_name'=>$resume_file_name]);
+        }else{
+            $success['resume'] = '';
+            $success['resume_file_name'] = '';
+        }
+        
         return response()->json(["status" => true, "message" => "Registered successfully.", "data" => $success]);
         //return response()->json(['success' => $success], $this->successStatus);
     }
@@ -142,48 +165,104 @@ class UserController extends Controller
     public function home()
     {
         $user = Auth::user();
-        $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
-        $success['status'] = 'Schedulad';
-        $success['current_status'] = 1;/* 1:On the way, 2:start , 3:finish*/
-        $success['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
-        $success['clientname'] = 'Neeti Alax';
-        $success['clientemail'] = 'neetialax@gmail.com';
-        $success['clientphone'] = '+(987)4563210';
-        $success['address'] = 'T blog way, Jhartos, CA';
-        $success['lat'] = '28.23654';
-        $success['long'] = '78.9654123';
-        $success['client_id'] = 1;
-        return response()->json(["status" => true, "message" => "Home page", "data" => $success]);
+        $servise_list = ServiceMember::where('member_id',$user->id)->where('status',1)->get();
+        $response = array();
+        foreach ($servise_list as $key => $value) {
+            $service = Service::where('id',$servise_list->service_id)->first();
+            $temp['service_name'] = isset($service->name) ?? '';
+            $temp['service_id'] = isset($service->id) ?? '';
+            // $temp['status'] = (($value->status == 1) ? "Scheduled" :($value->status == 2) ? "On the way" : ($value->status == 3) ? "Start": ($value->status == 4) ? "finish" : "Scheduled");
+            $temp['status'] = ($value->status == 1) ?? "Scheduled";
+            $temp['status_id'] = $value->status;
+            $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
+            $temp['client_id'] = isset($service->billed_to) ?? '';
+            $client = Client::where('id',$service->billed_to)->first();
+            $temp['clientname'] = isset($client->name) ?? '';
+            $temp['clientemail'] = isset($client->email_address) ?? '';
+            $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
+            $temp['address'] = isset($client->address) ?? '';
+            $temp['lat'] = '28.23654';
+            $temp['long'] = '78.9654123';
+            $response[] = $temp;
+        }
+        return response()->json(["status" => true, "message" => "Home page", "data" => $response]);
+    }
+    
+    public function services()
+    {
+        $user = Auth::user();
+        $servise_list = ServiceMember::where('member_id',$user->id)->where('status',1)->get();
+        $response = array();
+        foreach ($servise_list as $key => $value) {
+            $service = Service::where('id',$servise_list->service_id)->first();
+            $temp['service_name'] = isset($service->name) ?? '';
+            $temp['service_id'] = isset($service->id) ?? '';
+            // $temp['status'] = (($value->status == 1) ? "Scheduled" :($value->status == 2) ? "On the way" : ($value->status == 3) ? "Start": ($value->status == 4) ? "finish" : "Scheduled");
+            $temp['status'] = (($value->status == 1) ?? "Scheduled");
+            $temp['status_id'] = $value->status;
+            $temp['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
+            $temp['client_id'] = isset($service->billed_to) ?? '';
+            $client = Client::where('id',$service->billed_to)->first();
+            $temp['clientname'] = isset($client->name) ?? '';
+            $temp['clientemail'] = isset($client->email_address) ?? '';
+            $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
+            $temp['address'] = isset($client->address) ?? '';
+            $temp['lat'] = '28.23654';
+            $temp['long'] = '78.9654123';
+            $response[] = $temp;
+        }
+        return response()->json(["status" => true, "message" => "Services Listing", "data" => $response]);
     }
     
     public function service_details(Request $request)
     {
         $user = Auth::user();
-        $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
-        $success['service_name'] = 'Schedulad';
-        $success['Status'] = 'Schedulad';
-        $success['current_status'] = 1;/* 1:On the way, 2:start , 3:finish*/
-        $success['service_type'] = 1;
-        $success['service_frequency'] = asset('public/assets/admin-images/profile-img.jpg');
-        $success['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
-        $success['clientname'] = 'Neeti Alax';
-        $success['clientemail'] = 'neetialax@gmail.com';
-        $success['clientphone'] = '+(987)4563210';
-        $success['address'] = 'T blog way, Jhartos, CA';
-        $success['lat'] = '28.23654';
-        $success['long'] = '78.9654123';
-        $success['client_id'] = 1;
+        $validator = Validator::make($request->all(), [
+            'service_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        $servise_list = ServiceMember::where('member_id',$user->id)->where('service_id',$request->service_id)->where('status',1)->first();
+        $service = Service::where('id',$request->service_id)->first();
+        $temp['service_name'] = isset($service->name) ?? '';
+        $temp['service_id'] = isset($service->id) ?? '';
+        // $temp['status'] = (($value->status == 1) ?? "Scheduled" :($value->status == 2) ?? "On the way" : ($value->status == 3) ?? "Start": ($value->status == 4) ? "finish" : "Scheduled");
+        $temp['status'] = ($value->status == 1) ?? "Scheduled";
+        $temp['status_id'] = $value->status;
+        $temp['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
+        $temp['client_id'] = isset($service->billed_to) ?? '';
+        $client = Client::where('id',$service->billed_to)->first();
+        $temp['clientname'] = isset($client->name) ?? '';
+        $temp['clientemail'] = isset($client->email_address) ?? '';
+        $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
+        $temp['address'] = isset($client->address) ?? '';
+        $temp['lat'] = '28.23654';
+        $temp['long'] = '78.9654123';
         $inscope = InScope::orderBy('id','DESC')->get();
         $outscope = OutScope::orderBy('id','DESC')->get();
         $services_values = ServicesValue::orderBy('id','DESC')->get();
-        $success['inscope'] = $inscope;
-        $success['OutScope'] = $outscope;
-        $success['ServicesItems'] = $services_values;
-        $success['scheduled_list'] =[];
-        $success['total'] = 200;
+        $temp['inscope'] = $inscope;
+        $temp['OutScope'] = $outscope;
+        $temp['ServicesItems'] = $services_values;
+        $temp['scheduled_list'] =[];
+        $temp['total'] = 200;
         
         
-        return response()->json(["status" => true, "message" => "Service Details", "data" => $success]);
+        return response()->json(["status" => true, "message" => "Service Details", "data" => $temp]);
+    }
+    
+    public function UpdateStatus(Request $request)
+    {
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'service_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
+        }
+        ServiceMember::where('member_id',$user->id)->where('service_id',$request->service_id)->update(['status'=>$request->status]);
+        return response()->json(["status" => true, "message" => "Status updated.", "data" => $success]);
     }
     
     public function save_rating(Request $request)
@@ -250,6 +329,12 @@ class UserController extends Controller
         $success['resume'] = $user->resume;
         $success['state_id'] = $user->state_id;
         $success['zipcode'] = $user->zipcode;
+        if ($user->resume) {
+            $success['resume'] = asset('public/assets/admin-images/').$user->resume;
+        } else {
+            $success['resume'] = '';
+        }
+        $success['resume_file_name'] = $user->resume_file_name;
         return response()->json(["status" => true, "message" => "Profile updated", "data" => $success]);
     }
 

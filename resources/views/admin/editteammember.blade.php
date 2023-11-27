@@ -58,6 +58,7 @@
                                 <div class="form-group">
                                     <h3>Mobile phone</h3>
                                     <input type="text" class="form-control" name="mobile_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ $data->phonenumber ?? '' }}" placeholder="Mobile phone" required>
                                 </div>
                             </div>
@@ -65,6 +66,7 @@
                                 <div class="form-group">
                                     <h3>Home phone</h3>
                                     <input type="text" class="form-control" name="home_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ $data->home_phone ?? '' }}" placeholder="Home phone">
                                 </div>
                             </div>
@@ -72,6 +74,7 @@
                                 <div class="form-group">
                                     <h3>Work phone</h3>
                                     <input type="text" class="form-control" name="work_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ $data->work_phone ?? '' }}" placeholder="Work phone">
                                 </div>
                             </div>

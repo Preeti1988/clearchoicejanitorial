@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,7 +51,8 @@ Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeC
 
 
 // services all functionality
-Route::resource("services", App\Http\Controllers\ServiceController::class);
+Route::resource("services", ServiceController::class);
+Route::get("service-scheduler", [ServiceController::class, 'serviceScheduler'])->name('services.scheduler');
 Route::get("assign-member/{id}", [ServiceController::class, 'assignMember'])->name('services.assign');
 Route::post("assign-member", [ServiceController::class, 'assignMemberPost'])->name('services.assign.post');
 

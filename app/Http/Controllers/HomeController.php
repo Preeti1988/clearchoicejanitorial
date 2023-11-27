@@ -10,6 +10,7 @@ use App\Models\MaritalStatus;
 use App\Models\ServicesValue;
 use App\Models\InScope;
 use App\Models\OutScope;
+use App\Models\Service;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
@@ -36,7 +37,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin.dashboard');
+        $services = Service::count();
+        $members = User::where("admin", "!=", 1)->count();
+        $ongoing = Service::has("members")->with("members")->get();
+        $unassigned = Service::doesntHave("members")->get();
+
+        return view('admin.dashboard', compact('services', 'members', 'ongoing', 'unassigned'));
     }
 
     public function dashboard()
@@ -169,7 +175,7 @@ class HomeController extends Controller
             }
             if ($request->file('resume')) {
                 $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();  
-                $request->resume->move(public_path('upload/user-profile'), $imageName);
+                $request->resume->move(public_path('upload/resume'), $imageName);
                 $resume = $imageName;
                 $resume_file_name = $request->resume->getClientOriginalName();
             }else{
@@ -350,14 +356,14 @@ class HomeController extends Controller
                     'status' => 1,
                 ]);
             } elseif ($tag_id == 3) {
-                // dd($request->all());
+                
                 $name = 'Services';
-
                 $user = ServicesValue::create([
                     'name' => $request->name,
                     'price' => $request->price,
                     'status' => 1,
                 ]);
+                dd($request->all());
             } elseif ($tag_id == 2) {
                 $name = 'Out Of Scope';
                 $user = OutScope::create([

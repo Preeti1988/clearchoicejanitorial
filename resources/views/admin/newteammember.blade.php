@@ -55,6 +55,7 @@
                                 <div class="form-group">
                                     <h3>Mobile phone</h3>
                                     <input type="text" class="form-control" name="mobile_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('mobile_phone') }}" placeholder="Mobile phone" required>
                                 </div>
                             </div>
@@ -62,6 +63,7 @@
                                 <div class="form-group">
                                     <h3>Home phone</h3>
                                     <input type="text" class="form-control" name="home_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('home_phone') }}" placeholder="Home phone">
                                 </div>
                             </div>
@@ -69,6 +71,7 @@
                                 <div class="form-group">
                                     <h3>Work phone</h3>
                                     <input type="text" class="form-control" name="work_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('work_phone') }}" placeholder="Work phone">
                                 </div>
                             </div>
@@ -215,7 +218,7 @@
                                 <div class="product-images-upload">
                                     <div class="file-form-group">
                                         <input type="file" class="file-form-control" name="resume"
-                                            accept=".png, .jpg, .jpeg, .pdf">
+                                            accept=".png, .jpeg, .pdf">
                                     </div>
                                 </div>
                                 <div class="product-images-head">

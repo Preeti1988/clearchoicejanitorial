@@ -344,23 +344,15 @@
 
     <!-------------------- Approval-Product-Jquery -------------------->
     <script>
-        << << << < HEAD
-
-        function Get_Tag_Name(Tag_name, Tag_id) {
-            document.getElementById("tag_name").innerText = Tag_name;
-            document.getElementById("tag_id").value = Tag_id;
-        } ===
-        ===
-        =
         function Get_Tag_Name(Tag_name, Tag_id) {
             document.getElementById("tag_name").innerText = Tag_name;
             document.getElementById("tag_id").value = Tag_id;
         }
 
-        >>>
-        >>>
-        >
-        6 a525aa1cd40943f9fda182bf0d1eb4be2f77158
+        function Get_Tag_Name(Tag_name, Tag_id) {
+            document.getElementById("tag_name").innerText = Tag_name;
+            document.getElementById("tag_id").value = Tag_id;
+        }
     </script>
 
 @endsection
