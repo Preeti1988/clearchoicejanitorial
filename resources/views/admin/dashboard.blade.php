@@ -59,48 +59,33 @@
                     </div>
                     <div class="Ongoing-calender-list">
                         <div id="Ongoingcalender" class="owl-carousel owl-theme">
-                            <div class="item">
-                                <div class="Ongoing-calender-item">
-                                    <h3>Sun</h3>
-                                    <h2>01</h2>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="Ongoing-calender-item">
-                                    <h3>Mon</h3>
-                                    <h2>02</h2>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="Ongoing-calender-item">
-                                    <h3>Tue</h3>
-                                    <h2>03</h2>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="Ongoing-calender-item">
-                                    <h3>Wed</h3>
-                                    <h2>04</h2>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="Ongoing-calender-item">
-                                    <h3>Thu</h3>
-                                    <h2>05</h2>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="Ongoing-calender-item">
-                                    <h3>Fri</h3>
-                                    <h2>06</h2>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="Ongoing-calender-item">
-                                    <h3>Sat</h3>
-                                    <h2>07</h2>
-                                </div>
-                            </div>
+                            @php
+                                $arr = [];
+                                // Get the current month and year
+                                $currentMonth = now()->format('F');
+                                $currentYear = now()->year;
+
+                                // Get the number of days in the current month
+                                $daysInMonth = date('j');
+
+                                // Loop through each day in the month
+                                for ($day = 1; $day <= $daysInMonth; $day++) {
+                                    $date = now()->setDay($day);
+                                    $dayOfWeek = $date->format('D');
+                                    $formattedDate = $date->format('d');
+                                    $arr[] = ['w' => $dayOfWeek, 'd' => $formattedDate, 'date' => date('Y-m-d', strtotime($date))];
+                                }
+                            @endphp
+                            @foreach ($arr as $item)
+                                <a class="item" href="{{ route('Homes', 'date=' . $item['date']) }}">
+                                    <div class="Ongoing-calender-item">
+                                        <h3>{{ $item['w'] }}</h3>
+                                        <h2>{{ $item['d'] }}</h2>
+                                    </div>
+                                </a>
+                            @endforeach
+
+
                         </div>
                     </div>
                     <div class="tasks-content-info tab-content">
@@ -188,8 +173,11 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service Start Time:</h2>
-                                                            <p>{{ date('d-m-y', strtotime($item->created_date)) }},
-                                                                10:30</p>
+                                                            <p>
+                                                                {{ date('M d,Y', strtotime($item->created_date)) }},
+                                                                {{ date('h:i A', strtotime($item->service_start_time)) }}
+
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -201,8 +189,10 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service End Time:</h2>
-                                                            <p>{{ date('d-m-y', strtotime($item->scheduled_end_date)) }},
-                                                                10:30</p>
+                                                            <p>
+                                                                {{ date('M d,Y', strtotime($item->scheduled_end_date)) }},
+                                                                {{ date('h:i A', strtotime($item->service_end_time)) }}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>

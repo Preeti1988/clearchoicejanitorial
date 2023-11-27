@@ -143,7 +143,7 @@ h4.heading-title {font-size: 16px;font-weight: 700;margin: 0;padding: 0; color: 
 
 .search-filter .form-control:focus {border: 1px solid #7bc043;}
 .search-form-group{position: relative;}
-.search-form-group input.form-control {position: relative;color:#fff;border-radius: 5px;font-weight: 400;font-size: 13px;box-sizing: border-box;padding: 12px 15px 12px 50px;border: none;width: 100%;}
+.search-form-group input.form-control {position: relative;color:black;border-radius: 5px;font-weight: 400;font-size: 13px;box-sizing: border-box;padding: 12px 15px 12px 50px;border: none;width: 100%;}
 .search-form-group span.search-icon {position: absolute;top: 48%;left: 15px;pointer-events: none;transform: translateY(-50%) scaleX(-1);color: #fecb59;font-size: 18px;}
 
 /*----------------------------

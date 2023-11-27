@@ -26,16 +26,18 @@
                                     </a>
                                 </div>
                                 <div class="col-md-7">
-                                    <div class="search-form-group">
-                                        <input type="text" name="" class="form-control"
-                                            placeholder="Search by client Name, Date, Location, or Status">
-                                        <span class="search-icon"><img
-                                                src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
+                                    <form action="">
+                                        <div class="search-form-group">
+                                            <input type="text" name="search" class="form-control"
+                                                placeholder="Search by client Name, Date, Location, or Status">
+                                            <span class="search-icon"><img
+                                                    src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
 
-                                        <span class="search-icon"><img
-                                                src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
+                                            <span class="search-icon"><img
+                                                    src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
 
-                                    </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

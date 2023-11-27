@@ -14,6 +14,7 @@ use App\Models\Service;
 use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -37,10 +38,28 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $services = Service::count();
-        $members = User::where("admin", "!=", 1)->count();
-        $ongoing = Service::has("members")->with("members")->get();
-        $unassigned = Service::doesntHave("members")->get();
+        $services = Service::query();
+        if (request()->has('date')) {
+            $services = $services->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        $services = $services->count();
+        $members = User::where("admin", "!=", 1);
+        if (request()->has('date')) {
+            $members = $members->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        $members = $members->count();
+
+        $ongoing = Service::has("members")->with("members");
+        if (request()->has('date')) {
+            $ongoing = $ongoing->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        $ongoing = $ongoing->get();
+
+        $unassigned = Service::doesntHave("members");
+        if (request()->has('date')) {
+            $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        $unassigned = $unassigned->get();
 
         return view('admin.dashboard', compact('services', 'members', 'ongoing', 'unassigned'));
     }
@@ -52,20 +71,24 @@ class HomeController extends Controller
 
     public function clients()
     {
-        $datas = Client::orderBy('id', 'DESC')->paginate(10);
+        $datas = Client::query();
+        if (request()->has('search')) {
+            $datas = $datas->where("name", "LIKE", "%" . trim(request('search')) . "%")->orwhereDate("created_at", Carbon::parse(request('date')))->orWhere("address", "LIKE", "%" . request('search'));
+        }
+        $datas = $datas->orderBy('id', 'DESC')->paginate(10);
         return view('admin.client', compact('datas'));
     }
 
     public function EditTeamMember($id)
     {
         $id = encryptDecrypt('decrypt', $id);
-        $designation = Designation::orderBy('id','DESC')->get(); 
-        $country = Country::orderBy('id','DESC')->get(); 
-        $state = State::orderBy('id','DESC')->get(); 
-        $city = City::orderBy('id','DESC')->get();
-        $MaritalStatus = MaritalStatus::orderBy('id','DESC')->get();
+        $designation = Designation::orderBy('id', 'DESC')->get();
+        $country = Country::orderBy('id', 'DESC')->get();
+        $state = State::orderBy('id', 'DESC')->get();
+        $city = City::orderBy('id', 'DESC')->get();
+        $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
         $data = User::where('userid', $id)->first();
-        return view('admin.editteammember', compact('data','designation','country','state','city','data','MaritalStatus'));
+        return view('admin.editteammember', compact('data', 'designation', 'country', 'state', 'city', 'data', 'MaritalStatus'));
     }
 
     public function SaveClient(Request $request)
@@ -82,8 +105,8 @@ class HomeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $user = Client::create([
-                'email_address' =>$request->email_address,
-                'name' => $request->first_name.' '.$request->last_name,
+                'email_address' => $request->email_address,
+                'name' => $request->first_name . ' ' . $request->last_name,
                 'mobile_number' => $request->mobile_number,
                 'address' => $request->address,
                 'display_name' => $request->display_name,
@@ -113,7 +136,7 @@ class HomeController extends Controller
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
         }
     }
-    
+
     public function UpdateClient(Request $request)
     {
         try {
@@ -129,7 +152,7 @@ class HomeController extends Controller
             }
             $Client = Client::where('id', $request->id)->first();
             $Client->email_address = $request->email_address;
-            $Client->name = $request->first_name.' '.$request->last_name;
+            $Client->name = $request->first_name . ' ' . $request->last_name;
             $Client->mobile_number = $request->mobile_number;
             $Client->address = $request->address;
             $Client->display_name = $request->display_name;
@@ -166,8 +189,8 @@ class HomeController extends Controller
                 'last_name' => 'required|string|max:255|min:1',
                 'email' => 'required|email|unique:user',
                 'phonenumber' => 'required|unique:user',
-                'password' => ['required','min:8'],
-                'c_password' => ['required','same:password','min:8'],
+                'password' => ['required', 'min:8'],
+                'c_password' => ['required', 'same:password', 'min:8'],
             ]);
 
             if ($validator->fails()) {
@@ -176,9 +199,11 @@ class HomeController extends Controller
             if ($request->file('resume')) {
                 $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();  
                 $request->resume->move(public_path('upload/resume'), $imageName);
+                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
+                $request->resume->move(public_path('upload/user-profile'), $imageName);
                 $resume = $imageName;
                 $resume_file_name = $request->resume->getClientOriginalName();
-            }else{
+            } else {
                 $resume = '';
                 $resume_file_name = '';
             }
@@ -213,16 +238,16 @@ class HomeController extends Controller
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
         }
     }
-    
+
     public function add_member()
     {
         try {
-            $designation = Designation::orderBy('id','DESC')->get(); 
-            $country = Country::orderBy('id','DESC')->get(); 
-            $state = State::orderBy('id','DESC')->get(); 
-            $city = City::orderBy('id','DESC')->get(); 
-            $MaritalStatus = MaritalStatus::orderBy('id','DESC')->get();
-            return view('admin.newteammember',compact('designation','country','state','city','MaritalStatus'));
+            $designation = Designation::orderBy('id', 'DESC')->get();
+            $country = Country::orderBy('id', 'DESC')->get();
+            $state = State::orderBy('id', 'DESC')->get();
+            $city = City::orderBy('id', 'DESC')->get();
+            $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
+            return view('admin.newteammember', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -243,13 +268,13 @@ class HomeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             if ($request->file('resume')) {
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();  
+                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
                 $request->resume->move(public_path('upload/user-profile'), $imageName);
                 $resume = $imageName;
                 $resume_file_name = $request->resume->getClientOriginalName();
-                User::where('userid',$request->userid)->update(['resume'=>$imageName,'resume_file_name'=>$resume_file_name]);
+                User::where('userid', $request->userid)->update(['resume' => $imageName, 'resume_file_name' => $resume_file_name]);
             }
-            
+
             $user->fullname = $request->first_name . ' ' . $request->last_name;
             $user->email = $request->email;
             $user->address = $request->address;
@@ -271,7 +296,7 @@ class HomeController extends Controller
             $user->city = $request->city;
             $user->zipcode = $request->zipcode;
             $user->save();
-                        
+
             if (!empty($request->password)) {
                 $user->password = Hash::make($request->password);
             }
@@ -281,7 +306,7 @@ class HomeController extends Controller
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
         }
     }
-    
+
     public function Updateuser(Request $request)
     {
         try {
@@ -297,17 +322,17 @@ class HomeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             if ($request->file('profile_image')) {
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->profile_image->extension();  
+                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->profile_image->extension();
                 $request->profile_image->move(public_path('upload/user-profile'), $imageName);
-                User::where('userid',$request->userid)->update(['profile_image'=>$imageName]);
+                User::where('userid', $request->userid)->update(['profile_image' => $imageName]);
             }
-            
+
             $user->fullname = $request->fullname;
             $user->email = $request->email;
             $user->address = $request->address;
             $user->phonenumber = $request->phonenumber;
             $user->save();
-                        
+
             if (!empty($request->password)) {
                 $user->password = Hash::make($request->password);
             }
@@ -317,7 +342,7 @@ class HomeController extends Controller
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
         }
     }
-    
+
     public function changeSetting(Request $request)
     {
         try {
@@ -377,7 +402,6 @@ class HomeController extends Controller
                     'status' => 1,
                 ]);
             } else {
-
             }
             return redirect('master')->with('message', $name . 'created successfully');
         } catch (\Exception $e) {
@@ -566,28 +590,28 @@ class HomeController extends Controller
     public function add_client()
     {
         try {
-            $designation = Designation::orderBy('id','DESC')->get(); 
-            $country = Country::orderBy('id','DESC')->get(); 
-            $state = State::orderBy('id','DESC')->get(); 
-            $city = City::orderBy('id','DESC')->get(); 
-            $MaritalStatus = MaritalStatus::orderBy('id','DESC')->get();
-            return view('admin.newclient',compact('designation','country','state','city','MaritalStatus'));
+            $designation = Designation::orderBy('id', 'DESC')->get();
+            $country = Country::orderBy('id', 'DESC')->get();
+            $state = State::orderBy('id', 'DESC')->get();
+            $city = City::orderBy('id', 'DESC')->get();
+            $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
+            return view('admin.newclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
+
     public function EditClient($id)
     {
         try {
             $id = encryptDecrypt('decrypt', $id);
-            $designation = Designation::orderBy('id','DESC')->get(); 
-            $country = Country::orderBy('id','DESC')->get(); 
-            $state = State::orderBy('id','DESC')->get(); 
-            $city = City::orderBy('id','DESC')->get();
-            $MaritalStatus = MaritalStatus::orderBy('id','DESC')->get();
+            $designation = Designation::orderBy('id', 'DESC')->get();
+            $country = Country::orderBy('id', 'DESC')->get();
+            $state = State::orderBy('id', 'DESC')->get();
+            $city = City::orderBy('id', 'DESC')->get();
+            $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             $data = Client::where('id', $id)->first();
-            return view('admin.editclient',compact('designation','country','state','city','MaritalStatus','data'));
+            return view('admin.editclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

@@ -127,11 +127,11 @@
                                                         </div>
                                                         <div class="col-md-3">
                                                             <p class="mb-0">Email Id</p>
-                                                            <h6 class="mt-1">{{ $val->email ?? '' }}
+                                                             <h6 class="mt-1">{{ $val->email ?? '' }}
                                                             </h6>
 
                                                         </div>
-                                                        <div class="col-md-2">
+                                                        <div class="col-md-3">
                                                             <p class="mb-0">Phone no.</p>
                                                             <h6 class="mt-1">+{{ CountryCode($val->country_id) }}
                                                                 {{ $val->phonenumber ?? '' }}
@@ -153,7 +153,7 @@
                                                             <label class="label-switch" for="demo"></label>
                                                             <span class="info-text"></span>
                                                         </div> --}}
-                                                        <div class="col-md-1 ">
+                                                        <div class="col-md-1 d-none">
                                                             <div class="view-btn">
                                                                 <a
                                                                     href="{{ url('team-detail/' . encryptDecrypt('encrypt', $val->userid)) }}">
