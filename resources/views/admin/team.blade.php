@@ -38,32 +38,33 @@
                                     <div class="ongoing-services-item-head">
                                         <div class="row align-items-center">
                                             <div class="col-md-8">
-                                                @if ($type == 1)
+                                                {{-- @if ($type == 1)
                                                     <form action="{{ route('search.team-member-active') }}" method="POST">
                                                     @else
                                                         <form action="{{ route('search.team-member-inactive') }}"
                                                             method="POST">
-                                                @endif
+                                                            @csrf
+                                                @endif --}}
+                                                <form action="">
 
-                                                @csrf
-                                                <div class="search-input">
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control"
-                                                            placeholder="Search by Employee Name, Employee Id, Email or Phone No."
-                                                            name="search" value="{{ $search ?? '' }}"
-                                                            aria-label="Recipient's username"
-                                                            aria-describedby="button-addon2">
-                                                        <button class="btn btn-outline-secondary" type="submit"
-                                                            id="button-addon2">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                height="16" fill="white" class="bi bi-search"
-                                                                viewBox="0 0 16 16">
-                                                                <path
-                                                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                                                            </svg>
-                                                        </button>
+                                                    <div class="search-input">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control"
+                                                                placeholder="Search by Employee Name, Employee Id, Email or Phone No."
+                                                                name="search" value="{{ $search ?? '' }}"
+                                                                aria-label="Recipient's username"
+                                                                aria-describedby="button-addon2">
+                                                            <button class="btn btn-outline-secondary" type="submit"
+                                                                id="button-addon2">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                    height="16" fill="white" class="bi bi-search"
+                                                                    viewBox="0 0 16 16">
+                                                                    <path
+                                                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 </form>
                                             </div>
                                             <div class="col-md-4 active-btns justify-content-end">
@@ -127,7 +128,7 @@
                                                         </div>
                                                         <div class="col-md-3">
                                                             <p class="mb-0">Email Id</p>
-                                                             <h6 class="mt-1">{{ $val->email ?? '' }}
+                                                            <h6 class="mt-1">{{ $val->email ?? '' }}
                                                             </h6>
 
                                                         </div>

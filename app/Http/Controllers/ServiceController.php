@@ -138,7 +138,7 @@ class ServiceController extends Controller
         $service = Service::find($id);
         foreach ($service->members as  $value) {
             $value->fullname = $value->member->fullname;
-            $value->projects = $value->member->projects->count() . " projects";
+            $value->projects = $value->member->projects ? $value->member->projects->count() . " projects" : "0 projects";
         }
         return view('admin.services.assign', compact('service'));
     }

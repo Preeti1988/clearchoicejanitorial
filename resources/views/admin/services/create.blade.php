@@ -2,6 +2,28 @@
 @section('title', 'Clear-ChoiceJanitorial - Client')
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/create-service.css') }}">
+    <style>
+        .dollar-sign::before {
+            content: "$";
+            position: absolute;
+            margin-left: 1px;
+            background: rgb(237, 233, 233);
+            width: 20px;
+
+            padding: 10px 5px;
+            font-weight: normal;
+            color: #000;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+
+            /* Adjust the margin as needed */
+        }
+
+        .dollar-sign input {
+            padding-left: 25px !important;
+            /* Adjust the padding to make space for  the dollar sign */
+        }
+    </style>
 @endpush
 @section('content')
 
@@ -13,7 +35,7 @@
             </div>
             <div class="create-service-form">
                 <form action="{{ route('services.store') }}" method="POST" id="create-service">
-                    @csrf\
+                    @csrf
                     <input type="hidden" id="redirect_url" value="{{ route('services.index') }}">
                     <div class="create-service-form-box">
                         <h1>Client Info.</h1>
@@ -22,10 +44,8 @@
                                 <div class="form-group">
                                     <h3>Billed to</h3>
                                     <select class="form-control" name="assigned_member_id"
-                                        onchange="fetchClient(this.value)">
-                                        <option value="0">
-                                            Select Client
-                                        </option>
+                                        onchange="fetchClient(this.value)" required>
+
                                         @foreach ($clients as $item)
                                             <option value="{{ $item->id }}">
                                                 {{ $item->name }}
@@ -70,8 +90,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Client name</h3>
-                                    <input type="text" class="form-control" name="" id="name"
-                                        value="Esther Howard" />
+                                    <input type="text" class="form-control" name="" id="name" />
                                 </div>
                             </div>
 
@@ -86,7 +105,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Client Home Number</h3>
-                                    <input type="text" class="form-control" id="home_number" name=""
+                                    <input type="text" class="form-control" id="home_number" name="home_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="" />
                                 </div>
@@ -95,7 +114,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Client mobile number</h3>
-                                    <input type="text" class="form-control" name="" id="mobile_number"
+                                    <input type="text" class="form-control" name="mobile_number" id="mobile_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="" />
                                 </div>
@@ -104,9 +123,9 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Client work number</h3>
-                                    <input type="text" class="form-control" name="" id="client_work_number"
-                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="" />
+                                    <input type="text" class="form-control" name="client_work_number"
+                                        id="client_work_number" data-inputmask="'mask': '(999) 999-9999'"
+                                        placeholder="(999) 999-9999" value="" />
                                 </div>
                             </div>
 
@@ -133,20 +152,19 @@
                                 <div class="form-group">
                                     <h3>Discount amount</h3>
                                     <input type="text" class="form-control" name="discount_amount"
-                                        placeholder="$0.00" />
+                                        placeholder="0.00" />
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Due amount</h3>
-                                    <input type="text" class="form-control" name="due_amount" placeholder="$0.00" />
+                                    <input type="text" class="form-control" name="due_amount" placeholder="0.00" />
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Gross Profit</h3>
-                                    <input type="text" class="form-control" name="gross_profit"
-                                        placeholder="$0.00" />
+                                    <input type="text" class="form-control" name="gross_profit" placeholder="0.00" />
                                 </div>
                             </div>
                         </div>
@@ -158,8 +176,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Frequency</h3>
-                                    <select class="form-control" name="frequency">
-                                        <option>Select</option>
+                                    <select class="form-control" name="frequency" required>
+
                                         <option>7 x Weekly</option>
                                         <option>2 x Weekly</option>
                                         <option>Monthly</option>
@@ -175,40 +193,40 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Name</h3>
-                                    <input type="text" class="form-control" name="name" />
+                                    <input type="text" class="form-control" name="name" required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service scheduled for</h3>
-                                    <input type="text" class="form-control" name="scheduled_for" />
+                                    <input type="text" class="form-control" name="scheduled_for" required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service lead source</h3>
-                                    <input type="text" class="form-control" name="lead_source" />
+                                    <input type="text" class="form-control" name="lead_source" required />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service source</h3>
-                                    <input type="text" class="form-control" name="service_source" />
+                                    <input type="text" class="form-control" name="service_source" required />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Revenue</h3>
-                                    <input type="text" class="form-control" name="revenue" placeholder="$0.00" />
+                                    <input type="text" class="form-control" name="revenue" placeholder="0.00" />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service created date</h3>
-                                    <input type="date" class="form-control" name="created_date" />
+                                    <input type="date" class="form-control" name="created_date" required />
                                 </div>
                             </div>
 
@@ -217,7 +235,7 @@
                                     <h3>
                                         Service scheduled end date
                                     </h3>
-                                    <input type="date" class="form-control" name="scheduled_end_date" />
+                                    <input type="date" class="form-control" name="scheduled_end_date" required />
                                 </div>
                             </div>
 
@@ -256,13 +274,13 @@
                                         <li>
                                             <div class="ccjradio">
                                                 <input type="radio" name="servicetype" checked value="Commercial"
-                                                    id="commercial" />
+                                                    required id="commercial" />
                                                 <label for="commercial">Commercial</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" value="Residential" name="servicetype"
+                                                <input type="radio" value="Residential" name="servicetype" required
                                                     id="residential" />
                                                 <label for="residential">Residential</label>
                                             </div>
@@ -273,13 +291,13 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Shift Start Time</h3>
-                                    <input type="time" class="form-control" name="service_start_time" />
+                                    <input type="time" class="form-control" name="service_start_time" required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Shift End Time</h3>
-                                    <input type="time" class="form-control" name="service_end_time" />
+                                    <input type="time" class="form-control" name="service_end_time" required />
                                 </div>
                             </div>
 
@@ -335,37 +353,50 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Labor cost</h3>
-                                    <input type="text" class="form-control" name="labour_cost" placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="labour_cost"
+                                            placeholder="0.00" required />
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Labor cost % of rev</h3>
-                                    <input type="text" class="form-control" name="labour_cost_percent"
-                                        placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="labour_cost_percent"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
+
                                     <h3>Material cost</h3>
-                                    <input type="text" class="form-control" name="material_cost"
-                                        placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="material_cost"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Material cost % of rev</h3>
-                                    <input type="text" class="form-control" name="material_cost_percent"
-                                        placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control " name="material_cost_percent"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Miscellaneous cost</h3>
-                                    <input type="text" class="form-control" name="miscellaneous_cost"
-                                        placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="miscellaneous_cost"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -373,64 +404,83 @@
                                     <h3>
                                         Miscellaneous cost 5 of rev
                                     </h3>
-                                    <input type="text" class="form-control" name="" placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control" name="" placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Paid Amount</h3>
-                                    <input type="text" class="form-control" name="paid_amount" placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="paid_amount"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Profit margin</h3>
-                                    <input type="text" class="form-control" name="profit_margin"
-                                        placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="profit_margin"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service cost</h3>
-                                    <input type="text" class="form-control" name="service_cost"
-                                        placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="service_cost"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Tax amount</h3>
-                                    <input type="text" class="form-control" name="tax_amount" placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="tax_amount"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Tax rate</h3>
-                                    <input type="text" class="form-control" name="tax_rate" placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="tax_rate"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Tip amount</h3>
-                                    <input type="text" class="form-control" name="tip_amount" placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="tip_amount"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Total duration</h3>
-                                    <input type="text" class="form-control" name="total_duration" />
+                                    <input type="text" class="form-control " name="total_duration" />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Total service cost</h3>
-                                    <input type="text" class="form-control" name="total_service_cost"
-                                        placeholder="$0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="total_service_cost"
+                                            required placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
 
@@ -545,7 +595,8 @@
                     </div>
 
                     <div class="create-service-form-action">
-                        <button class="cancelbtn">cancel</button>
+                        <button class="cancelbtn"
+                            onclick="location.replace('{{ route('services.index') }}')">Cancel</button>
                         <button class="Savebtn" type="submit">Save</button>
                     </div>
                 </form>
@@ -696,9 +747,23 @@
 
         }
         $(document).ready(function() {
+            $.validator.addMethod("phoneValid", function(value) {
+                return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
+            }, 'Invalid phone number.');
             $('#create-service').validate({
                 rules: {
-
+                    client_work_number: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    mobile_number: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    home_number: {
+                        required: true,
+                        phoneValid: true
+                    },
 
                 },
                 errorElement: "span",

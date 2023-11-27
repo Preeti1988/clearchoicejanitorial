@@ -32,7 +32,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Email Address</h3>
-                                    <input type="text" class="form-control" name="email_address"
+                                    <input type="email" class="form-control" name="email_address"
                                         placeholder="Email Address" value="{{ old('email_address') }}" required>
                                 </div>
                             </div>
@@ -92,13 +92,13 @@
                                     <ul class="Ownertype-list">
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" name="ownertype">
-                                                <label for="Home Owner">Home Owner</label>
+                                                <input type="radio" name="ownertype" value="home owner" id="homeowner">
+                                                <label for="homeowner">Home Owner</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" name="ownertype">
+                                                <input type="radio" name="ownertype" value="Business" id="Business">
                                                 <label for="Business">Business</label>
                                             </div>
                                         </li>
@@ -115,21 +115,22 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h3>Address (additional addresses)</h3>
-                                    <textarea type="text" class="form-control" name="address" value="{{ old('address') }}" placeholder="Address"></textarea>
+                                    <textarea required type="text" class="form-control" name="address" value="{{ old('address') }}"
+                                        placeholder="Address"></textarea>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h3>Address Notes</h3>
-                                    <textarea type="text" class="form-control" name="address_notes" placeholder="Address Notes"></textarea>
+                                    <textarea required type="text" class="form-control" name="address_notes" placeholder="Address Notes"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Contractor</h3>
                                     <input type="text" class="form-control" name="contractor"
-                                        value="{{ old('contractor') }}" placeholder="contractor">
+                                        value="{{ old('contractor') }}" placeholder="Contractor">
                                 </div>
                             </div>
 
@@ -206,7 +207,7 @@
                                 <div class="form-group">
                                     <h3>Client Tags</h3>
                                     <input type="text" class="form-control" name="client_tags"
-                                        value="{{ old('client_tags') }}" placeholder="Tages">
+                                        value="{{ old('client_tags') }}" placeholder="Tags">
                                 </div>
                             </div>
 
@@ -223,7 +224,7 @@
                                 <div class="form-group">
                                     <h3>Lead Source </h3>
                                     <input type="text" class="form-control" name="lead_source"
-                                        value="{{ old('lead_source') }}" placeholder="Display Name" required>
+                                        value="{{ old('lead_source') }}" placeholder="Lead Resource" required>
                                 </div>
                             </div>
 
@@ -240,7 +241,7 @@
                     </div>
 
                     <div class="create-service-form-action">
-                        <button class="cancelbtn">cancel</button>
+                        <button class="cancelbtn" onclick="location.replace('route('Clients')')">Cancel</button>
                         <button class="Savebtn" type="submit">Save</button>
                     </div>
                 </form>
