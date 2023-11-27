@@ -8,6 +8,7 @@ use App\Models\OutScope;
 use App\Models\Service;
 use App\Models\ServiceMember;
 use App\Models\ServicesValue;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Exists;
 
@@ -18,11 +19,21 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        $services = Service::all();
-        $completed = 0;
-        $earning = 0;
+        $services = Service::query();
+        if (request()->has('date')) {
+            $services = $services->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        $services = $services->get();
 
-        return view("admin.services.index", compact('services', 'completed', 'earning'));
+        $completed_services = Service::where("status", "completed");
+        if (request()->has('date')) {
+            $completed_services = $completed_services->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        $completed_services = $completed_services->get();
+        $completed =  Service::where("status", 'completed')->count();
+        $earning = Service::where("status", 'completed')->sum("total_service_cost");
+
+        return view("admin.services.index", compact('services', 'completed', "completed_services", 'earning'));
     }
 
     /**
@@ -64,7 +75,7 @@ class ServiceController extends Controller
         $service->service_type = $request->servicetype;
         $service->description = $request->description;
 
-
+        $service->status = "ongoing";
         $service->labour_cost = $request->labour_cost;
         $service->labour_cost_percent = $request->labour_cost_percent;
         $service->material_cost = $request->material_cost;
@@ -159,7 +170,11 @@ class ServiceController extends Controller
     }
     public function serviceScheduler()
     {
-        $services = Service::doesntHave("members")->get();
+        $services = Service::doesntHave("members");
+        if (request()->has('date')) {
+            $services = $services->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        $services = $services->get();
         return view("admin.services.scheduler", compact('services'));
     }
 }
