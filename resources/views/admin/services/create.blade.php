@@ -13,7 +13,7 @@
             </div>
             <div class="create-service-form">
                 <form action="{{ route('services.store') }}" method="POST" id="create-service">
-                    @csrf\
+                    @csrf
                     <input type="hidden" id="redirect_url" value="{{ route('services.index') }}">
                     <div class="create-service-form-box">
                         <h1>Client Info.</h1>
@@ -21,7 +21,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Billed to</h3>
-                                    <select class="form-control" name="assigned_member_id"
+                                    <select class="form-control" name="assigned_client_id"
                                         onchange="fetchClient(this.value)">
                                         <option value="0">
                                             Select Client

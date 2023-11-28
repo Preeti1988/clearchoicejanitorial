@@ -13,6 +13,8 @@ use App\Models\OutScope;
 use App\Models\ServicesValue;
 use App\Models\ServiceMember;
 use App\Models\Service;
+use App\Models\Client;
+use App\Models\ServiceTimesheet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -99,7 +101,7 @@ class UserController extends Controller
             'c_password' => 'required|same:password',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
@@ -145,6 +147,7 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\Response 
      */
+    /*Last Seven Date for mobile home screen */
     public function userDetails()
     {
         $user = Auth::user();
@@ -162,25 +165,68 @@ class UserController extends Controller
         return response()->json(["status" => true, "message" => "Profile.", "data" => $success]);
     }
     
-    public function home()
+    /*Last Seven Date for mobile home screen */
+    public function DateOfWeek()
     {
         $user = Auth::user();
-        $servise_list = ServiceMember::where('member_id',$user->id)->where('status',1)->get();
+        $m= date("m");
+        $de= date("d");
+        $y= date("Y");
+        $response = array();
+        for($i=0; $i<=7; $i++){
+            $date_array = date('d-m-y:D',mktime(0,0,0,$m,($de-$i),$y));
+            $response[] = $date_array;
+        }
+        return response()->json(["status" => true, "message" => "Date Listing.", "data" => $response]);
+    }
+    
+    public function home(Request $request)
+    {
+        $user = Auth::user();
+        if (isset($request->date)) {
+            
+            $servise_list = ServiceMember::where('member_id',$user->userid)->whereDate('created_at', '=', $request->date)->get();
+        } else {
+            
+            $servise_list = ServiceMember::where('member_id',$user->userid)->orderBy('id','DESC')->get();
+        }
+        
         $response = array();
         foreach ($servise_list as $key => $value) {
-            $service = Service::where('id',$servise_list->service_id)->first();
-            $temp['service_name'] = isset($service->name) ?? '';
-            $temp['service_id'] = isset($service->id) ?? '';
-            // $temp['status'] = (($value->status == 1) ? "Scheduled" :($value->status == 2) ? "On the way" : ($value->status == 3) ? "Start": ($value->status == 4) ? "finish" : "Scheduled");
-            $temp['status'] = ($value->status == 1) ?? "Scheduled";
-            $temp['status_id'] = $value->status;
+            $service = Service::where('id',$value->service_id)->first();
+            $temp['service_name'] = isset($service->name) ? $service->name : '';
+            $temp['service_id'] = isset($service->id) ? $service->id : '';
+            
+            $timesheet = ServiceTimesheet::where('assign_member_id',$user->userid)->where('service_id',$service->id)->whereDate('date',date('Y-m-d'))->first();
+            if(!empty($timesheet))
+            {
+                if ($timesheet->status == 1) {
+                    $status = 'Scheduled';
+                }elseif($timesheet->status == 2){
+                    $status = 'On the way';
+                }elseif($timesheet->status == 3){
+                    $status = 'Start';
+                } elseif($timesheet->status == 4){
+                    $status = 'Finish';
+                }else {
+                    $status = 'Scheduled';
+                } 
+            }else{
+                $status = 'Scheduled';
+            }
+            
+            $temp['status'] = $status;
+            $temp['status_id'] = isset($timesheet->status) ? $timesheet->status:'';
+            $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
+            $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
+            $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
             $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
-            $temp['client_id'] = isset($service->billed_to) ?? '';
-            $client = Client::where('id',$service->billed_to)->first();
-            $temp['clientname'] = isset($client->name) ?? '';
-            $temp['clientemail'] = isset($client->email_address) ?? '';
-            $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
-            $temp['address'] = isset($client->address) ?? '';
+            $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
+            $client = Client::where('id',$service->assigned_client_id)->first();
+            $temp['clientname'] = isset($client->name) ? $client->name : '';
+            $temp['clientemail'] = isset($client->email_address) ? $client->email_address: '';
+            $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number: '+(987)4563210';
+            $temp['address'] = isset($client->address) ? $client->address : '';
             $temp['lat'] = '28.23654';
             $temp['long'] = '78.9654123';
             $response[] = $temp;
@@ -188,25 +234,53 @@ class UserController extends Controller
         return response()->json(["status" => true, "message" => "Home page", "data" => $response]);
     }
     
-    public function services()
+    public function services(Request $request)
     {
         $user = Auth::user();
-        $servise_list = ServiceMember::where('member_id',$user->id)->where('status',1)->get();
+        if (isset($request->date)) {
+            
+            $servise_list = ServiceMember::where('member_id',$user->userid)->whereDate('created_at', '=', $request->date)->where('status',1)->get();
+        } else {
+            
+            $servise_list = ServiceMember::where('member_id',$user->userid)->orderBy('id','DESC')->where('status',1)->get();
+        }
+        
         $response = array();
         foreach ($servise_list as $key => $value) {
-            $service = Service::where('id',$servise_list->service_id)->first();
-            $temp['service_name'] = isset($service->name) ?? '';
-            $temp['service_id'] = isset($service->id) ?? '';
-            // $temp['status'] = (($value->status == 1) ? "Scheduled" :($value->status == 2) ? "On the way" : ($value->status == 3) ? "Start": ($value->status == 4) ? "finish" : "Scheduled");
-            $temp['status'] = (($value->status == 1) ?? "Scheduled");
-            $temp['status_id'] = $value->status;
-            $temp['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
-            $temp['client_id'] = isset($service->billed_to) ?? '';
-            $client = Client::where('id',$service->billed_to)->first();
-            $temp['clientname'] = isset($client->name) ?? '';
-            $temp['clientemail'] = isset($client->email_address) ?? '';
-            $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
-            $temp['address'] = isset($client->address) ?? '';
+            $service = Service::where('id',$value->service_id)->first();
+            $temp['service_name'] = isset($service->name) ? $service->name : '';
+            $temp['service_id'] = isset($service->id) ? $service->id : '';
+            
+            $timesheet = ServiceTimesheet::where('assign_member_id',$user->userid)->where('service_id',$service->id)->whereDate('date',date('Y-m-d'))->first();
+            if(!empty($timesheet))
+            {
+                if ($timesheet->status == 1) {
+                    $status = 'Scheduled';
+                }elseif($timesheet->status == 2){
+                    $status = 'On the way';
+                }elseif($timesheet->status == 3){
+                    $status = 'Start';
+                } elseif($timesheet->status == 4){
+                    $status = 'Finish';
+                }else {
+                    $status = 'Scheduled';
+                } 
+            }else{
+                $status = 'Scheduled';
+            }
+            
+            $temp['status'] = $status;
+            $temp['status_id'] = isset($timesheet->status) ? $timesheet->status:'';
+            $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
+            $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
+            $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
+            $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
+            $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
+            $client = Client::where('id',$service->assigned_client_id)->first();
+            $temp['clientname'] = isset($client->name) ? $client->name : '';
+            $temp['clientemail'] = isset($client->email_address) ? $client->email_address: '';
+            $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number: '+(987)4563210';
+            $temp['address'] = isset($client->address) ? $client->address : '';
             $temp['lat'] = '28.23654';
             $temp['long'] = '78.9654123';
             $response[] = $temp;
@@ -223,20 +297,43 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $servise_list = ServiceMember::where('member_id',$user->id)->where('service_id',$request->service_id)->where('status',1)->first();
+        $value = ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->first();
         $service = Service::where('id',$request->service_id)->first();
-        $temp['service_name'] = isset($service->name) ?? '';
-        $temp['service_id'] = isset($service->id) ?? '';
-        // $temp['status'] = (($value->status == 1) ?? "Scheduled" :($value->status == 2) ?? "On the way" : ($value->status == 3) ?? "Start": ($value->status == 4) ? "finish" : "Scheduled");
-        $temp['status'] = ($value->status == 1) ?? "Scheduled";
-        $temp['status_id'] = $value->status;
-        $temp['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
-        $temp['client_id'] = isset($service->billed_to) ?? '';
-        $client = Client::where('id',$service->billed_to)->first();
-        $temp['clientname'] = isset($client->name) ?? '';
-        $temp['clientemail'] = isset($client->email_address) ?? '';
-        $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
-        $temp['address'] = isset($client->address) ?? '';
+        $temp['service_name'] = isset($service->name) ? $service->name : '';
+        $temp['service_id'] = isset($service->id) ? $service->id : '';
+        $temp['service_type'] = $service->service_type;
+        $temp['service_frequency'] = $service->frequency;
+        
+        $timesheet = ServiceTimesheet::where('assign_member_id',$user->userid)->where('service_id',$request->service_id)->whereDate('date',date('Y-m-d'))->first();
+        if(!empty($timesheet))
+        {
+            if ($timesheet->status == 1) {
+                $status = 'Scheduled';
+            }elseif($timesheet->status == 2){
+                $status = 'On the way';
+            }elseif($timesheet->status == 3){
+                $status = 'Start';
+            } elseif($timesheet->status == 4){
+                $status = 'Finish';
+            }else {
+                $status = 'Scheduled';
+            } 
+        }else{
+            $status = 'Scheduled';
+        }
+        
+        $temp['status'] = $status;
+        $temp['status_id'] = isset($timesheet->status) ? $timesheet->status:'';
+        $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
+        $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
+        $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
+        $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
+        $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
+        $client = Client::where('id',$service->assigned_client_id)->first();
+        $temp['clientname'] = isset($client->name) ? $client->name : '';
+        $temp['clientemail'] = isset($client->email_address) ? $client->email_address: '';
+        $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number: '+(999)999999';
+        $temp['address'] = isset($client->address) ? $client->address : '';
         $temp['lat'] = '28.23654';
         $temp['long'] = '78.9654123';
         $inscope = InScope::orderBy('id','DESC')->get();
@@ -257,44 +354,51 @@ class UserController extends Controller
         $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'service_id' => 'required',
+            'status'=>'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
-        ServiceMember::where('member_id',$user->id)->where('service_id',$request->service_id)->update(['status'=>$request->status]);
-        return response()->json(["status" => true, "message" => "Status updated.", "data" => $success]);
+        $status = $request->status; /*2:On the way, 3:Start timimg, 4: Finish*/
+        if($status == 2){
+            $key = 'on_the_way';
+            $value = date('H:i:s');
+            $date = date('Y-m-d');
+        }elseif($status == 3){
+            $key = 'start_time';
+            $value = date('H:i:s');
+            $date = date('Y-m-d');
+        }elseif($status == 4){
+            $key = 'end_time';
+            $value = date('H:i:s');
+            $date = date('Y-m-d');
+        }
+        $timesheet = ServiceTimesheet::where('assign_member_id',$user->userid)->where('service_id',$request->service_id)
+        ->whereDate('date',date('Y-m-d'))->first();
+        if(!empty($timesheet))
+        {
+            ServiceTimesheet::where('assign_member_id',$user->userid)->where('service_id',$request->service_id)->whereDate('date',date('Y-m-d'))->update(['status'=>$request->status,$key=>$value]);
+        }else{
+            $sheet = new ServiceTimesheet;
+            $sheet->assign_member_id = $user->userid;
+            $sheet->service_id = $request->service_id;
+            $sheet->date = date('Y-m-d');
+            $sheet->on_the_way_time = date('H:i:s');
+            $sheet->start_time = '';
+            $sheet->end_time = '';
+            $sheet->status = 2;
+            $sheet->save();
+        }
+        
+        //ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->update(['status'=>$request->status,$key=>$value]);
+        return response()->json(["status" => true, "message" => "Status updated."]);
     }
     
-    public function save_rating(Request $request)
+    public function submit_review(Request $request)
     {
         $user = Auth::user();
-        $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
-        $success['service_name'] = 'Schedulad';
-        $success['Status'] = 'Schedulad';
-        $success['current_status'] = 1;/* 1:On the way, 2:start , 3:finish*/
-        $success['service_type'] = 1;
-        $success['service_frequency'] = asset('public/assets/admin-images/profile-img.jpg');
-        $success['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
-        $success['clientname'] = 'Neeti Alax';
-        $success['clientemail'] = 'neetialax@gmail.com';
-        $success['clientphone'] = '+(987)4563210';
-        $success['address'] = 'T blog way, Jhartos, CA';
-        $success['lat'] = '28.23654';
-        $success['long'] = '78.9654123';
-        $success['client_id'] = 1;
-        $inscope = InScope::orderBy('id','DESC')->get();
-        $outscope = OutScope::orderBy('id','DESC')->get();
-        $services_values = ServicesValue::orderBy('id','DESC')->get();
-        $success['inscope'] = $inscope;
-        $success['OutScope'] = $outscope;
-        $success['ServicesItems'] = $services_values;
-        $success['scheduled_list'] =[];
-        $success['total'] = 200;
-        
-        
         return response()->json(["status" => true, "message" => "Service Details", "data" => $success]);
     }
-    
 
     public function updateProfile(Request $request)
     {

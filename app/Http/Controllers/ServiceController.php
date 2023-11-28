@@ -57,7 +57,7 @@ class ServiceController extends Controller
         $service = new Service();
         $service->name = $request->name;
 
-        $service->assigned_member_id = $request->assigned_member_id;
+        $service->assigned_client_id = $request->assigned_client_id;
         $service->discount_amount = $request->discount_amount;
         $service->due_amount = $request->due_amount;
         $service->gross_profit = $request->gross_profit;
