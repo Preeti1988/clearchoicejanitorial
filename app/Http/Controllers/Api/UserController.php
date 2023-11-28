@@ -57,12 +57,12 @@ class UserController extends Controller
                 $success['status'] = $user->status;
                 $success['created_date'] = $user->created_date;
                 if ($user->resume) {
-                    $success['resume'] = asset('public/assets/admin-images/').$user->resume;
+                    $success['resume'] = asset('public/assets/admin-images/') . $user->resume;
                 } else {
                     $success['resume'] = '';
                 }
-                
-                
+
+
                 $success['resume_file_name'] = $user->resume_file_name;
                 return response()->json(["status" => true, "message" => "Logged in successfully.", "data" => $success]);
             } else {
@@ -124,18 +124,18 @@ class UserController extends Controller
         $success['status'] = $user->status;
         $success['created_date'] = $user->created_date;
         if ($request->file('resume')) {
-            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();  
+            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
             $request->resume->move(public_path('upload/resume'), $imageName);
             $resume = $imageName;
             $resume_file_name = $request->resume->getClientOriginalName();
-            $success['resume'] = asset('public/assets/admin-images/').$imageName;
+            $success['resume'] = asset('public/assets/admin-images/') . $imageName;
             $success['resume_file_name'] = $resume_file_name;
-            User::where('userid',$user->userid)->update(['resume'=>$imageName,'resume_file_name'=>$resume_file_name]);
-        }else{
+            User::where('userid', $user->userid)->update(['resume' => $imageName, 'resume_file_name' => $resume_file_name]);
+        } else {
             $success['resume'] = '';
             $success['resume_file_name'] = '';
         }
-        
+
         return response()->json(["status" => true, "message" => "Registered successfully.", "data" => $success]);
         //return response()->json(['success' => $success], $this->successStatus);
     }
@@ -161,14 +161,14 @@ class UserController extends Controller
         $success['created_date'] = $user->created_date;
         return response()->json(["status" => true, "message" => "Profile.", "data" => $success]);
     }
-    
+
     public function home()
     {
         $user = Auth::user();
-        $servise_list = ServiceMember::where('member_id',$user->id)->where('status',1)->get();
+        $servise_list = ServiceMember::where('member_id', $user->id)->where('status', 1)->get();
         $response = array();
         foreach ($servise_list as $key => $value) {
-            $service = Service::where('id',$servise_list->service_id)->first();
+            $service = Service::where('id', $servise_list->service_id)->first();
             $temp['service_name'] = isset($service->name) ?? '';
             $temp['service_id'] = isset($service->id) ?? '';
             // $temp['status'] = (($value->status == 1) ? "Scheduled" :($value->status == 2) ? "On the way" : ($value->status == 3) ? "Start": ($value->status == 4) ? "finish" : "Scheduled");
@@ -176,7 +176,7 @@ class UserController extends Controller
             $temp['status_id'] = $value->status;
             $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
             $temp['client_id'] = isset($service->billed_to) ?? '';
-            $client = Client::where('id',$service->billed_to)->first();
+            $client = Client::where('id', $service->billed_to)->first();
             $temp['clientname'] = isset($client->name) ?? '';
             $temp['clientemail'] = isset($client->email_address) ?? '';
             $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
@@ -187,14 +187,14 @@ class UserController extends Controller
         }
         return response()->json(["status" => true, "message" => "Home page", "data" => $response]);
     }
-    
+
     public function services()
     {
         $user = Auth::user();
-        $servise_list = ServiceMember::where('member_id',$user->id)->where('status',1)->get();
+        $servise_list = ServiceMember::where('member_id', $user->id)->where('status', 1)->get();
         $response = array();
         foreach ($servise_list as $key => $value) {
-            $service = Service::where('id',$servise_list->service_id)->first();
+            $service = Service::where('id', $servise_list->service_id)->first();
             $temp['service_name'] = isset($service->name) ?? '';
             $temp['service_id'] = isset($service->id) ?? '';
             // $temp['status'] = (($value->status == 1) ? "Scheduled" :($value->status == 2) ? "On the way" : ($value->status == 3) ? "Start": ($value->status == 4) ? "finish" : "Scheduled");
@@ -202,7 +202,7 @@ class UserController extends Controller
             $temp['status_id'] = $value->status;
             $temp['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
             $temp['client_id'] = isset($service->billed_to) ?? '';
-            $client = Client::where('id',$service->billed_to)->first();
+            $client = Client::where('id', $service->billed_to)->first();
             $temp['clientname'] = isset($client->name) ?? '';
             $temp['clientemail'] = isset($client->email_address) ?? '';
             $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
@@ -213,7 +213,7 @@ class UserController extends Controller
         }
         return response()->json(["status" => true, "message" => "Services Listing", "data" => $response]);
     }
-    
+
     public function service_details(Request $request)
     {
         $user = Auth::user();
@@ -223,8 +223,8 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $servise_list = ServiceMember::where('member_id',$user->id)->where('service_id',$request->service_id)->where('status',1)->first();
-        $service = Service::where('id',$request->service_id)->first();
+        $servise_list = ServiceMember::where('member_id', $user->id)->where('service_id', $request->service_id)->where('status', 1)->first();
+        $service = Service::where('id', $request->service_id)->first();
         $temp['service_name'] = isset($service->name) ?? '';
         $temp['service_id'] = isset($service->id) ?? '';
         // $temp['status'] = (($value->status == 1) ?? "Scheduled" :($value->status == 2) ?? "On the way" : ($value->status == 3) ?? "Start": ($value->status == 4) ? "finish" : "Scheduled");
@@ -232,26 +232,26 @@ class UserController extends Controller
         $temp['status_id'] = $value->status;
         $temp['service_image'] = asset('public/assets/admin-images/profile-img.jpg');
         $temp['client_id'] = isset($service->billed_to) ?? '';
-        $client = Client::where('id',$service->billed_to)->first();
+        $client = Client::where('id', $service->billed_to)->first();
         $temp['clientname'] = isset($client->name) ?? '';
         $temp['clientemail'] = isset($client->email_address) ?? '';
         $temp['clientphone'] = isset($client->mobile_number) ?? '+(987)4563210';
         $temp['address'] = isset($client->address) ?? '';
         $temp['lat'] = '28.23654';
         $temp['long'] = '78.9654123';
-        $inscope = InScope::orderBy('id','DESC')->get();
-        $outscope = OutScope::orderBy('id','DESC')->get();
-        $services_values = ServicesValue::orderBy('id','DESC')->get();
+        $inscope = InScope::orderBy('id', 'DESC')->get();
+        $outscope = OutScope::orderBy('id', 'DESC')->get();
+        $services_values = ServicesValue::orderBy('id', 'DESC')->get();
         $temp['inscope'] = $inscope;
         $temp['OutScope'] = $outscope;
         $temp['ServicesItems'] = $services_values;
-        $temp['scheduled_list'] =[];
+        $temp['scheduled_list'] = [];
         $temp['total'] = 200;
-        
-        
+
+
         return response()->json(["status" => true, "message" => "Service Details", "data" => $temp]);
     }
-    
+
     public function UpdateStatus(Request $request)
     {
         $user = Auth::user();
@@ -261,10 +261,10 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
-        ServiceMember::where('member_id',$user->id)->where('service_id',$request->service_id)->update(['status'=>$request->status]);
+        ServiceMember::where('member_id', $user->id)->where('service_id', $request->service_id)->update(['status' => $request->status]);
         return response()->json(["status" => true, "message" => "Status updated.", "data" => $success]);
     }
-    
+
     public function save_rating(Request $request)
     {
         $user = Auth::user();
@@ -282,19 +282,19 @@ class UserController extends Controller
         $success['lat'] = '28.23654';
         $success['long'] = '78.9654123';
         $success['client_id'] = 1;
-        $inscope = InScope::orderBy('id','DESC')->get();
-        $outscope = OutScope::orderBy('id','DESC')->get();
-        $services_values = ServicesValue::orderBy('id','DESC')->get();
+        $inscope = InScope::orderBy('id', 'DESC')->get();
+        $outscope = OutScope::orderBy('id', 'DESC')->get();
+        $services_values = ServicesValue::orderBy('id', 'DESC')->get();
         $success['inscope'] = $inscope;
         $success['OutScope'] = $outscope;
         $success['ServicesItems'] = $services_values;
-        $success['scheduled_list'] =[];
+        $success['scheduled_list'] = [];
         $success['total'] = 200;
-        
-        
+
+
         return response()->json(["status" => true, "message" => "Service Details", "data" => $success]);
     }
-    
+
 
     public function updateProfile(Request $request)
     {
@@ -307,7 +307,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
-        User::where('userid',$user->userid)->update(['fullname'=>$request->fullname,'email'=>$request->email,'phonenumber'=>$request->phonenumber]);
+        User::where('userid', $user->userid)->update(['fullname' => $request->fullname, 'email' => $request->email, 'phonenumber' => $request->phonenumber]);
         $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
         $success['token'] = $token;
         $success['userid'] = $user->userid;
@@ -330,7 +330,7 @@ class UserController extends Controller
         $success['state_id'] = $user->state_id;
         $success['zipcode'] = $user->zipcode;
         if ($user->resume) {
-            $success['resume'] = asset('public/assets/admin-images/').$user->resume;
+            $success['resume'] = asset('public/assets/admin-images/') . $user->resume;
         } else {
             $success['resume'] = '';
         }
@@ -358,7 +358,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $state = State::where('country_id',$request->country_id)->get();
+        $state = State::where('country_id', $request->country_id)->get();
         $response = array();
         foreach ($state as $key => $value) {
             $temp['value'] = $value->id;
@@ -377,7 +377,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $city = City::where('state_id',$request->state_id)->get();
+        $city = City::where('state_id', $request->state_id)->get();
         $response = array();
         foreach ($city as $key => $value) {
             $temp['value'] = $value->id;

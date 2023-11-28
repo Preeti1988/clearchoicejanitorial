@@ -446,12 +446,12 @@ class HomeController extends Controller
             if ($request->has("search")) {
                 $search = $request->search;
                 $type = 1;
-                $datas = User::where('status', 1)->where('userid', '!=', 1)
-                    ->orwhere('fullname', 'like', '%' . $search . '%')
-                    ->orwhere('email', 'like', '%' . $search . '%')
-                    ->orwhere('userid', 'like', '%' . $search . '%')
-                    ->orwhere('phonenumber', 'like', '%' . $search . '%')
-                    ->orderBy('userid', 'DESC')->paginate(10);
+                $datas = User::where('status', 1)->where('userid', '!=', 1)->where(function ($query) use ($search) {
+                    $query->orwhere('fullname', 'like', '%' . $search . '%')
+                        ->orwhere('email', 'like', '%' . $search . '%')
+                        ->orwhere('userid', 'like', '%' . $search . '%')
+                        ->orwhere('phonenumber', 'like', '%' . $search . '%');
+                })->orderBy('userid', 'DESC')->paginate(10);
                 return view('admin.team', compact('datas', 'search', 'type'));
             } else {
                 $search = '';
