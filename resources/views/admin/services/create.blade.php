@@ -43,9 +43,11 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Billed to</h3>
-                                    <select class="form-control" name="assigned_member_id"
-                                        onchange="fetchClient(this.value)" required>
-
+                                    <select class="form-control" name="assigned_client_id"
+                                        onchange="fetchClient(this.value)">
+                                        <option value="0">
+                                            Select Client
+                                        </option>
                                         @foreach ($clients as $item)
                                             <option value="{{ $item->id }}">
                                                 {{ $item->name }}
