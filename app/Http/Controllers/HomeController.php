@@ -197,7 +197,7 @@ class HomeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             if ($request->file('resume')) {
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();  
+                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
                 $request->resume->move(public_path('upload/resume'), $imageName);
                 $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
                 $request->resume->move(public_path('upload/user-profile'), $imageName);
@@ -381,7 +381,7 @@ class HomeController extends Controller
                     'status' => 1,
                 ]);
             } elseif ($tag_id == 3) {
-                
+
                 $name = 'Services';
                 $user = ServicesValue::create([
                     'name' => $request->name,
@@ -443,7 +443,7 @@ class HomeController extends Controller
     public function team_active(Request $request)
     {
         try {
-            if (isset($request->search)) {
+            if ($request->has("search")) {
                 $search = $request->search;
                 $type = 1;
                 $datas = User::where('status', 1)->where('userid', '!=', 1)
@@ -457,6 +457,8 @@ class HomeController extends Controller
                 $search = '';
                 $type = 1;
                 $datas = User::where('status', 1)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->paginate(10);
+
+
                 return view('admin.team', compact('datas', 'search', 'type'));
             }
         } catch (\Exception $e) {
@@ -538,7 +540,10 @@ class HomeController extends Controller
         try {
             $id = encryptDecrypt('decrypt', $id);
             $data = Client::where('id', $id)->first();
-            return view('admin.client-details', compact('data'));
+            $ongoing = Service::where("assigned_member_id", $id)->where("status", "ongoing")->get();
+            $completed = Service::where("assigned_member_id", $id)->where("status", "completed")->get();
+            $unassigned = Service::doesntHave("members")->get();
+            return view('admin.client-details', compact('data', 'ongoing', 'completed', 'unassigned'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

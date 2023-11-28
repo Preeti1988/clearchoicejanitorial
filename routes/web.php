@@ -55,9 +55,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get("service-scheduler", [ServiceController::class, 'serviceScheduler'])->name('services.scheduler');
     Route::get("assign-member/{id}", [ServiceController::class, 'assignMember'])->name('services.assign');
     Route::post("assign-member", [ServiceController::class, 'assignMemberPost'])->name('services.assign.post');
-
-
-    // Listing Ajax request
-    Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');
-    Route::get("search-user", [AjaxController::class, 'searchUser'])->name('searhcUser');
 });
+// Listing Ajax request
+Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');
+Route::get("search-user", [AjaxController::class, 'searchUser'])->name('searhcUser');

@@ -12,7 +12,8 @@
                 <div class="profile-item-title d-flex align-items-center">
                     <div class="d-flex align-items-center">
                         <div class="profile-card-image">
-                            <img src="{{ asset('public/assets/admin-images/admin-profile.svg') }}">
+                            <img
+                                src="{{ Auth::user()->profile_image ? asset('public/assets/admin-images/admin-profile.svg') : asset('public/upload/profile-image/' . Auth::user()->profile_image) }}">
                         </div>
                         <div class="profile-card-head">
                             <h2 class="ms-2 mb-0">Profile Overview</h2>
@@ -127,18 +128,19 @@
                         <div class="mb-3">
                             <label for="recipient-name" class="col-form-label">Phone No.</label>
                             <input type="text" class="form-control"name="phonenumber"
+                                data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                 value="{{ Auth::user()->phonenumber }}"
                                 id="phone"placeholder="Enter your phone number" required>
                         </div>
                         <div class="mb-3">
-                            <label for="recipient-name" class="col-form-label">Upload Logo</label><br>
+                            <label for="recipient-name" class="col-form-label">Profile Image</label><br>
                             <input type="file" id="real-file" hidden="hidden" name="profile_image"
                                 accept=".png, .jpg, .jpeg" />
-                            <button type="button" id="custom-button">Upload your logo</button>
+                            <button type="button" id="custom-button">Profile Image</button>
                         </div>
                         <div class="mb-3">
                             <label for="message-text" class="col-form-label">Address</label>
-                            <textarea class="form-control" id="address-text" rows="3" name="address"
+                            <textarea class="form-control" id="address-text" rows="3" name="address" required
                                 placeholder="Type your full address">{{ Auth::user()->address }}</textarea>
                         </div>
                         <div class="mb-3">
@@ -187,7 +189,7 @@
                         <div class="mb-3">
                             <label class="control-label" for="password">Confirm Password</label><br>
                             <div class="input-texts d-flex align-items-center">
-                                <input type="password" placeholder="confirm password" name="c_password"
+                                <input type="password" placeholder="Confirm password" name="c_password"
                                     id="myPass3"required>
                                 <span class="showPass" data-target="myPass3">
                                     <i class="fa fa-eye-slash" aria-hidden="true"></i>
