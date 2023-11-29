@@ -20,6 +20,7 @@ Route::post('register', [UserController::class, 'register']);
 Route::get('country', [UserController::class, 'country']);
 Route::post('state', [UserController::class, 'state']);
 Route::post('city', [UserController::class, 'city']);
+Route::get('designation', [UserController::class, 'designation']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('profile', [UserController::class, 'userDetails']);

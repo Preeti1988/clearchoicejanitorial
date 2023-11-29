@@ -14,6 +14,7 @@ use App\Models\ServicesValue;
 use App\Models\ServiceMember;
 use App\Models\Service;
 use App\Models\Client;
+use App\Models\Designation;
 use App\Models\ServiceTimesheet;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -74,6 +75,13 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return errorMsg("Exception -> " . $e->getMessage());
         }
+    }
+
+    public function designation()
+    {
+
+        $designation = Designation::all();
+        return response()->json(["status" => true, "message" => "Designation.", "data" => $designation]);
     }
 
     /** 
@@ -216,7 +224,7 @@ class UserController extends Controller
             }
 
             $temp['status'] = $status;
-            $temp['status_id'] = isset($timesheet->status) ? $timesheet->status : '';
+            $temp['status_id'] = $timesheet ? $timesheet->status : '';
             $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
             $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
             $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
@@ -532,7 +540,7 @@ class UserController extends Controller
         $result = [];
         $currentWeek = null;
         $totalHoursInWeek = 0;
-
+        $daysInWeek = [];
         foreach ($timesheet as $record) {
             if ($currentWeek !== $record->week_number) {
                 // Start a new week
