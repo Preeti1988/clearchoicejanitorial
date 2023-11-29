@@ -25,7 +25,11 @@
     <link rel="stylesheet"href="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.css') }}"
         type="text/css" />
 
-
+    <style>
+        .invalid-feedback {
+            border: 2px solid red;
+        }
+    </style>
 
 </head>
 

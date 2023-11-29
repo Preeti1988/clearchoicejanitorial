@@ -27,7 +27,7 @@
                             <div class="col-md-3">
                                 <div class="d-flex align-items-center">
                                     <div class="info-image">
-                                        <img src="{{ asset('public/assets/admin-images/profile-img.jpg') }}" alt="image"
+                                        <img src="{{ asset('public/assets/admin-images/user-default.png') }}" alt="image"
                                             class="img-fluid">
                                     </div>
                                     <div class="name-info ms-3">

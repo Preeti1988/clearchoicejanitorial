@@ -38,7 +38,7 @@
                         </div>
                         <div class="overview-card-back">
                             <div class="overview-back-text">
-                                <p>New Registrations Requests: <b>05</b></p>
+                                <p>New Registrations Requests: <b>{{ $request_members }}</b></p>
                             </div>
                         </div>
                     </div>
@@ -133,9 +133,14 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
-                                                            <p>{{ $item->members->first()->fullname }} + <a
-                                                                    href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
-                                                                    Employee</a></p>
+                                                            <p>{{ $item->members->first()->member ? $item->members->first()->member->fullname : '' }}
+
+                                                                @if ($item->members->count() - 1)
+                                                                    + <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                        Employee</a>
+                                                                @endif
+
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>

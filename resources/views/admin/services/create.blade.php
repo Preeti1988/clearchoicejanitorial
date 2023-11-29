@@ -23,6 +23,27 @@
             padding-left: 25px !important;
             /* Adjust the padding to make space for  the dollar sign */
         }
+
+        .per-sign::before {
+            content: "%";
+            position: absolute;
+            margin-left: 1px;
+            background: rgb(237, 233, 233);
+            width: 20px;
+
+            padding: 10px 5px;
+            font-weight: normal;
+            color: #000;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+
+            /* Adjust the margin as needed */
+        }
+
+        .per-sign input {
+            padding-left: 25px !important;
+            /* Adjust the padding to make space for  the dollar sign */
+        }
     </style>
 @endpush
 @section('content')
@@ -227,7 +248,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service created date</h3>
+                                    <h3>Service start date</h3>
                                     <input type="date" class="form-control" name="created_date" required />
                                 </div>
                             </div>
@@ -240,35 +261,6 @@
                                     <input type="date" class="form-control" name="scheduled_end_date" required />
                                 </div>
                             </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Service duration</h3>
-                                    <input type="time" class="form-control" name="service_duration" />
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <h3>Service travel duration</h3>
-                                    <input type="time" class="form-control" name="travel_duration" />
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Service tags</h3>
-                                    <input type="text" class="form-control" name="service_tags" />
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Service window</h3>
-                                    <input type="text" class="form-control" name="service_window" />
-                                </div>
-                            </div>
-
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Service type</h3>
@@ -293,15 +285,46 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Shift Start Time</h3>
-                                    <input type="time" class="form-control" name="service_start_time" required />
+                                    <input type="time" class="form-control" id="startTime" name="service_start_time"
+                                        required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Shift End Time</h3>
-                                    <input type="time" class="form-control" name="service_end_time" required />
+                                    <input type="time" class="form-control" id="endTime"
+                                        onchange="calculateTimeDifference(this.value)" name="service_end_time" required />
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service duration (In Hours)</h3>
+                                    <input type="text" class="form-control" id="result" name="service_duration" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <h3>Service travel duration</h3>
+                                    <input type="time" class="form-control" name="travel_duration" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service tags</h3>
+                                    <input type="text" class="form-control" name="service_tags" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service window</h3>
+                                    <input type="text" class="form-control" name="service_window" />
+                                </div>
+                            </div>
+
+
 
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -365,7 +388,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Labor cost % of rev</h3>
-                                    <div class="dollar-sign">
+                                    <div class="per-sign">
                                         <input type="text" class="form-control cost" name="labour_cost_percent"
                                             placeholder="0.00" />
                                     </div>
@@ -385,7 +408,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Material cost % of rev</h3>
-                                    <div class="dollar-sign">
+                                    <div class="per-sign">
                                         <input type="text" class="form-control " name="material_cost_percent"
                                             placeholder="0.00" />
                                     </div>
@@ -424,7 +447,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Profit margin</h3>
-                                    <div class="dollar-sign">
+                                    <div class="per-sign">
                                         <input type="text" class="form-control cost" name="profit_margin"
                                             placeholder="0.00" />
                                     </div>
@@ -440,9 +463,18 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <h3>Tax rate</h3>
+                                    <div class="per-sign">
+                                        <input type="text" class="form-control cost" name="tax_rate"
+                                            placeholder="0.00" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Tax Amount</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="tax_amount"
                                             placeholder="0.00" />
@@ -450,15 +482,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Tax rate</h3>
-                                    <div class="dollar-sign">
-                                        <input type="text" class="form-control cost" name="tax_rate"
-                                            placeholder="0.00" />
-                                    </div>
-                                </div>
-                            </div>
+
 
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -519,7 +543,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h1>In Scope</h1>
-                                    <br>
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -558,7 +582,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <h1>Out Of Scope</h1>
-                                    <br>
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -770,15 +794,15 @@
                 },
                 errorElement: "span",
                 errorPlacement: function(error, element) {
-                    error.addClass("text-danger");
+                    error.addClass("invalid-feedback");
                     element.closest(".field").append(error);
                 },
                 highlight: function(element, errorClass, validClass) {
                     $('.please-wait').click();
-                    $(element).addClass("text-danger");
+                    $(element).addClass("invalid-feedback");
                 },
                 unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass("text-danger");
+                    $(element).removeClass("invalid-feedback");
                 },
                 submitHandler: function(form, event) {
 
@@ -869,5 +893,27 @@
                 }
             })
         });
+
+        function calculateTimeDifference() {
+            // Get the values of start and end time input fields
+            var startTime = document.getElementById("startTime").value;
+            var endTime = document.getElementById("endTime").value;
+            if (startTime != "" && endTime != "") {
+                var startDate = new Date("1970-01-01T" + startTime + "Z");
+                var endDate = new Date("1970-01-01T" + endTime + "Z");
+
+                // Calculate the time difference in milliseconds
+                var timeDifference = endDate - startDate;
+
+                // Convert the time difference to hours
+                var hoursDifference = timeDifference / (1000 * 60 * 60);
+
+                // Display the result
+                document.getElementById("result").value = hoursDifference.toFixed(2);
+            }
+            // Convert the time strings to Date objects
+
+        }
     </script>
 @endsection
+Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus cum vel eius deleniti laudantium quasi voluptatibus sint quos facilis, quia autem, sequi fuga, inventore optio ratione architecto delectus iure deserunt.

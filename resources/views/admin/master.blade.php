@@ -120,13 +120,12 @@
                                 <div class="master-list-bg d-flex justify-content-between align-items-center">
                                     <p class="mb-0">{{ $val->name ?? '' }}</p>
                                     <div class="cancel-bg">
-                                        <a href="{{ url('delete-master-item/2/' . encryptDecrypt('encrypt', $val->id)) }}"><img
-                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
+                                        <a href="{{ url('delete-master-item/2/' . encryptDecrypt('encrypt', $val->id)) }}">
+                                            <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
-
-
                                     </div>
                                 </div>
+                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -148,8 +147,7 @@
                     <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
                         onclick='Get_Tag_Name("Add Designation","4")'>Add Designation</a>
 
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
-                        onclick='Get_Tag_Name("Add Designation","4")'>Add Designation</a>
+
 
                 </div>
             </div>
@@ -167,25 +165,15 @@
                                 <div class="master-list-bg d-flex justify-content-between align-items-center">
                                     <p class="mb-0">{{ $val->name ?? '' }}</p>
                                     <div class="cancel-bg">
-                                        <a
-                                            href="{{ url('delete-master-item/4/' . encryptDecrypt('encrypt', $val->id)) }}">
+                                        <a href="{{ url('delete-master-item/4/' . encryptDecrypt('encrypt', $val->id)) }}">
                                             <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
 
-                                        <a href="#"><img
-                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                alt=""></a>
 
 
-                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
-                                        <div class="cancel-bg">
-                                            <a href="#"><img
-                                                    src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                    alt=""></a>
-
-                                        </div>
                                     </div>
                                 </div>
+                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -208,9 +196,7 @@
                         onclick='Get_Tag_Name("Add Marital Status","5")'>Add Marital
                         Status</a>
 
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
-                        onclick='Get_Tag_Name("Add Marital Status","5")'>Add Marital
-                        Status</a>
+
 
                 </div>
             </div>
@@ -233,20 +219,10 @@
                                             <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
 
-                                        <a href="#"><img
-                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                alt=""></a>
 
-
-                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
-                                        <div class="cancel-bg">
-                                            <a href="#"><img
-                                                    src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                    alt=""></a>
-
-                                        </div>
                                     </div>
                                 </div>
+                            </div>
                         @endforeach
                     @endif
                 </div>

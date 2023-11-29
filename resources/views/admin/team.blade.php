@@ -119,7 +119,7 @@
                                                         <div class="col-md-3">
                                                             <div class="d-flex align-items-center">
                                                                 <div class="profile-img">
-                                                                    <img src="{{ asset('public/assets/admin-images/profile-img.jpg') }}"
+                                                                    <img src="{{ asset('public/assets/admin-images/user-default.png') }}"
                                                                         alt="image" class="img-fluid">
                                                                 </div>
                                                                 <h6 class="ms-2 mt-0 mb-0">

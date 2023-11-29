@@ -282,7 +282,7 @@
                     break;
                 }
             }
-
+            $("#total_member").text(assigned.length)
             renderMembers();
         }
 
@@ -339,6 +339,10 @@
                 submitHandler: function(form, event) {
 
                     event.preventDefault();
+                    if (assigned.length == 0) {
+                        Swal.fire("Error", 'Please assign atleast one member.', 'error');
+                        return false;
+                    }
                     let formData = new FormData(form);
                     var working = false;
                     // assigned.forEach(element => {

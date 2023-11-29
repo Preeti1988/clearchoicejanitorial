@@ -43,7 +43,7 @@ class HomeController extends Controller
             $services = $services->whereDate("created_at", Carbon::parse(request('date')));
         }
         $services = $services->count();
-        $members = User::where("admin", "!=", 1);
+        $members = User::where("admin", "!=", 1)->where("status", 1);
         if (request()->has('date')) {
             $members = $members->whereDate("created_at", Carbon::parse(request('date')));
         }
@@ -53,15 +53,15 @@ class HomeController extends Controller
         if (request()->has('date')) {
             $ongoing = $ongoing->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $ongoing = $ongoing->get();
+        $ongoing = $ongoing->orderBy("id", "desc")->get();
 
         $unassigned = Service::doesntHave("members");
         if (request()->has('date')) {
             $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $unassigned = $unassigned->get();
-
-        return view('admin.dashboard', compact('services', 'members', 'ongoing', 'unassigned'));
+        $unassigned = $unassigned->orderBy("id", "desc")->get();
+        $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
+        return view('admin.dashboard', compact('services', 'members', 'ongoing', 'request_members', 'unassigned'));
     }
 
     public function dashboard()

@@ -25,8 +25,8 @@ class AjaxController extends Controller
     public function searchUser()
     {
         if (request()->has('search')) {
-            $key = request("search");
-            $members = User::where("fullname", "LIKE", "%$key%")->where("admin", "!=", 1)->get();
+            $key = trim(request("search"));
+            $members = User::where("fullname", "LIKE", "%$key%")->where("userid", "!=", 1)->get();
             foreach ($members as  $value) {
 
                 $value->projects_count = $value->projects ? $value->projects->count() . " projects" : "0 projects";

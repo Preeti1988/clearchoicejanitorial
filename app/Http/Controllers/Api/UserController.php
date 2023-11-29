@@ -15,7 +15,9 @@ use App\Models\ServiceMember;
 use App\Models\Service;
 use App\Models\Client;
 use App\Models\Designation;
+use App\Models\Review;
 use App\Models\ServiceTimesheet;
+use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -48,7 +50,9 @@ class UserController extends Controller
                 $success['emailid'] = $user->email;
                 $success['phonenumber'] = ($user->phonenumber) ?? '';
                 $success['designation_id'] = ($user->designation_id) ?? '';
-                $success['DOB'] = ($user->DOB) ?? '';
+                $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
+                $success['DOB'] = ($user->DOB) ? date("m-d-Y", strtotime($user->DOB)) : '';
+                $success['profile_image'] = ($user->profile_image) ? $user->profile_image : '';
                 $success['marital_status'] = ($user->marital_status) ?? '';
                 $success['dependents'] = ($user->dependents) ?? '';
                 $success['address'] = ($user->address) ?? '';
@@ -81,6 +85,14 @@ class UserController extends Controller
     {
 
         $designation = Designation::all();
+        foreach ($designation as $item) {
+            $item->value = $item->id;
+            $item->label = $item->name;
+            $item->makeHidden("id");
+            $item->makeHidden("name");
+            $item->makeHidden("created_date");
+            $item->makeHidden("status");
+        }
         return response()->json(["status" => true, "message" => "Designation.", "data" => $designation]);
     }
 
@@ -109,6 +121,7 @@ class UserController extends Controller
             'password' => 'required',
             'c_password' => 'required|same:password',
         ]);
+
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
@@ -134,14 +147,15 @@ class UserController extends Controller
         $success['applying_letter'] = ($user->applying_letter) ?? '';
         $success['status'] = $user->status;
         $success['created_date'] = $user->created_date;
+        $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
         if ($request->file('resume')) {
-            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
-            $request->resume->move(public_path('upload/resume'), $imageName);
-            $resume = $imageName;
-            $resume_file_name = $request->resume->getClientOriginalName();
+            $file = $request->file("resume");
+            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('upload/resume'), $imageName);
+
             $success['resume'] = asset('public/assets/admin-images/') . $imageName;
-            $success['resume_file_name'] = $resume_file_name;
-            User::where('userid', $user->userid)->update(['resume' => $imageName, 'resume_file_name' => $resume_file_name]);
+            $success['resume_file_name'] = $imageName;
+            User::where('userid', $user->userid)->update(['resume' => $imageName, 'resume_file_name' => $imageName]);
         } else {
             $success['resume'] = '';
             $success['resume_file_name'] = '';
@@ -167,8 +181,8 @@ class UserController extends Controller
         $success['fullname'] = $user->fullname;
         $success['emailid'] = $user->email;
         $success['phonenumber'] = ($user->phonenumber) ?? '';
-        $success['service_count'] = 01;
-        $success['service_log'] = 03;
+        $success['service_count'] = Service::where("status", "!=", "completed")->count();
+        $success['service_log'] = Service::where("status",  "completed")->count();
         $success['status'] = $user->status;
         $success['created_date'] = $user->created_date;
         return response()->json(["status" => true, "message" => "Profile.", "data" => $success]);
@@ -212,7 +226,7 @@ class UserController extends Controller
                     $status = 'Scheduled';
                 } elseif ($timesheet->status == 2) {
                     $status = 'On the way';
-                } elseif ($timesheet->status == 3) {
+                } elseif ($timesheet->status == Service::where("status", "!=", "completed")->count()) {
                     $status = 'Start';
                 } elseif ($timesheet->status == 4) {
                     $status = 'Finish';
@@ -348,7 +362,28 @@ class UserController extends Controller
         $temp['inscope'] = $inscope;
         $temp['OutScope'] = $outscope;
         $temp['ServicesItems'] = $services_values;
-        $temp['scheduled_list'] = [];
+
+        $temp['service'] = $service;
+
+        $members = [];
+
+        foreach ($service->members as $item) {
+            if ($item->member) {
+                $members[] = ["name" => $item->member->fullname, 'userid' => $item->member->userid, 'phone' => $item->member->phonenumber];
+            }
+        }
+
+        $temp['scheduled_list'] = [
+            'from' => [
+                "date" => date("m-d-y", strtotime($service->created_date)),
+                'time' => date("h:i", strtotime($service->service_start_time))
+            ],
+            'to' => [
+                "date" =>  date("m-d-y", strtotime($service->scheduled_end_date)),
+                'time' =>  date("h:i", strtotime($service->service_end_time))
+            ],
+            'list' => $members
+        ];
         $temp['total'] = 200;
 
 
@@ -401,8 +436,22 @@ class UserController extends Controller
 
     public function submit_review(Request $request)
     {
-        $user = Auth::user();
-        return response()->json(["status" => true, "message" => "Service Details", "data" => $success]);
+        $review = new Review();
+        $review->member_id = $request->member_id;
+        $review->service_id = $request->service_id;
+
+        $review->service = $request->service;
+        $review->equipment = $request->equipment;
+        $review->burnisher = $request->burnisher;
+        $review->supplies = $request->supplies;
+
+        $review->service_rating = $request->service_rating;
+        $review->equipment_rating = $request->equipment_rating;
+        $review->burnisher_rating = $request->burnisher_rating;
+        $review->supplies_rating = $request->supplies_rating;
+        $review->save();
+
+        return response()->json(["status" => true, "message" => "Service Details", "data" => $review]);
     }
 
     public function updateProfile(Request $request)

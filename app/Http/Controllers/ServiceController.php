@@ -23,13 +23,13 @@ class ServiceController extends Controller
         if (request()->has('date')) {
             $services = $services->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $services = $services->get();
+        $services = $services->orderBy("id", "desc")->get();
 
         $completed_services = Service::where("status", "completed");
         if (request()->has('date')) {
             $completed_services = $completed_services->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $completed_services = $completed_services->get();
+        $completed_services = $completed_services->orderBy("id", "desc")->get();
         $completed =  Service::where("status", 'completed')->count();
         $earning = Service::where("status", 'completed')->sum("total_service_cost");
 
@@ -174,7 +174,7 @@ class ServiceController extends Controller
         if (request()->has('date')) {
             $services = $services->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $services = $services->get();
+        $services = $services->orderBy("id", "desc")->get();
         return view("admin.services.scheduler", compact('services'));
     }
 }
