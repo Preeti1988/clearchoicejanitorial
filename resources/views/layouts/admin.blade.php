@@ -324,6 +324,8 @@
                                         Edit Team Members
                                     @elseif($currentURL == 'EditClient')
                                         Edit Client
+                                    @elseif($currentURL == 'services.scheduler')
+                                        Service Scheduler
                                     @else
                                     @endif
                                 </div>

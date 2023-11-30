@@ -388,7 +388,7 @@ class HomeController extends Controller
                     'price' => $request->price,
                     'status' => 1,
                 ]);
-                dd($request->all());
+                // dd($request->all());
             } elseif ($tag_id == 2) {
                 $name = 'Out Of Scope';
                 $user = OutScope::create([

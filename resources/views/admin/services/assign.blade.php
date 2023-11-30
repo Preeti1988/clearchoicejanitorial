@@ -141,7 +141,8 @@
 
 
                     <div class="assign-service-emplyee-action">
-                        <button class="cancelbtn" type="button">cancel</button>
+                        <button class="cancelbtn"onclick="location.replace('{{ route('services.index') }}')"
+                            type="button">cancel</button>
                         <button class="Savebtn">Confirm & Assign Employees</button>
                     </div>
 

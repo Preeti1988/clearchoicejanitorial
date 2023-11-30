@@ -911,9 +911,8 @@
                 // Display the result
                 document.getElementById("result").value = hoursDifference.toFixed(2);
             }
-            // Convert the time strings to Date objects
+            // Convert the time strings to Date objects 
 
         }
     </script>
 @endsection
-Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus cum vel eius deleniti laudantium quasi voluptatibus sint quos facilis, quia autem, sequi fuga, inventore optio ratione architecto delectus iure deserunt.

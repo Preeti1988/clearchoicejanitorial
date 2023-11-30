@@ -91,7 +91,7 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
-                                                            <p>{{ $item->members->first()->member ? $item->members->first()->member->fullname : '' }}
+                                                            <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
 
                                                                 @if ($item->members->count() - 1)
                                                                     + <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
@@ -240,7 +240,7 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
-                                                            <p>{{ $item->members->first()->member ? $item->members->first()->member->fullname : '' }}
+                                                            <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
 
                                                                 @if ($item->members->count() - 1)
                                                                     + <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
