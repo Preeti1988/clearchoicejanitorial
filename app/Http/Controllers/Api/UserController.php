@@ -17,6 +17,7 @@ use App\Models\Client;
 use App\Models\Designation;
 use App\Models\Review;
 use App\Models\ServiceTimesheet;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,9 @@ class UserController extends Controller
 
 
                 $success['resume_file_name'] = $user->resume_file_name;
+                if ($user->status == 0) {
+                    return response()->json(["status" => false, "message" => "You are not approved by admin."]);
+                }
                 return response()->json(["status" => true, "message" => "Logged in successfully.", "data" => $success]);
             } else {
                 return response()->json(['error' => 'Unauthorised'], 401);
@@ -208,7 +212,7 @@ class UserController extends Controller
         $user = Auth::user();
         if (isset($request->date)) {
 
-            $servise_list = ServiceMember::where('member_id', $user->userid)->whereDate('created_at', '=', $request->date)->get();
+            $servise_list = ServiceMember::where('member_id', $user->userid)->whereDate('created_at', '=', Carbon::parse($request->date))->get();
         } else {
 
             $servise_list = ServiceMember::where('member_id', $user->userid)->orderBy('id', 'DESC')->get();
@@ -375,11 +379,11 @@ class UserController extends Controller
 
         $temp['scheduled_list'] = [
             'from' => [
-                "date" => date("m-d-y", strtotime($service->created_date)),
+                "date" => $service->created_date ? date("m-d-y", strtotime($service->created_date)) : null,
                 'time' => date("h:i", strtotime($service->service_start_time))
             ],
             'to' => [
-                "date" =>  date("m-d-y", strtotime($service->scheduled_end_date)),
+                "date" =>  $service->scheduled_end_date ? date("m-d-y", strtotime($service->scheduled_end_date)) : null,
                 'time' =>  date("h:i", strtotime($service->service_end_time))
             ],
             'list' => $members
@@ -451,7 +455,7 @@ class UserController extends Controller
         $review->supplies_rating = $request->supplies_rating;
         $review->save();
 
-        return response()->json(["status" => true, "message" => "Service Details", "data" => $review]);
+        return response()->json(["status" => true, "message" => "Thanks for submitting your feedback.", "data" => $review]);
     }
 
     public function updateProfile(Request $request)

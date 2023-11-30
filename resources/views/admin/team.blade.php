@@ -10,7 +10,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h6 class="p-0 total-count">Total Onboard Team Members <b>({{ count($datas) }})</b></h6>
             <div class="d-flex mb-2">
-                <a href="{{ url('addmember') }}" class="add-member-btn me-3">Add Team Member
+                <a href="{{ url('addmember') }}" class="add-member-btn me-3 d-none">Add Team Member
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-person-add" viewBox="0 0 16 16">
                         <path
@@ -139,7 +139,7 @@
                                                             </h6>
 
                                                         </div>
-                                                        <div class="col-md-2">
+                                                        <div class="col-md-1">
                                                             <p class="mb-0">Status</p>
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox"
@@ -154,15 +154,15 @@
                                                             <label class="label-switch" for="demo"></label>
                                                             <span class="info-text"></span>
                                                         </div> --}}
-                                                        <div class="col-md-1 d-none">
+                                                        <div class="col-md-1 ">
                                                             <div class="view-btn">
                                                                 <a
                                                                     href="{{ url('team-detail/' . encryptDecrypt('encrypt', $val->userid)) }}">
-                                                                    <h6><i class="fa fa-eye me-1"></i>View</h6>
+                                                                    <h6><i class="fa fa-eye me-1"></i></h6>
                                                                 </a>
                                                                 <a
                                                                     href="{{ url('edit-teammember/' . encryptDecrypt('encrypt', $val->userid)) }}">
-                                                                    <h6><i class="fa fa-pencil me-1"></i>edit</h6>
+                                                                    <h6><i class="fa fa-pencil me-1"></i></h6>
                                                                 </a>
 
                                                             </div>

@@ -63,6 +63,8 @@ class ServiceController extends Controller
         $service->gross_profit = $request->gross_profit;
         $service->frequency = $request->frequency;
         $service->scheduled_for = $request->scheduled_for;
+        $service->scheduled_end_date = $request->scheduled_end_date;
+
         $service->lead_source = $request->lead_source;
         $service->service_source = $request->service_source;
         $service->revenue = $request->revenue;

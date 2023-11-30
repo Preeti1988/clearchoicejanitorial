@@ -42,6 +42,7 @@ class HomeController extends Controller
         if (request()->has('date')) {
             $services = $services->whereDate("created_at", Carbon::parse(request('date')));
         }
+
         $services = $services->count();
         $members = User::where("admin", "!=", 1)->where("status", 1);
         if (request()->has('date')) {
@@ -49,7 +50,7 @@ class HomeController extends Controller
         }
         $members = $members->count();
 
-        $ongoing = Service::has("members")->with("members");
+        $ongoing = Service::has("members");
         if (request()->has('date')) {
             $ongoing = $ongoing->whereDate("created_at", Carbon::parse(request('date')));
         }
@@ -59,6 +60,7 @@ class HomeController extends Controller
         if (request()->has('date')) {
             $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
         }
+
         $unassigned = $unassigned->orderBy("id", "desc")->get();
         $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
         return view('admin.dashboard', compact('services', 'members', 'ongoing', 'request_members', 'unassigned'));
@@ -114,7 +116,7 @@ class HomeController extends Controller
                 'mobile_number' => $request->mobile_number,
                 'home_number' => $request->home_number,
                 'client_work_number' => $request->client_work_number,
-                'designation_id' => $request->role,
+                'role' => $request->role,
                 'ownertype' => $request->ownertype,
                 'address_notes' => $request->address_notes,
                 'contractor' => $request->contractor,
@@ -159,7 +161,7 @@ class HomeController extends Controller
             $Client->company = $request->company;
             $Client->home_number = $request->home_number;
             $Client->client_work_number = $request->client_work_number;
-            $Client->designation_id = $request->role;
+            $Client->role = $request->role;
             $Client->ownertype = $request->ownertype;
             $Client->address_notes = $request->address_notes;
             $Client->contractor = $request->contractor;
@@ -542,9 +544,24 @@ class HomeController extends Controller
         try {
             $id = encryptDecrypt('decrypt', $id);
             $data = Client::where('id', $id)->first();
-            $ongoing = Service::where("assigned_member_id", $id)->where("status", "ongoing")->get();
-            $completed = Service::where("assigned_member_id", $id)->where("status", "completed")->get();
-            $unassigned = Service::doesntHave("members")->get();
+            $ongoing = Service::has("members")->where("assigned_member_id", $id)->where("status", "ongoing");
+            if (request()->has('date')) {
+                $ongoing = $ongoing->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $ongoing = $ongoing->orderBy("id", "desc")->get();
+
+            $completed = Service::where("assigned_member_id", $id)->where("status", "completed");
+            if (request()->has('date')) {
+                $completed = $completed->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $completed = $completed->orderBy("id", "desc")->get();
+
+            $unassigned = Service::doesntHave("members")->where("assigned_member_id", $id);
+            if (request()->has('date')) {
+                $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $unassigned = $unassigned->orderBy("id", "desc")->get();
+
             return view('admin.client-details', compact('data', 'ongoing', 'completed', 'unassigned'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

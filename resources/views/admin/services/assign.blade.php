@@ -81,7 +81,7 @@
                                     src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
                         </div>
                         <div class="assign-service-Search-action">
-                            <button class="Searchbtn">Search</button>
+                            <button class="Searchbtn" type="button">Search</button>
                         </div>
                     </div>
                     <div class="assign-service-Search" style="box-shadow: none">
@@ -208,6 +208,7 @@
                 $("#total_member").text(assigned.length)
                 renderMembers();
             }
+            $("#search-results").hide();
         }
 
         function renderMembers() {

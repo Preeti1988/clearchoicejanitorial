@@ -7,7 +7,7 @@
     <div class="body-main-content">
         <div class="create-service-section">
             <div class="create-service-heading">
-                <h3>Add New Team Members</h3>
+                <h3> Add New Client</h3>
             </div>
             <div class="create-service-form">
                 <form action="{{ route('SaveClient') }}" method="POST" enctype="multipart/form-data" id="newteammember">
@@ -28,7 +28,7 @@
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
                                         value="{{ old('last_name') }}" required>
                                 </div>
-                            </div>  
+                            </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Email Address</h3>
@@ -78,33 +78,42 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Role</h3>
-                                    <select class="form-control" name="role">
-                                        @foreach ($designation as $data)
-                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="text" class="form-control" name="role" placeholder="Role">
                                 </div>
                             </div>
 
-                            <div class="col-md-9">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Owner Type</h3>
                                     <ul class="Ownertype-list">
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" name="ownertype" value="home owner" id="homeowner">
+                                                <input type="radio" name="ownertype" checked value="home owner"
+                                                    onchange="$('#business_checkbox').toggleClass('d-none')" id="homeowner">
                                                 <label for="homeowner">Home Owner</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" name="ownertype" value="Business" id="Business">
+                                                <input type="radio" name="ownertype"
+                                                    onchange="$('#business_checkbox').toggleClass('d-none')"
+                                                    value="Business" id="Business">
                                                 <label for="Business">Business</label>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
+                            <div class="col-md-4 d-none" id="business_checkbox">
+                                <div class="form-group">
+                                    <h3 style="opacity: 0">Owner Type</h3>
+                                    <div class="ccjcheckbox">
+                                        <input type="checkbox" name="" readonly checked>
+                                        <label>We subcontract for this general contractor</label>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -112,32 +121,19 @@
                     <div class="create-service-form-box">
                         <h1>Address Info.</h1>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <h3>Address (additional addresses)</h3>
-                                    <textarea required type="text" class="form-control" name="address" value="{{ old('address') }}"
-                                        placeholder="Address"></textarea>
-                                </div>
-                            </div>
 
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <h3>Address Notes</h3>
-                                    <textarea required type="text" class="form-control" name="address_notes" placeholder="Address Notes"></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Contractor</h3>
                                     <input type="text" class="form-control" name="contractor"
                                         value="{{ old('contractor') }}" placeholder="Contractor">
                                 </div>
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <h3>Street</h3>
-                                    <input type="text" class="form-control" name="street"
+                                    <input type="text" class="form-control" name="street" required
                                         value="{{ old('street') }}"placeholder="Street">
                                 </div>
                             </div>
@@ -152,7 +148,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Country</h3>
-                                    <select class="form-control"name="country_id" onchange="getState(this.value)">
+                                    <select class="form-control"name="country_id" onchange="getState(this.value)"
+                                        required>
                                         <option value="0">--Select--</option>
                                         @foreach ($country as $crty)
                                             <option value="{{ $crty->id }}">{{ $crty->name }}</option>
@@ -165,7 +162,8 @@
                                 <div class="form-group">
                                     <h3>State</h3>
                                     <div id="state_container">
-                                        <select class="form-control" name="state_id" onchange="getCity(this.value)">
+                                        <select class="form-control" name="state_id" onchange="getCity(this.value)"
+                                            required>
                                             <option value="0">--Select--</option>
                                             @foreach ($state as $stat)
                                                 <option value="{{ $stat->id }}">{{ $stat->name }}</option>
@@ -180,7 +178,7 @@
                                 <div class="form-group">
                                     <h3>City</h3>
                                     <div id="city_container">
-                                        <select class="form-control" name="city">
+                                        <select class="form-control" name="city" required>
                                             <option value="0">--Select--</option>
                                             @foreach ($city as $cty)
                                                 <option value="{{ $cty->id }}">{{ $cty->name }}</option>
@@ -196,10 +194,26 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Zipcode</h3>
-                                    <input type="text" class="form-control" name="zipcode" placeholder="Zipcode">
+                                    <input type="text" class="form-control" name="zipcode" placeholder="Zipcode"
+                                        required>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h3>Address Notes</h3>
+                                    <textarea type="text" class="form-control" name="address_notes" placeholder="Address Notes"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h3>Address (additional addresses)</h3>
+                                    <textarea type="text" class="form-control" name="address" value="{{ old('address') }}" placeholder="Address"></textarea>
+                                </div>
+                            </div>
+
+
                         </div>
+
                     </div>
 
                     <div class="create-service-form-box">
@@ -250,7 +264,8 @@
                     </div>
 
                     <div class="create-service-form-action">
-                        <button class="cancelbtn" onclick="location.replace('route('Clients')')">Cancel</button>
+                        <button class="cancelbtn" type="button"
+                            onclick="location.replace('route('Clients')')">Cancel</button>
                         <button class="Savebtn" type="submit">Save</button>
                     </div>
                 </form>
@@ -293,6 +308,9 @@
             $.validator.addMethod("phoneValid", function(value) {
                 return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
             }, 'Invalid phone number.');
+            $.validator.addMethod("zeroValue", function(value) {
+                return value != 0;
+            }, 'Please select .');
             $('#newteammember').validate({
                 rules: {
                     phonenumber: {
@@ -314,6 +332,18 @@
                     c_password: {
                         required: true,
                         minlength: 8
+                    },
+                    country_id: {
+                        required: true,
+                        zeroValue: true
+                    },
+                    state_id: {
+                        required: true,
+                        zeroValue: true
+                    },
+                    city: {
+                        required: true,
+                        zeroValue: true
                     }
                 },
                 errorElement: "span",

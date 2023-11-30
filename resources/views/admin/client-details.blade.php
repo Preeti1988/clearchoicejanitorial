@@ -2,6 +2,7 @@
 @section('title', 'Clear-ChoiceJanitorial - Client-Details')
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/client.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/teams.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -63,7 +64,7 @@
 
             <div class="ongoing-Services-section">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <div class="services-tabs">
                             <ul class="nav nav-tabs">
                                 <li><a class="active" href="#OngoingServices" data-bs-toggle="tab">Ongoing</a></li>
@@ -93,7 +94,7 @@
                                 @endphp
                                 @foreach ($arr as $item)
                                     <a class="item"
-                                        href="{{ route('ClientDetails', $data->id) . '?date=' . $item['date'] }}">
+                                        href="{{ url('client-details/' . encryptDecrypt('encrypt', $data->id) . '?date=' . $item['date']) }}">
                                         <div class="Ongoing-calender-item">
                                             <h3>{{ $item['w'] }}</h3>
                                             <h2>{{ $item['d'] }}</h2>
@@ -488,19 +489,46 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="service-panel-sidebar">
                             <h2>{{ $data->name ?? '' }} Ongoing, Assigned & Completed Projects logs</h2>
                             <div class="service-log-media">
                                 <img src="{{ asset('public/assets/admin-images/service-log-icon.svg') }}">
                             </div>
 
-                            <div class="service-log-overview">
+                            {{-- <div class="service-log-overview">
                                 <h3>Total Projects {{ count($ongoing) }} Projects</h3>
 
                                 <div class="service-log-item">
                                     <h2>01</h2>
                                     <p>ONTIME</p>
+                                </div>
+                            </div> --}}
+
+                        </div>
+                        <div class="team-panel-sidebar">
+
+                            <div class="count-bg-1 mt-2">
+                                <p class="p-0 m-0 text-center">{{ count($ongoing) + count($unassigned) }} Total Projects</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="detail-small-1 detail-box mt-3">
+                                        <h5 class="text-center m-0 p-0">{{ count($ongoing) }}</h5>
+                                        <p class="text-center mt-2 mb-0 p-0">Ongoing</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-small-1 detail-box mt-3">
+                                        <h5 class="text-center m-0 p-0">{{ count($unassigned) }}</h5>
+                                        <p class="text-center mt-2 mb-0 p-0">Un-assigned</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mx-auto">
+                                    <div class="detail-small-1 detail-box mt-3">
+                                        <h5 class="text-center m-0 p-0">{{ count($completed) }}</h5>
+                                        <p class="text-center mt-2 mb-0 p-0">Completed</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

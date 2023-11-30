@@ -81,34 +81,41 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Role</h3>
-                                    <select class="form-control" name="role">
-                                        @foreach ($designation as $desi)
-                                            <option
-                                                value="{{ $desi->id }}"@if ($data->designation_id == $desi->id) selected @endif>
-                                                {{ $desi->name }}</option>
-                                        @endforeach
-                                    </select>
+
+                                    <input type="text" class="form-control" name="role"
+                                        value="{{ $data->role ?? '' }}" placeholder="Role">
                                 </div>
                             </div>
 
-                            <div class="col-md-9">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Owner Type</h3>
                                     <ul class="Ownertype-list">
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" name="ownertype" id="ownertype"
-                                                    value="{{ $data->ownertype ?? '' }}">
-                                                <label for="Home Owner">Home Owner</label>
+                                                <input type="radio" name="ownertype" checked value="home owner"
+                                                    onchange="$('#business_checkbox').toggleClass('d-none')" id="homeowner">
+                                                <label for="homeowner">Home Owner</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" name="ownertype" id="ownertype">
+                                                <input type="radio" name="ownertype"
+                                                    onchange="$('#business_checkbox').toggleClass('d-none')"
+                                                    value="Business" id="Business">
                                                 <label for="Business">Business</label>
                                             </div>
                                         </li>
                                     </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-none" id="business_checkbox">
+                                <div class="form-group">
+                                    <h3 style="opacity: 0">Owner Type</h3>
+                                    <div class="ccjcheckbox">
+                                        <input type="checkbox" name="" readonly checked>
+                                        <label>We subcontract for this general contractor</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

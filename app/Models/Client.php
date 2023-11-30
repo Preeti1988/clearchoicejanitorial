@@ -33,6 +33,8 @@ class Client extends Model
         'client_bills_to',
         'lead_source',
         'status',
+        'role',
+
         'created_at'
     ];
     protected $table = 'clients';

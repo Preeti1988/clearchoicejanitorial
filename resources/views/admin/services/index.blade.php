@@ -94,7 +94,10 @@
                                                             <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
 
                                                                 @if ($item->members->count() - 1)
-                                                                    + <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                    <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                        Employee</a>
+                                                                @else
+                                                                    <a href="{{ route('services.assign', $item->id) }}">+
                                                                         Employee</a>
                                                                 @endif
 
@@ -150,7 +153,7 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service End Time:</h2>
-                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }},
+                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }}
                                                                 {{ date('h:i A', strtotime($item->service_end_time)) }}
                                                             </p>
                                                         </div>
@@ -176,7 +179,7 @@
                                                     src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
                                             </div>
                                             <div class="ongoing-services-date">
-                                                {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}
+                                                {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
                                             </div>
                                         </div>
                                     </div>
@@ -245,6 +248,9 @@
                                                                 @if ($item->members->count() - 1)
                                                                     + <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
                                                                         Employee</a>
+                                                                @else
+                                                                    <a href="{{ route('services.assign', $item->id) }}">+
+                                                                        Employee</a>
                                                                 @endif
 
                                                             </p>
@@ -301,7 +307,7 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service End Time:</h2>
-                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }},
+                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }}
                                                                 {{ date('h:i A', strtotime($item->service_end_time)) }}
                                                             </p>
                                                         </div>
@@ -327,7 +333,7 @@
                                                     src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
                                             </div>
                                             <div class="ongoing-services-date">
-                                                {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}
+                                                {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
                                             </div>
                                         </div>
                                     </div>
