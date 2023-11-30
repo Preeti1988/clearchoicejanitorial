@@ -10,7 +10,7 @@
                 <h3>Add New Team Members</h3>
             </div>
             <div class="create-service-form">
-                <form action="{{ route('SaveClient') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('SaveClient') }}" method="POST" enctype="multipart/form-data" id="newteammember">
                     @csrf
                     <div class="create-service-form-box">
                         <h1>Members Info.</h1>
@@ -28,7 +28,7 @@
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
                                         value="{{ old('last_name') }}" required>
                                 </div>
-                            </div>
+                            </div>  
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Email Address</h3>
@@ -152,7 +152,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Country</h3>
-                                    <select class="form-control"name="country_id">
+                                    <select class="form-control"name="country_id" onchange="getState(this.value)">
+                                        <option value="0">--Select--</option>
                                         @foreach ($country as $crty)
                                             <option value="{{ $crty->id }}">{{ $crty->name }}</option>
                                         @endforeach
@@ -163,22 +164,30 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>State</h3>
-                                    <select class="form-control" name="state_id">
-                                        @foreach ($state as $stat)
-                                            <option value="{{ $stat->id }}">{{ $stat->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div id="state_container">
+                                        <select class="form-control" name="state_id" onchange="getCity(this.value)">
+                                            <option value="0">--Select--</option>
+                                            @foreach ($state as $stat)
+                                                <option value="{{ $stat->id }}">{{ $stat->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>City</h3>
-                                    <select class="form-control" name="city">
-                                        @foreach ($city as $cty)
-                                            <option value="{{ $cty->id }}">{{ $cty->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div id="city_container">
+                                        <select class="form-control" name="city">
+                                            <option value="0">--Select--</option>
+                                            @foreach ($city as $cty)
+                                                <option value="{{ $cty->id }}">{{ $cty->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -249,3 +258,77 @@
         </div>
     </div>
 @endsection
+@push('js')
+    <script>
+        function getState(id) {
+            $.get("{{ route('getState') }}" + '?id=' + id, function(data) {
+                htm = "";
+                htm += `<select class="form-control" name="state_id" onchange="getCity(this.value)">`;
+                if (data.length == 0) {
+                    htm += `<option >No records</option>`;
+                }
+                data.map(item => {
+                    htm += ` <option value="${item.id}">${item.name}</option> `;
+                })
+                htm += `</select>`;
+                $("#state_container").html(htm);
+            })
+        }
+
+        function getCity(id) {
+            $.get("{{ route('getCity') }}" + '?id=' + id, function(data) {
+                htm = "";
+                htm += `<select class="form-control" name="city" >`;
+                if (data.length == 0) {
+                    htm += `<option >No records</option>`;
+                }
+                data.map(item => {
+                    htm += ` <option value="${item.id}">${item.name}</option> `;
+                })
+                htm += `</select>`;
+                $("#city_container").html(htm);
+            })
+        }
+        $(document).ready(function() {
+            $.validator.addMethod("phoneValid", function(value) {
+                return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
+            }, 'Invalid phone number.');
+            $('#newteammember').validate({
+                rules: {
+                    phonenumber: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    home_phone: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    work_phone: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    password: {
+                        required: true,
+                        minlength: 8
+                    },
+                    c_password: {
+                        required: true,
+                        minlength: 8
+                    }
+                },
+                errorElement: "span",
+                errorPlacement: function(error, element) {
+                    element.addClass("invalid-feedback");
+                    element.closest(".field").append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $('.please-wait').click();
+                    $(element).addClass("invalid-feedback");
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass("invalid-feedback");
+                }
+            })
+        });
+    </script>
+@endpush

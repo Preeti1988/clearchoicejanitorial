@@ -27,7 +27,7 @@
 
     <style>
         .invalid-feedback {
-            border: 2px solid red;
+            border: 1px solid red !important;
         }
     </style>
 
@@ -384,7 +384,13 @@
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
-
+    @foreach ($errors->all() as $item)
+        <script>
+            $(document).ready(function() {
+                toastr.error("{{ $item }}");
+            });
+        </script>
+    @endforeach
     <script>
         var base_url = "{{ url('/') }}";
 
@@ -393,7 +399,7 @@
                 toastr.success(" {{ Session::get('success') }} ");
             }
             if ("{{ Session::has('error') }}") {
-                toastr.error(" {{ Session::get('error') }} ");
+                toastr.error("{{ Session::get('error') }} ");
             }
             if ("{{ Session::has('warn') }}") {
                 toastr.warning(" {{ Session::get('warn') }} ");

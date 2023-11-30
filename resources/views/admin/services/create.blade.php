@@ -794,7 +794,7 @@
                 },
                 errorElement: "span",
                 errorPlacement: function(error, element) {
-                    error.addClass("invalid-feedback");
+                    element.addClass("invalid-feedback");
                     element.closest(".field").append(error);
                 },
                 highlight: function(element, errorClass, validClass) {

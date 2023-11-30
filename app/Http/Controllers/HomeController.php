@@ -196,13 +196,14 @@ class HomeController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
+            $resume = "";
             if ($request->file('resume')) {
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
-                $request->resume->move(public_path('upload/resume'), $imageName);
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
-                $request->resume->move(public_path('upload/user-profile'), $imageName);
-                $resume = $imageName;
-                $resume_file_name = $request->resume->getClientOriginalName();
+
+                $file = $request->file("resume");
+                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('upload/resume'), $imageName);
+                $resume = public_path('upload/resume') . $imageName;
+                $resume_file_name = $imageName;
             } else {
                 $resume = '';
                 $resume_file_name = '';
@@ -235,7 +236,8 @@ class HomeController extends Controller
             ]);
             return redirect('teams-active')->with('success', 'Team member created successfully');
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
+            // return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
+            return redirect('teams-active')->with('error', $e->getMessage());
         }
     }
 
@@ -245,7 +247,7 @@ class HomeController extends Controller
             $designation = Designation::orderBy('id', 'DESC')->get();
             $country = Country::orderBy('id', 'DESC')->get();
             $state = State::orderBy('id', 'DESC')->get();
-            $city = City::orderBy('id', 'DESC')->get();
+            $city = City::orderBy('id', 'DESC')->take(1000)->get();
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             return view('admin.newteammember', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
         } catch (\Exception $e) {
@@ -598,7 +600,7 @@ class HomeController extends Controller
             $designation = Designation::orderBy('id', 'DESC')->get();
             $country = Country::orderBy('id', 'DESC')->get();
             $state = State::orderBy('id', 'DESC')->get();
-            $city = City::orderBy('id', 'DESC')->get();
+            $city = City::orderBy('id', 'DESC')->take(1000)->get();
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             return view('admin.newclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
         } catch (\Exception $e) {
@@ -612,10 +614,12 @@ class HomeController extends Controller
             $id = encryptDecrypt('decrypt', $id);
             $designation = Designation::orderBy('id', 'DESC')->get();
             $country = Country::orderBy('id', 'DESC')->get();
-            $state = State::orderBy('id', 'DESC')->get();
-            $city = City::orderBy('id', 'DESC')->get();
+
+
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             $data = Client::where('id', $id)->first();
+            $state = State::orderBy('id', 'DESC')->where("country_id", $data->country_id)->get();
+            $city = City::orderBy('id', 'DESC')->where("state_id", $data->state_id)->get();
             return view('admin.editclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

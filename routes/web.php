@@ -60,3 +60,5 @@ Route::group(['middleware' => ['auth']], function () {
 // Listing Ajax request
 Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');
 Route::get("search-user", [AjaxController::class, 'searchUser'])->name('searhcUser');
+Route::get("get-state", [AjaxController::class, 'getState'])->name('getState');
+Route::get("get-city", [AjaxController::class, 'getCity'])->name('getCity');

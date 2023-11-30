@@ -157,7 +157,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Country</h3>
-                                    <select class="form-control"name="country_id">
+                                    <select class="form-control"name="country_id" onchange="getState(this.value)">
                                         @foreach ($country as $ctry)
                                             <option value="{{ $ctry->id }}"
                                                 @if ($data->country_id == $ctry->id) selected @endif>
@@ -170,26 +170,38 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <h3>State</h3>
-                                    <select class="form-control"name="state_id">
-                                        @foreach ($state as $value)
-                                            <option value="{{ $value->id }}"
-                                                @if ($data->state_id == $value->id) selected @endif>
-                                                {{ $value->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div id="state_container">
+                                        <select class="form-control"name="state_id" onchange="getCity(this.value)">
+
+                                            <option value="0">--Select--</option>
+                                            @foreach ($state as $value)
+                                                <option value="{{ $value->id }}"
+                                                    @if ($data->state_id == $value->id) selected @endif>
+                                                    {{ $value->name }}</option>
+                                            @endforeach
+
+
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <h3>City</h3>
-                                    <select class="form-control"name="city">
-                                        @foreach ($city as $cty)
-                                            <option value="{{ $cty->id }}"
-                                                @if ($data->city == $cty->id) selected @endif>
-                                                {{ $cty->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div id="city_container">
+                                        <select class="form-control"name="city">
+
+                                            <option value="0">--Select--</option>
+                                            @foreach ($city as $cty)
+                                                <option value="{{ $cty->id }}"
+                                                    @if ($data->city == $cty->id) selected @endif>
+                                                    {{ $cty->name }}</option>
+                                            @endforeach
+
+
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 
@@ -259,4 +271,39 @@
             </div>
         </div>
     </div>
+
 @endsection
+@push('js')
+    <script>
+        function getState(id) {
+            $.get("{{ route('getState') }}" + '?id=' + id, function(data) {
+                htm = "";
+                htm += `<select class="form-control" name="state_id" onchange="getCity(this.value)">`;
+                if (data.length == 0) {
+                    htm += `<option >No records</option>`;
+                }
+                data.map(item => {
+                    htm += ` <option value="${item.id}">${item.name}</option> `;
+                })
+                htm += `</select>`;
+                $("#state_container").html(htm);
+                console.log(htm);
+            })
+        }
+
+        function getCity(id) {
+            $.get("{{ route('getCity') }}" + '?id=' + id, function(data) {
+                htm = "";
+                htm += `<select class="form-control" name="city" >`;
+                if (data.length == 0) {
+                    htm += `<option >No records</option>`;
+                }
+                data.map(item => {
+                    htm += ` <option value="${item.id}">${item.name}</option> `;
+                })
+                htm += `</select>`;
+                $("#city_container").html(htm);
+            })
+        }
+    </script>
+@endpush

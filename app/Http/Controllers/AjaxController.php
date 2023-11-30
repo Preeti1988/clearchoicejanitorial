@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\Client;
+use App\Models\State;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -31,6 +33,26 @@ class AjaxController extends Controller
 
                 $value->projects_count = $value->projects ? $value->projects->count() . " projects" : "0 projects";
             }
+            return $members;
+        } else {
+            return [];
+        }
+    }
+    public function getState()
+    {
+        if (request()->has('id')) {
+            $key = trim(request("id"));
+            $members = State::where("country_id", $key)->get();
+            return $members;
+        } else {
+            return [];
+        }
+    }
+    public function getCity()
+    {
+        if (request()->has('id')) {
+            $key = trim(request("id"));
+            $members = City::where("state_id", $key)->get();
             return $members;
         } else {
             return [];
