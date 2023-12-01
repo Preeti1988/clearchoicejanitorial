@@ -58,9 +58,13 @@
 
                                     // Get the number of days in the current month
                                     $daysInMonth = date('j');
+                                    $currentMonth = date('n'); // n represents the month without leading zeros
+                                    $currentYear = date('Y');
 
+                                    // Get the number of days in the current month
+                                    $numDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
                                     // Loop through each day in the month
-                                    for ($day = 1; $day <= $daysInMonth; $day++) {
+                                    for ($day = 1; $day <= $numDaysInMonth; $day++) {
                                         $date = now()->setDay($day);
                                         $dayOfWeek = $date->format('D');
                                         $formattedDate = $date->format('d');

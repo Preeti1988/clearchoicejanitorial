@@ -619,7 +619,8 @@ class HomeController extends Controller
             $state = State::orderBy('id', 'DESC')->get();
             $city = City::orderBy('id', 'DESC')->take(1000)->get();
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
-            return view('admin.newclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
+            $data = null;
+            return view('admin.clients.create', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
