@@ -15,6 +15,7 @@ use App\Models\ServiceMember;
 use App\Models\Service;
 use App\Models\Client;
 use App\Models\ServiceTimesheet;
+use App\Models\ServiceReview;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -185,7 +186,7 @@ class UserController extends Controller
         $user = Auth::user();
         if (isset($request->date)) {
             
-            $servise_list = ServiceMember::where('member_id',$user->userid)->whereDate('created_at', '=', $request->date)->get();
+            //$servise_list = ServiceMember::where('member_id',$user->userid)->whereDate('created_at', '=', $request->date)->get();
         } else {
             
             $servise_list = ServiceMember::where('member_id',$user->userid)->orderBy('id','DESC')->get();
@@ -336,13 +337,22 @@ class UserController extends Controller
         $temp['address'] = isset($client->address) ? $client->address : '';
         $temp['lat'] = '28.23654';
         $temp['long'] = '78.9654123';
-        $inscope = InScope::orderBy('id','DESC')->get();
-        $outscope = OutScope::orderBy('id','DESC')->get();
-        $services_values = ServicesValue::orderBy('id','DESC')->get();
+        $inscope = json_decode($service->inscopes);
+        $outscope = json_decode($service->outscopes);
+        $service_items = json_decode($service->service_items);
         $temp['inscope'] = $inscope;
         $temp['OutScope'] = $outscope;
-        $temp['ServicesItems'] = $services_values;
-        $temp['scheduled_list'] =[];
+        $temp['ServicesItems'] = $service_items;
+        $ServiceMember = ServiceMember::where('service_id',$request->service_id)->get();
+        $response = array();
+        foreach ($ServiceMember as $key => $value) {
+            $user = User::where('service_id',$value->assign_member_id)->get();
+            $temps['userphone'] = isset($user->phonenumber) ? $user->phonenumber: '+(987)4563210';
+            $temps['fullname'] = isset($user->fullname) ? $user->fullname: '';
+            $temps['userid'] = isset($user->userid) ? $user->userid: '';
+            $response[] = $temps;
+        }
+        $temp['scheduled_list'] = $response;
         $temp['total'] = 200;
         
         
@@ -397,7 +407,32 @@ class UserController extends Controller
     public function submit_review(Request $request)
     {
         $user = Auth::user();
-        return response()->json(["status" => true, "message" => "Service Details", "data" => $success]);
+        $validator = Validator::make($request->all(), [
+            'service_id' => 'required',
+            'member_id' => 'required',
+            'service' => 'required',
+            'equipment' => 'required',
+            'burnisher' => 'required',
+            'supplies' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
+        }
+        
+        $ServiceReview = new ServiceReview;
+        $ServiceReview->service = $request->service;
+        $ServiceReview->service_comment = $request->service_comment;
+        $ServiceReview->equipment = $request->equipment;
+        $ServiceReview->equipment_comment = $request->equipment_comment;
+        $ServiceReview->burnisher = $request->burnisher;
+        $ServiceReview->burnisher_comment = $request->burnisher_comment;
+        $ServiceReview->supplies = $request->supplies;
+        $ServiceReview->supplies_comment = $request->supplies_comment;
+        $ServiceReview->service_id = $request->service_id;
+        $ServiceReview->member_id = $request->member_id;
+        $ServiceReview->save();
+        
+        return response()->json(["status" => true, "message" => "Reviews Saved"]);
     }
 
     public function updateProfile(Request $request)
