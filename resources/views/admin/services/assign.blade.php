@@ -81,7 +81,7 @@
                                     src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
                         </div>
                         <div class="assign-service-Search-action">
-                            <button class="Searchbtn">Search</button>
+                            <button class="Searchbtn" type="button">Search</button>
                         </div>
                     </div>
                     <div class="assign-service-Search" style="box-shadow: none">
@@ -141,7 +141,8 @@
 
 
                     <div class="assign-service-emplyee-action">
-                        <button class="cancelbtn" type="button">cancel</button>
+                        <button class="cancelbtn"onclick="location.replace('{{ route('services.index') }}')"
+                            type="button">cancel</button>
                         <button class="Savebtn">Confirm & Assign Employees</button>
                     </div>
 
@@ -207,6 +208,7 @@
                 $("#total_member").text(assigned.length)
                 renderMembers();
             }
+            $("#search-results").hide();
         }
 
         function renderMembers() {
@@ -282,7 +284,7 @@
                     break;
                 }
             }
-
+            $("#total_member").text(assigned.length)
             renderMembers();
         }
 
@@ -339,6 +341,10 @@
                 submitHandler: function(form, event) {
 
                     event.preventDefault();
+                    if (assigned.length == 0) {
+                        Swal.fire("Error", 'Please assign atleast one member.', 'error');
+                        return false;
+                    }
                     let formData = new FormData(form);
                     var working = false;
                     // assigned.forEach(element => {

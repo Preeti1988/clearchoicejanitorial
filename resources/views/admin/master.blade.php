@@ -120,13 +120,12 @@
                                 <div class="master-list-bg d-flex justify-content-between align-items-center">
                                     <p class="mb-0">{{ $val->name ?? '' }}</p>
                                     <div class="cancel-bg">
-                                        <a href="{{ url('delete-master-item/2/' . encryptDecrypt('encrypt', $val->id)) }}"><img
-                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
+                                        <a href="{{ url('delete-master-item/2/' . encryptDecrypt('encrypt', $val->id)) }}">
+                                            <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
-
-
                                     </div>
                                 </div>
+                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -145,11 +144,10 @@
                     </div>
                 </div>
                 <div class="add-new-master">
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
+                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addDesignation"
                         onclick='Get_Tag_Name("Add Designation","4")'>Add Designation</a>
 
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
-                        onclick='Get_Tag_Name("Add Designation","4")'>Add Designation</a>
+
 
                 </div>
             </div>
@@ -167,25 +165,15 @@
                                 <div class="master-list-bg d-flex justify-content-between align-items-center">
                                     <p class="mb-0">{{ $val->name ?? '' }}</p>
                                     <div class="cancel-bg">
-                                        <a
-                                            href="{{ url('delete-master-item/4/' . encryptDecrypt('encrypt', $val->id)) }}">
+                                        <a href="{{ url('delete-master-item/4/' . encryptDecrypt('encrypt', $val->id)) }}">
                                             <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
 
-                                        <a href="#"><img
-                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                alt=""></a>
 
 
-                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
-                                        <div class="cancel-bg">
-                                            <a href="#"><img
-                                                    src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                    alt=""></a>
-
-                                        </div>
                                     </div>
                                 </div>
+                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -204,13 +192,11 @@
                     </div>
                 </div>
                 <div class="add-new-master">
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
+                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addMarital"
                         onclick='Get_Tag_Name("Add Marital Status","5")'>Add Marital
                         Status</a>
 
-                    <a class="add-new-service-btn" href="#" data-bs-toggle="modal" data-bs-target="#addNewValue"
-                        onclick='Get_Tag_Name("Add Marital Status","5")'>Add Marital
-                        Status</a>
+
 
                 </div>
             </div>
@@ -233,20 +219,10 @@
                                             <img src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
                                                 alt=""></a>
 
-                                        <a href="#"><img
-                                                src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                alt=""></a>
 
-
-                                        <p class="mb-0">{{ $val->name ?? '' }}</p>
-                                        <div class="cancel-bg">
-                                            <a href="#"><img
-                                                    src="{{ asset('public/assets/admin-images/cancel-icon.svg') }}"
-                                                    alt=""></a>
-
-                                        </div>
                                     </div>
                                 </div>
+                            </div>
                         @endforeach
                     @endif
                 </div>
@@ -342,6 +318,64 @@
         </div>
     </div>
 
+
+    <!-- Designation Modal -->
+    <div class="modal fade" id="addDesignation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center">Add Designation</h5>
+                    <form action="{{ route('SaveMaster') }}" method="POST">
+                        @csrf
+                        <input type="hidden" id="tag_id_ser" name="tag_id" value="4">
+                        <input type="text" class="form-control mt-4" name="name" placeholder="Type name here"
+                            required>
+
+
+                        <div class="text-center">
+                            <button class="add-new-value-btn mt-3" type="submit">Add</button>
+                        </div>
+
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marital Status Modal -->
+    <div class="modal fade" id="addMarital" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center">Add Marital Status</h5>
+                    <form action="{{ route('SaveMaster') }}" method="POST">
+                        @csrf
+                        <input type="hidden" id="tag_id_ser" name="tag_id" value="5">
+                        <input type="text" class="form-control mt-4" name="name" placeholder="Type name here"
+                            required>
+
+
+                        <div class="text-center">
+                            <button class="add-new-value-btn mt-3" type="submit">Add</button>
+                        </div>
+
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-------------------- Approval-Product-Jquery -------------------->
     <script>
         function Get_Tag_Name(Tag_name, Tag_id) {

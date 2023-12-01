@@ -30,10 +30,12 @@
 @endpush
 @section('content')
     <div class="body-main-content">
+        {{-- <div class="assign-Services-heading">
+            <h2>Service Scheduler</h2>
+        </div> --}}
+
         <div class="assign-Services-section">
-            <div class="assign-Services-heading">
-                <h2>Service Scheduler</h2>
-            </div>
+
             <div class="ongoing-Services-section">
                 <div class="row">
                     <div class="col-md-12">

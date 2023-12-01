@@ -91,9 +91,17 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
-                                                            <p>John Doe + <a
-                                                                    href="{{ route('services.assign', $item->id) }}">12
-                                                                    Employee</a></p>
+                                                            <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
+
+                                                                @if ($item->members->count() - 1)
+                                                                    <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                        Employee</a>
+                                                                @else
+                                                                    <a href="{{ route('services.assign', $item->id) }}">+
+                                                                        Employee</a>
+                                                                @endif
+
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -145,7 +153,7 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service End Time:</h2>
-                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }},
+                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }}
                                                                 {{ date('h:i A', strtotime($item->service_end_time)) }}
                                                             </p>
                                                         </div>
@@ -171,7 +179,7 @@
                                                     src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
                                             </div>
                                             <div class="ongoing-services-date">
-                                                {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}
+                                                {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
                                             </div>
                                         </div>
                                     </div>
@@ -235,9 +243,17 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
-                                                            <p>John Doe + <a
-                                                                    href="{{ route('services.assign', $item->id) }}">12
-                                                                    Employee</a></p>
+                                                            <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
+
+                                                                @if ($item->members->count() - 1)
+                                                                    + <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                        Employee</a>
+                                                                @else
+                                                                    <a href="{{ route('services.assign', $item->id) }}">+
+                                                                        Employee</a>
+                                                                @endif
+
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -291,7 +307,7 @@
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service End Time:</h2>
-                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }},
+                                                            <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }}
                                                                 {{ date('h:i A', strtotime($item->service_end_time)) }}
                                                             </p>
                                                         </div>
@@ -317,7 +333,7 @@
                                                     src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
                                             </div>
                                             <div class="ongoing-services-date">
-                                                {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}
+                                                {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
                                             </div>
                                         </div>
                                     </div>
@@ -343,7 +359,7 @@
                         <div class="completedservice-overview-content">
                             <h2>Total completed service</h2>
                             <h1>{{ $completed }}</h1>
-                            <p><i class="las la-check-circle"></i> Completed</p>
+                            {{-- <p><i class="las la-check-circle"></i> Completed</p> --}}
                         </div>
                         <div class="completedservice-overview-images">
                             <img src="{{ asset('public/assets/admin-images/service-log-icon.svg') }}">
@@ -352,9 +368,9 @@
 
                     <div class="completedservice-overview">
                         <div class="completedservice-overview-content">
-                            <h2>Total Ammout Earning</h2>
+                            <h2>Total Earning Amount</h2>
                             <h1>${{ $earning }}</h1>
-                            <p><i class="las la-check-circle"></i> Completed</p>
+                            {{-- <p><i class="las la-check-circle"></i> Completed</p> --}}
                         </div>
                         <div class="completedservice-overview-images">
                             <img src="{{ asset('public/assets/admin-images/Earning.svg') }}">

@@ -42,26 +42,28 @@ class HomeController extends Controller
         if (request()->has('date')) {
             $services = $services->whereDate("created_at", Carbon::parse(request('date')));
         }
+
         $services = $services->count();
-        $members = User::where("admin", "!=", 1);
+        $members = User::where("admin", "!=", 1)->where("status", 1);
         if (request()->has('date')) {
             $members = $members->whereDate("created_at", Carbon::parse(request('date')));
         }
         $members = $members->count();
 
-        $ongoing = Service::has("members")->with("members");
+        $ongoing = Service::has("members");
         if (request()->has('date')) {
             $ongoing = $ongoing->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $ongoing = $ongoing->get();
+        $ongoing = $ongoing->orderBy("id", "desc")->get();
 
         $unassigned = Service::doesntHave("members");
         if (request()->has('date')) {
             $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $unassigned = $unassigned->get();
 
-        return view('admin.dashboard', compact('services', 'members', 'ongoing', 'unassigned'));
+        $unassigned = $unassigned->orderBy("id", "desc")->get();
+        $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
+        return view('admin.dashboard', compact('services', 'members', 'ongoing', 'request_members', 'unassigned'));
     }
 
     public function dashboard()
@@ -114,7 +116,7 @@ class HomeController extends Controller
                 'mobile_number' => $request->mobile_number,
                 'home_number' => $request->home_number,
                 'client_work_number' => $request->client_work_number,
-                'designation_id' => $request->role,
+                'role' => $request->role,
                 'ownertype' => $request->ownertype,
                 'address_notes' => $request->address_notes,
                 'contractor' => $request->contractor,
@@ -159,7 +161,7 @@ class HomeController extends Controller
             $Client->company = $request->company;
             $Client->home_number = $request->home_number;
             $Client->client_work_number = $request->client_work_number;
-            $Client->designation_id = $request->role;
+            $Client->role = $request->role;
             $Client->ownertype = $request->ownertype;
             $Client->address_notes = $request->address_notes;
             $Client->contractor = $request->contractor;
@@ -196,13 +198,14 @@ class HomeController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
+            $resume = "";
             if ($request->file('resume')) {
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
-                $request->resume->move(public_path('upload/resume'), $imageName);
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
-                $request->resume->move(public_path('upload/user-profile'), $imageName);
-                $resume = $imageName;
-                $resume_file_name = $request->resume->getClientOriginalName();
+
+                $file = $request->file("resume");
+                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('upload/resume'), $imageName);
+                $resume = public_path('upload/resume') . $imageName;
+                $resume_file_name = $imageName;
             } else {
                 $resume = '';
                 $resume_file_name = '';
@@ -235,7 +238,8 @@ class HomeController extends Controller
             ]);
             return redirect('teams-active')->with('success', 'Team member created successfully');
         } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
+            // return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
+            return redirect('teams-active')->with('error', $e->getMessage());
         }
     }
 
@@ -245,7 +249,7 @@ class HomeController extends Controller
             $designation = Designation::orderBy('id', 'DESC')->get();
             $country = Country::orderBy('id', 'DESC')->get();
             $state = State::orderBy('id', 'DESC')->get();
-            $city = City::orderBy('id', 'DESC')->get();
+            $city = City::orderBy('id', 'DESC')->take(1000)->get();
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             return view('admin.newteammember', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
         } catch (\Exception $e) {
@@ -388,7 +392,7 @@ class HomeController extends Controller
                     'price' => $request->price,
                     'status' => 1,
                 ]);
-                dd($request->all());
+                // dd($request->all());
             } elseif ($tag_id == 2) {
                 $name = 'Out Of Scope';
                 $user = OutScope::create([
@@ -446,12 +450,12 @@ class HomeController extends Controller
             if ($request->has("search")) {
                 $search = $request->search;
                 $type = 1;
-                $datas = User::where('status', 1)->where('userid', '!=', 1)
-                    ->orwhere('fullname', 'like', '%' . $search . '%')
-                    ->orwhere('email', 'like', '%' . $search . '%')
-                    ->orwhere('userid', 'like', '%' . $search . '%')
-                    ->orwhere('phonenumber', 'like', '%' . $search . '%')
-                    ->orderBy('userid', 'DESC')->paginate(10);
+                $datas = User::where('status', 1)->where('userid', '!=', 1)->where(function ($query) use ($search) {
+                    $query->orwhere('fullname', 'like', '%' . $search . '%')
+                        ->orwhere('email', 'like', '%' . $search . '%')
+                        ->orwhere('userid', 'like', '%' . $search . '%')
+                        ->orwhere('phonenumber', 'like', '%' . $search . '%');
+                })->orderBy('userid', 'DESC')->paginate(10);
                 return view('admin.team', compact('datas', 'search', 'type'));
             } else {
                 $search = '';
@@ -540,9 +544,24 @@ class HomeController extends Controller
         try {
             $id = encryptDecrypt('decrypt', $id);
             $data = Client::where('id', $id)->first();
-            $ongoing = Service::where("assigned_member_id", $id)->where("status", "ongoing")->get();
-            $completed = Service::where("assigned_member_id", $id)->where("status", "completed")->get();
-            $unassigned = Service::doesntHave("members")->get();
+            $ongoing = Service::has("members")->where("assigned_member_id", $id)->where("status", "ongoing");
+            if (request()->has('date')) {
+                $ongoing = $ongoing->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $ongoing = $ongoing->orderBy("id", "desc")->get();
+
+            $completed = Service::where("assigned_member_id", $id)->where("status", "completed");
+            if (request()->has('date')) {
+                $completed = $completed->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $completed = $completed->orderBy("id", "desc")->get();
+
+            $unassigned = Service::doesntHave("members")->where("assigned_member_id", $id);
+            if (request()->has('date')) {
+                $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $unassigned = $unassigned->orderBy("id", "desc")->get();
+
             return view('admin.client-details', compact('data', 'ongoing', 'completed', 'unassigned'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -598,9 +617,20 @@ class HomeController extends Controller
             $designation = Designation::orderBy('id', 'DESC')->get();
             $country = Country::orderBy('id', 'DESC')->get();
             $state = State::orderBy('id', 'DESC')->get();
-            $city = City::orderBy('id', 'DESC')->get();
+            $city = City::orderBy('id', 'DESC')->take(1000)->get();
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             return view('admin.newclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    
+    public function chats()
+    {
+        try {
+            $chats = Chat::orderBy('id', 'DESC')->get();
+            $datas = User::where('status',1)->orderBy('id', 'DESC')->get();
+            return view('admin.chat', compact('datas','chats'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -612,10 +642,12 @@ class HomeController extends Controller
             $id = encryptDecrypt('decrypt', $id);
             $designation = Designation::orderBy('id', 'DESC')->get();
             $country = Country::orderBy('id', 'DESC')->get();
-            $state = State::orderBy('id', 'DESC')->get();
-            $city = City::orderBy('id', 'DESC')->get();
+
+
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             $data = Client::where('id', $id)->first();
+            $state = State::orderBy('id', 'DESC')->where("country_id", $data->country_id)->get();
+            $city = City::orderBy('id', 'DESC')->where("state_id", $data->state_id)->get();
             return view('admin.editclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

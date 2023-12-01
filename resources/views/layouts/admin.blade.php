@@ -25,7 +25,11 @@
     <link rel="stylesheet"href="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.css') }}"
         type="text/css" />
 
-
+    <style>
+        .invalid-feedback {
+            border: 1px solid red !important;
+        }
+    </style>
 
 </head>
 
@@ -147,7 +151,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="chat.html">
+                            <a class="nav-link" href="{{ route('Chats') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none">
@@ -320,6 +324,10 @@
                                         Edit Team Members
                                     @elseif($currentURL == 'EditClient')
                                         Edit Client
+                                    @elseif($currentURL == 'services.scheduler')
+                                        Service Scheduler
+                                    @elseif($currentURL == 'Chats')
+                                        Chat
                                     @else
                                     @endif
                                 </div>
@@ -378,7 +386,13 @@
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
-
+    @foreach ($errors->all() as $item)
+        <script>
+            $(document).ready(function() {
+                toastr.error("{{ $item }}");
+            });
+        </script>
+    @endforeach
     <script>
         var base_url = "{{ url('/') }}";
 
@@ -387,7 +401,7 @@
                 toastr.success(" {{ Session::get('success') }} ");
             }
             if ("{{ Session::has('error') }}") {
-                toastr.error(" {{ Session::get('error') }} ");
+                toastr.error("{{ Session::get('error') }} ");
             }
             if ("{{ Session::has('warn') }}") {
                 toastr.warning(" {{ Session::get('warn') }} ");

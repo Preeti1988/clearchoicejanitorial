@@ -114,7 +114,7 @@
                                             </td>
                                             <td style="white-space:nowrap;">
                                                 <a class="viewbtn"
-                                                    href="{{ url('client-details/' . encryptDecrypt('encrypt', $val->id)) }}') }}">
+                                                    href="{{ url('client-details/' . encryptDecrypt('encrypt', $val->id)) }}">
                                                     <img src="{{ asset('public/assets/admin-images/view-icon.svg') }}">
                                                 </a>
                                                 <a class="viewbtn"

@@ -11,7 +11,7 @@ class Service extends Model
     // protected $fillable = ["*"];
     public function client()
     {
-        return $this->belongsTo(Client::class, 'assigned_member_id');
+        return $this->belongsTo(Client::class, 'assigned_client_id');
     }
     public function members()
     {

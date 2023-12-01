@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\ServiceController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Auth::routes();
-Route::group(['middleware' => ['auth']], function() {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('Home');
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('Homes');
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'dashboard'])->name('Dashboard');
@@ -48,6 +49,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::match(['get', 'post'], '/search-team-member-active', [App\Http\Controllers\HomeController::class, 'team_active'])->name('search.team-member-active');
     Route::match(['get', 'post'], '/search-team-member-inactive', [App\Http\Controllers\HomeController::class, 'team_inactive'])->name('search.team-member-inactive');
     Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeController::class, 'team'])->name('search.team-member');
+    Route::match(['get', 'post'], '/chats', [App\Http\Controllers\HomeController::class, 'chats'])->name('Chats');
 
 
     // services all functionality
@@ -59,3 +61,5 @@ Route::group(['middleware' => ['auth']], function() {
 // Listing Ajax request
 Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');
 Route::get("search-user", [AjaxController::class, 'searchUser'])->name('searhcUser');
+Route::get("get-state", [AjaxController::class, 'getState'])->name('getState');
+Route::get("get-city", [AjaxController::class, 'getCity'])->name('getCity');
