@@ -125,28 +125,10 @@
                     <div class="create-service-form-box">
                         <h1>Address Info.</h1>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <h3>Address (additional addresses)</h3>
-                                    <textarea type="text" class="form-control" name="address" placeholder="Address">{{ $data->address ?? '' }}</textarea>
-                                </div>
-                            </div>
+
+
 
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <h3>Address Notes</h3>
-                                    <textarea type="text" class="form-control" name="address_notes" placeholder="Address Notes">{{ $data->address_notes ?? '' }}</textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Contractor</h3>
-                                    <input type="text" class="form-control"
-                                        name="contractor"value="{{ $data->contractor ?? '' }}" placeholder="contractor">
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Street</h3>
                                     <input type="text" class="form-control" name="street"
@@ -219,6 +201,19 @@
                                     <h3>Zipcode</h3>
                                     <input type="text" class="form-control" name="zipcode"
                                         value="{{ $data->zipcode ?? '' }}" placeholder="Zipcode">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h3>Address (additional addresses)</h3>
+                                    <textarea type="text" class="form-control" name="address" placeholder="Address">{{ $data->address ?? '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <h3>Address Notes</h3>
+                                    <textarea type="text" class="form-control" name="address_notes" placeholder="Address Notes">{{ $data->address_notes ?? '' }}</textarea>
                                 </div>
                             </div>
                         </div>

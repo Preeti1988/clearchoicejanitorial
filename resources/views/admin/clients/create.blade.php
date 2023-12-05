@@ -20,7 +20,7 @@
                                 <div class="form-group">
                                     <h3>First Name</h3>
                                     <input type="text" class="form-control" name="first_name" placeholder="First Name"
-                                        value="{{ old('first_name') }}" required>
+                                        value="{{ $data ?$data->name:old('first_name') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
