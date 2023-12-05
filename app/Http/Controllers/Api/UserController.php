@@ -17,6 +17,7 @@ use App\Models\Client;
 use App\Models\Designation;
 use App\Models\Review;
 use App\Models\ServiceTimesheet;
+use App\Models\ChatCount;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
@@ -201,7 +202,7 @@ class UserController extends Controller
         $y = date("Y");
         $response = array();
         for ($i = 0; $i <= 7; $i++) {
-            $date_array = date('d-m-y:D', mktime(0, 0, 0, $m, ($de - $i), $y));
+            $date_array = date('Y-m-d:D', mktime(0, 0, 0, $m, ($de - $i), $y));
             $response[] = $date_array;
         }
         return response()->json(["status" => true, "message" => "Date Listing.", "data" => $response]);
@@ -311,6 +312,92 @@ class UserController extends Controller
             $response[] = $temp;
         }
         return response()->json(["status" => true, "message" => "Services Listing", "data" => $response]);
+    }
+    
+    public function submit_chat_count(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'service_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            }
+            $user = Auth::user();
+            $chat = ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->first();
+            if(!empty($chat)){
+                $count = $chat->read_status+1;
+                ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
+            }else{
+                $ChatCount = new ChatCount;
+                $ChatCount->sender_id = $user->userid;
+                $ChatCount->receiver_id = 1;
+                $ChatCount->service_id = $request->service_id;
+                $ChatCount->read_status = 0;
+                $ChatCount->save();
+            }
+            return response()->json(["status" => true, "message" => "Message send"]);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    
+    public function update_chat_count(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'service_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            }
+            $user = Auth::user();
+            $chat = ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->first();
+            if(!empty($chat)){
+                $count = 0;
+                ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
+            }else{
+                $ChatCount = new ChatCount;
+                $ChatCount->sender_id = $user->userid;
+                $ChatCount->receiver_id = 1;
+                $ChatCount->service_id = $request->service_id;
+                $ChatCount->read_status = 0;
+                $ChatCount->save();
+            }
+            return response()->json(["status" => true, "message" => "Message updated"]);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    
+    public function sevice_list(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            if (isset($request->date)) {
+
+                $servise_list = ServiceMember::where('member_id', $user->userid)->whereDate('created_at', '=', Carbon::parse($request->date))->get();
+            } else {
+    
+                $servise_list = ServiceMember::where('member_id', $user->userid)->orderBy('id', 'DESC')->get();
+            }
+
+            $response = array();
+            foreach ($servise_list as $key => $value) {
+                $service = Service::where('id', $value->service_id)->first();
+                $temp['service_name'] = isset($service->name) ? $service->name : '';
+                $temp['service_id'] = isset($service->id) ? $service->id : '';
+                $temp['admin_name'] = 'Admin';
+                $temp['admin_id'] = 1;
+                $temp['admin_image'] =  asset('public/assets/admin-images/hbgimg.png');
+                $count = ChatCount::where('sender_id',1)->where('service_id',$service->id)->first();
+                $temp['msg_count'] =  $count->read_status ?? '0';
+                $response[] = $temp;
+            }
+            return response()->json(["status" => true, "message" => "Services Listing", "data" => $response]);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
     }
 
     public function service_details(Request $request)
