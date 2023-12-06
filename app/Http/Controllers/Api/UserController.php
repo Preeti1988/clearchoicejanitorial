@@ -602,7 +602,9 @@ class UserController extends Controller
                     $result[] = [
                         'week_number' => $currentWeek,
                         'total_hours_in_week' => $totalHoursInWeek,
+                        'avg_hours_in_week' => $totalHoursInWeek / count($daysInWeek),
                         'days' => $daysInWeek,
+                        'total_days_worked' => count($daysInWeek)
                     ];
                 }
 
@@ -629,7 +631,10 @@ class UserController extends Controller
             $result[] = [
                 'week_number' => $currentWeek,
                 'total_hours_in_week' => $totalHoursInWeek,
+                'avg_hours_in_week' => $totalHoursInWeek / count($daysInWeek),
                 'days' => $daysInWeek,
+                'total_days_worked' => count($daysInWeek)
+
             ];
         }
 
