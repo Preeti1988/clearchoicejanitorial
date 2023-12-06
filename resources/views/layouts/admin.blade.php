@@ -150,8 +150,8 @@
                                 <span class="menu-title">Teams</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="chat.html">
+                        <li class="nav-item @if ($currentURL == 'Chats' || $currentURL == 'ChatsID') active @endif">
+                            <a class="nav-link" href="{{ route('Chats') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none">
@@ -326,6 +326,10 @@
                                         Edit Client
                                     @elseif($currentURL == 'services.scheduler')
                                         Service Scheduler
+                                    @elseif($currentURL == 'Chats')
+                                        Chat
+                                    @elseif($currentURL == 'ChatsID')
+                                        Chat
                                     @else
                                     @endif
                                 </div>

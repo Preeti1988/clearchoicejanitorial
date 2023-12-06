@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\Country;
 use App\Models\Designation;
+use App\Models\Service;
 use App\Models\MaritalStatus;
 
 if (!function_exists('successMsg')) {
@@ -27,6 +28,15 @@ if (!function_exists('CountryCode')) {
         $country = Country::where('id',$id)->first();
         $phonecode = $country->phonecode;
         return $phonecode;
+    }
+}
+
+if (!function_exists('ServiceName')) {
+    function ServiceName($id)
+    {
+        $Service = Service::where('id',$id)->first();
+        $name = $Service->name;
+        return $name;
     }
 }
 

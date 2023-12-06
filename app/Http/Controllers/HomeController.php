@@ -15,6 +15,7 @@ use App\Models\Country;
 use App\Models\State;
 use App\Models\City;
 use Carbon\Carbon;
+use App\Models\ServiceMember;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -621,6 +622,57 @@ class HomeController extends Controller
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             $data = null;
             return view('admin.clients.create', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    
+    public function chats(Request $request)
+    {
+        try {
+            if(isset($request->search))
+            {
+                $search = $request->search;
+                $datas = User::where('fullname','like','%' .$search. '%')->where('status',1)->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('fullname','like','%' .$search. '%')->where('status',1)->orderBy('userid', 'DESC')->first();
+                $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
+                $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
+                return view('admin.chat', compact('datas','firstData','search','servise_first','servise_list'));
+            }else{
+                $search = '';
+                $datas = User::where('status',1)->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('status',1)->orderBy('userid', 'DESC')->first();
+                $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
+                $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
+                return view('admin.chat', compact('datas','firstData','search','servise_first','servise_list'));
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    
+    public function chatsID(Request $request,$id)
+    {
+        try {
+            if(isset($request->search))
+            {
+                $id = encryptDecrypt('decrypt', $id);
+                $search = $request->search;
+                $datas = User::where('status',1)->where('fullname','like','%' .$search. '%')->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('fullname','like','%' .$search. '%')->where('status',1)->where('userid',$id)
+                ->orderBy('userid', 'DESC')->first();
+                $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
+                $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
+                return view('admin.chat', compact('datas','firstData','search','servise_list','servise_first'));
+            }else{
+                $id = encryptDecrypt('decrypt', $id);
+                $search = '';
+                $datas = User::where('status',1)->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('status',1)->where('userid',$id)->orderBy('userid', 'DESC')->first();
+                $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
+                $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
+                return view('admin.chat', compact('datas','firstData','search','servise_list','servise_first'));
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

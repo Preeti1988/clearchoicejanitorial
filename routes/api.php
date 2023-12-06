@@ -31,5 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('update-status', [UserController::class, 'UpdateStatus']);
 
     Route::get('DateOfWeek', [UserController::class, 'DateOfWeek']);
+    Route::post("service-list", [UserController::class, 'sevice_list']);
+    Route::post("submit-chat-count", [UserController::class, 'submit_chat_count']);
+    Route::post("update-chat-count", [UserController::class, 'update_chat_count']);
     Route::post("service_timecard", [UserController::class, 'sevice_timecard']);
 });

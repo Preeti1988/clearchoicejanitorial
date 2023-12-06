@@ -49,6 +49,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::match(['get', 'post'], '/search-team-member-active', [App\Http\Controllers\HomeController::class, 'team_active'])->name('search.team-member-active');
     Route::match(['get', 'post'], '/search-team-member-inactive', [App\Http\Controllers\HomeController::class, 'team_inactive'])->name('search.team-member-inactive');
     Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeController::class, 'team'])->name('search.team-member');
+    Route::match(['get', 'post'],'/chats', [App\Http\Controllers\HomeController::class, 'chats'])->name('Chats');
+    Route::match(['get', 'post'],'/chat/{id}', [App\Http\Controllers\HomeController::class, 'chatsID'])->name('ChatsID');
 
 
     // services all functionality
