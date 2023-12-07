@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Models\User;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,4 +37,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("submit-chat-count", [UserController::class, 'submit_chat_count']);
     Route::post("update-chat-count", [UserController::class, 'update_chat_count']);
     Route::post("service_timecard", [UserController::class, 'sevice_timecard']);
+    Route::post("uploadchatimage", [UserController::class, 'uploadchatimage']);
+    Route::get("service-logs", [UserController::class, 'serviceLogs']);
 });

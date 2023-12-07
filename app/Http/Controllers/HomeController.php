@@ -12,6 +12,7 @@ use App\Models\InScope;
 use App\Models\OutScope;
 use App\Models\Service;
 use App\Models\Country;
+use App\Models\ChatCount;
 use App\Models\State;
 use App\Models\City;
 use Carbon\Carbon;
@@ -611,6 +612,63 @@ class HomeController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+    
+    public function filter_blog_subcategory(Request $request)
+    {
+        $query = $request['query']; /*Category Id*/
+        $subcategories = Blogsubcategory::where('cat_id',$query)->get();
+        $d_json = json_encode($subcategories);
+        return $d_json;
+    }
+    
+    public function submit_chat_count(Request $request)
+    {
+        try {
+            $serviceID = $request['serviceID']; /*service_id Id*/
+            $receiver_id = $request['receiver_id']; /*receiver_id Id*/
+            $user = Auth::user();
+            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->first();
+            if(!empty($chat)){
+                $count = $chat->read_status+1;
+                ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->update(['read_status' => $count]);
+            }else{
+                $ChatCount = new ChatCount;
+                $ChatCount->sender_id = 1;
+                $ChatCount->receiver_id = $receiver_id;
+                $ChatCount->service_id = $serviceID;
+                $ChatCount->read_status = 1;
+                $ChatCount->save();
+            }
+            return 1;
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    
+    public function update_chat_count(Request $request)
+    {
+        try {
+            $serviceID = $request['serviceID']; /*service Id*/
+            $receiver_id = $request['receiver_id']; /*receiver Id*/
+            return $serviceID;
+            $user = Auth::user();
+            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->first();
+            if(!empty($chat)){
+                $count = 0;
+                ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->update(['read_status' => $count]);
+            }else{
+                $ChatCount = new ChatCount;
+                $ChatCount->sender_id = 1;
+                $ChatCount->receiver_id = $receiver_id;
+                $ChatCount->service_id = $request->service_id;
+                $ChatCount->read_status = 0;
+                $ChatCount->save();
+            }
+            
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
 
     public function add_client()
     {
@@ -671,6 +729,11 @@ class HomeController extends Controller
                 $firstData = User::where('status',1)->where('userid',$id)->orderBy('userid', 'DESC')->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
+                $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $id)->first();
+                if(!empty($chat))
+                {
+                    ChatCount::where('sender_id', 1)->where('receiver_id', $id)->update(['read_status' => 0]);
+                }
                 return view('admin.chat', compact('datas','firstData','search','servise_list','servise_first'));
             }
         } catch (\Exception $e) {
@@ -693,6 +756,17 @@ class HomeController extends Controller
             return view('admin.editclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    public function help_support_save_img(Request $request){
+        try {
+           
+            $file = $request->file("image");
+            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('upload/chat'), $imageName);
+            return response()->json(['status' => true, 'url' => $imageName, 'message' => 'image upload successfully.']);
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 }

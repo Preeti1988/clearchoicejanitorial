@@ -11,4 +11,9 @@ class ServiceTimesheet extends Model
     protected $table = 'service_timesheet';
     protected $key = 'id';
     public $timestamps = false;
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 }
