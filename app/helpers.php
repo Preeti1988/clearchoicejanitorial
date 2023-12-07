@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Country;
 use App\Models\Designation;
 use App\Models\Service;
+use App\Models\ChatCount;
 use App\Models\MaritalStatus;
 
 if (!function_exists('successMsg')) {
@@ -28,6 +29,23 @@ if (!function_exists('CountryCode')) {
         $country = Country::where('id',$id)->first();
         $phonecode = $country->phonecode;
         return $phonecode;
+    }
+}
+            
+if (!function_exists('CountMSG')) {
+    function CountMSG($id)
+    {
+        $chats = ChatCount::where('service_id',$id)->sum('read_status');
+        
+        return $chats;
+    }
+}
+if (!function_exists('TotalCountMSG')) {
+    function TotalCountMSG()
+    {
+        $chats = ChatCount::sum('read_status');
+        
+        return $chats;
     }
 }
 

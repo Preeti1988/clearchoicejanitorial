@@ -21,16 +21,15 @@
                                 stroke-linejoin="round"></path>
                         </svg>
                     </div>
-                    <h2>New Messages <span>08 New</span></h2>
+                    <h2>New Messages <span>{{ TotalCountMSG() }} New</span></h2>
                 </div>
                 <div class="chat-userlist-sidebar-body">
                     <form action="{{ route('Chats') }}" method="POST">
                         @csrf
                         <div class="chat-userlist-filter">
-
-                            <input type="text" name="search" class="form-control" placeholder="Search by Employee Name">
+                            <input type="text" name="search" class="form-control" value="{{ $search ?? '' }}"
+                                placeholder="Search by Employee Name">
                             <button class="search-btn"type="submit"><i class="las la-search"></i></button>
-
                         </div>
                     </form>
                     <div class="chat-userlist-info">
@@ -50,17 +49,23 @@
                                         </div>
                                         <div class="chat-userlist-item-content">
                                             <h4>{{ $val->fullname }} </h4>
-                                            {{-- <p>hey! there I'm available</p> --}}
+                                            <p>{{ $val->email }}</p>
                                         </div>
                                         <div class="chat-userlist-item-content">
-                                            <div class="chat-userlist-time">02:50 PM</div>
-                                            <div class="unread-message"><span class="badge">02</span></div>
+                                            {{-- <div class="chat-userlist-time">02:50 PM</div> --}}
+
+                                            @if (CountMSG($val->userid) > 0)
+                                                <div class="unread-message"><span
+                                                        class="badge">{{ CountMSG($val->userid) }}</span>
+                                                </div>
+                                            @endif
+
+
                                         </div>
                                     </div>
                                 </a>
                             @endforeach
                         @endif
-
                     </div>
                 </div>
             </div>
@@ -77,9 +82,12 @@
 
                     <div class="chat-panel-user-form">
                         <div class="chat-panel-service-dropdown">
-                            <select class="form-control">
+                            <select class="form-control" id="select_id">
                                 <option>Select Service</option>
-                                <option>Select: Service 1: Testla Motors HQ</option>
+                                @foreach ($servise_list as $cty)
+                                    <option value="{{ $cty->service_id }}">{{ ServiceName($cty->service_id) ?? '' }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -90,39 +98,12 @@
                 </div>
                 @if ($firstData)
                     <input type="hidden" id="ajax-chat-url" data-id="{{ $firstData->userid }}">
-                    <input type="hidden" id="ajax-chat-url-first" data-id="{{ $firstData->first_name }}">
-                    <input type="hidden" id="ajax-chat-url-last" data-id="{{ $firstData->last_name }}">
+                    <input type="hidden" id="ajax-chat-url-first" data-id="{{ $firstData->fullname }}">
+                    <input type="hidden" id="ajax-chat-url-service-id" value="">
                 @endif
                 <div class="chat-panel-chat-body" tabindex="1" style="overflow: auto; outline: none;">
                     <div class="chat-panel-chat-content">
                         <div class="messages-list">
-                            <div class="message-item  outgoing-message">
-                                <div class="message-item-chat-card">
-                                    <div class="message-item-user">
-                                        <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
-                                    </div>
-                                    <div class="message-item-chat-content">
-                                        <div class="message-content">
-                                            Did you make sure to clean the CEO's Cabin? 😃
-                                        </div>
-                                        <div class="time">2 Sep 2023, Sat: 12:03pm</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="message-item ">
-                                <div class="message-item-chat-card">
-                                    <div class="message-item-user">
-                                        <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
-                                    </div>
-                                    <div class="message-item-chat-content">
-                                        <div class="message-content">
-                                            Yes Boss, I have taken care of that. I have also informed to other employees
-                                        </div>
-                                        <div class="time">2 Sep 2023, Sat: 12:05pm</div>
-                                    </div>
-                                </div>
-                            </div>
 
                         </div>
                     </div>
@@ -132,14 +113,18 @@
                         <div class="row">
                             <div class="col-md-10">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Write a message.">
+                                    <input type="text" class="form-control" placeholder="Write a message." name="message"
+                                        id="message-input">
                                     <span class="form-attachemnt-icon">
-                                        <img src="{{ asset('public/assets/admin-images/attachemnt.svg') }}">
+                                        <a class="fs-24 ms-3 text-muted" id="image-attach" href="#!"><img
+                                                src="{{ asset('public/assets/admin-images/attachemnt.svg') }}"></a>
+                                        <input type="file" hidden accept="image/png, image/jpg, image/jpeg"
+                                            id="upload-file" name="image-attachment">
                                     </span>
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <button class="btn-send" title="" type="button">
+                                <button class="btn-send btnSend" title="" type="button">
                                     <img src="{{ asset('public/assets/admin-images/direction.svg') }}"> Send
                                 </button>
                             </div>
@@ -149,16 +134,18 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
-        // Get the active item element
-        var activeItem = document.querySelector('.current-chat-active');
-        if (activeItem) {
-            activeItem.scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-    </script>
-    <script>
+        $(document).on('click', "#image-attach", function() {
+
+            $("#upload-file").trigger('click');
+        })
+
+        $(document).on('change', "input[name='image-attachment']", function() {
+            $('.la-paperclip').css('color', '#0d6efd');
+        });
+
         $(document).ready(function() {
             // Get the container element
             var container = $('.items-container');
@@ -196,7 +183,8 @@
         };
 
         const receiver_id = $("#ajax-chat-url").data('id');
-        const group_id = "1-" + receiver_id;
+        var serviceID = $("#ajax-chat-url-service-id").val();
+        const group_id = receiver_id + "-" + serviceID;
         const app = initializeApp(firebaseConfig);
         let defaultFirestore = getFirestore(app);
         const auth = getAuth(app);
@@ -221,6 +209,7 @@
             const chatCol = collection(defaultFirestore, 'chatrooms/' + group_id_new2 + '/messages');
             let data = {
                 text: message,
+                status: 0,
                 sendBy: '1',
                 sendto: receiver_id,
                 adminName: 'Admin',
@@ -254,99 +243,131 @@
                 'asc'));
             const chatSnapshot = await getDocs(chatCols);
             const chatList = chatSnapshot.docs.map(doc => doc.data());
+
             showAllMessages(chatList);
+            //getClientChat(group_id);
             //return chatList;
         }
-        getClientChat(group_id);
     </script>
     <script>
         $(document).ready(function() {
-            const receiver_id = $("#ajax-chat-url").data('id');
-
+            $('#select_id').on('change', function() {
+                var value = this.value; /*Service Id*/
+                $('#ajax-chat-url-service-id').val(value);
+                var receiver_id = $("#ajax-chat-url").data('id');
+                var group_id = receiver_id + "-" + value;
+                getClientChat(group_id);
+            });
             $(document).on('click', '.btnSend', function() {
-                const user_firstName = $("#ajax-chat-url-first").data('id');
-                const user_lastName = $("#ajax-chat-url-last").data('id');
-                const userName = user_firstName + user_lastName;
+                const userName = $("#ajax-chat-url-first").data('id');
                 const receiver_id = $("#ajax-chat-url").data('id');
-                const group_id = "1-" + receiver_id;
-                let message = $('#message-input');
-                let time = moment().format('MMM DD, YYYY HH:mm A');
-                if (message.val() != '') {
-                    sendNewMessage(group_id, message.val(), receiver_id, userName);
-                    showMessage(message.val(), time, userName);
-                    message.val('').focus();
-                }
+                var serviceID = $("#ajax-chat-url-service-id").val();
+                if (serviceID != '') {
+                    const group_id = receiver_id + "-" + serviceID;
+                    let message = $('#message-input').val();
+                    $(this).val('');
+                    let time = moment().format('MMM DD, YYYY HH:mm A');
+                    let image = '';
+                    if ($('#upload-file')[0].files[0]) image = URL.createObjectURL($('#upload-file')[0]
+                        .files[0]);
+                    else image = '';
+                    if (message != '' || image != '') {
+                        sendNewMessage(group_id, message, receiver_id, userName);
+                        $('#message-input').val('');
+                        showMessage(message, time, userName, image);
+                    }
+                    $.ajax({
+                        url: '{{ url('submit-chat-count') }}',
+                        method: 'GET',
+                        data: {
+                            serviceID: serviceID,
+                            receiver_id: receiver_id
+                        },
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(data) {
 
+                        }
+                    });
+                } else {
+                    alert('Please select service');
+                    $('#message-input').val('');
+                }
             })
         });
 
         function showAllMessages(list, ajax_call = false) {
-            if (list.length == 0) return false;
-            let html = `${list.map(row => admin(row,ajax_call)).join('')}`;
-            $('.messages-card').html(html);
-            if (ajax_call == false) {
-                $(".body-chat-message-user").stop().animate({
-                    scrollTop: $(".body-chat-message-user")[0].scrollHeight
-                }, 1000);
+            if (list.length == 0) {
+                $('.messages-list').html('');
+            } else {
+                let html = `${list.map(row => admin(row,ajax_call)).join('')}`;
+                $('.messages-list').html(html);
             }
+
+            // if (ajax_call == false) {
+            //     $(".body-chat-message-user").stop().animate({
+            //         scrollTop: $(".body-chat-message-user")[0].scrollHeight
+            //     }, 1000);
+            // }
         }
 
         function showMessage(message, time, userName) {
-            let msg = `<div class="message-user-right">
-                        <div class="message-user-right-avtar">
-                            <div class="message-user-right-img">
-                                <img src="https://nileprojects.in/roadman/dev/public/assets/admin-images/no-image.png"
-                                alt="">
+            let msg = `<div class="message-item  outgoing-message">
+                        <div class="message-item-chat-card">
+                            <div class="message-item-user">
+                                <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
                             </div>
-                            <div class="message-user-title">
-                                <h4>${userName} <span>${time}</span></h4>
+                            <div class="message-item-chat-content">
+                                <div class="message-content">
+                                    ${message}
+                                </div>
+                                <div class="time">${time}</div>
                             </div>
-                        </div>
-                        <div class="message-user-right-text">
-                            <p>${message}</p> 
                         </div>
                     </div>`;
-            $('.messages-card').append(msg);
+            $('.messages-list').append(msg);
 
-            $(".body-chat-message-user").stop().animate({
-                scrollTop: $(".body-chat-message-user")[0].scrollHeight
+            $(".chat-panel-chat-body").stop().animate({
+                scrollTop: $(".chat-panel-chat-body")[0].scrollHeight
             }, 1000);
         }
 
         function admin(row) {
             let html = '';
             var formattedDate = moment.unix(row.createdAt.seconds).format('MMM DD, YYYY HH:mm A');
-            if (row.sendto == 1) {
+            if (row.sendBy == 1) {
 
                 html = `
-                    <div class="message-user-left">
-                        <div class="message-user-left-avtar">
-                            <div class="message-user-left-img">
-                                <img src="https://nileprojects.in/roadman/dev/public/assets/admin-images/no-image.png" alt="user image" class="img-fluid">
+                <div class="message-item  outgoing-message">
+                        <div class="message-item-chat-card">
+                            <div class="message-item-user">
+                                <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
                             </div>
-                            <div class="message-user-title">
-                                <h4>${row.userName} <span>${formattedDate}</span></h4>
+                            <div class="message-item-chat-content">
+                                <div class="message-content">
+                                    ${row.text}
+                                </div>
+                                <div class="time">${formattedDate}</div>
                             </div>
-                        </div>
-                        <div class="message-user-left-text">
-                            <p>${row.text}</p> 
                         </div>
                     </div>
+                
                 `;
             } else {
                 html = `
-                    <div class="message-user-right">
-                        <div class="message-user-right-avtar">
-                            <div class="message-user-right-img">
-                                <img src="https://nileprojects.in/roadman/dev/public/assets/admin-images/no-image.png"
-                                alt="">
+                <div class="message-item ">
+                        <div class="message-item-chat-card">
+                            <div class="message-item-user">
+                                <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
                             </div>
-                            <div class="message-user-title">
-                                <h4>${row.adminName} <span>${formattedDate}</span></h4>
+                            <div class="message-item-chat-content">
+                                <div class="message-content">
+                                    ${row.text}
+                                </div>
+                                <div class="time">${formattedDate}</div>
                             </div>
-                        </div>
-                        <div class="message-user-right-text">
-                            <p>${row.text}</p> 
                         </div>
                     </div>
                 `;
@@ -354,9 +375,9 @@
             return html;
         }
     </script>
-    <script>
+    {{-- <script>
         setInterval(function() {
             getClientChat(group_id, true);
         }, 5000);
-    </script>
+    </script> --}}
 @endsection

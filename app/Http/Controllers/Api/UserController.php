@@ -85,27 +85,12 @@ class UserController extends Controller
             return errorMsg("Exception -> " . $e->getMessage());
         }
     }
-
-    public function designation()
-    {
-
-        $designation = Designation::all();
-        foreach ($designation as $item) {
-            $item->value = $item->id;
-            $item->label = $item->name;
-            $item->makeHidden("id");
-            $item->makeHidden("name");
-            $item->makeHidden("created_date");
-            $item->makeHidden("status");
-        }
-        return response()->json(["status" => true, "message" => "Designation.", "data" => $designation]);
-    }
-
+    
     /** 
      * Register api 
      * 
      * @return \Illuminate\Http\Response 
-     */
+    */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -170,6 +155,21 @@ class UserController extends Controller
         //return response()->json(['success' => $success], $this->successStatus);
     }
 
+    public function designation()
+    {
+
+        $designation = Designation::all();
+        foreach ($designation as $item) {
+            $item->value = $item->id;
+            $item->label = $item->name;
+            $item->makeHidden("id");
+            $item->makeHidden("name");
+            $item->makeHidden("created_date");
+            $item->makeHidden("status");
+        }
+        return response()->json(["status" => true, "message" => "Designation.", "data" => $designation]);
+    }
+
     /** 
      * details api 
      * 
@@ -206,6 +206,20 @@ class UserController extends Controller
             $response[] = $date_array;
         }
         return response()->json(["status" => true, "message" => "Date Listing.", "data" => $response]);
+    }
+    
+    /* Upload file for firebase image */
+    public function uploadchatimage(Request $request)
+    {
+        try {
+            $file = $request->file("image");
+            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('upload/chat'), $imageName);
+            $chat = asset('public/upload/chat') .'/'. $imageName;
+            return response()->json(['status' => true, 'url' => $chat, 'message' => 'image upload successfully.']);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     public function home(Request $request)
@@ -324,16 +338,16 @@ class UserController extends Controller
                 return errorMsg($validator->errors()->first());
             }
             $user = Auth::user();
-            $chat = ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->first();
+            $chat = ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->first();
             if(!empty($chat)){
                 $count = $chat->read_status+1;
-                ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
+                ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->update(['read_status' => $count]);
             }else{
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
                 $ChatCount->receiver_id = 1;
                 $ChatCount->service_id = $request->service_id;
-                $ChatCount->read_status = 0;
+                $ChatCount->read_status = 1;
                 $ChatCount->save();
             }
             return response()->json(["status" => true, "message" => "Message send"]);
@@ -352,10 +366,10 @@ class UserController extends Controller
                 return errorMsg($validator->errors()->first());
             }
             $user = Auth::user();
-            $chat = ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->first();
+            $chat = ChatCount::where('sender_id', $$user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->first();
             if(!empty($chat)){
                 $count = 0;
-                ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
+                ChatCount::where('sender_id', $$user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->update(['read_status' => $count]);
             }else{
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
@@ -636,6 +650,7 @@ class UserController extends Controller
         }
         return response()->json(["status" => true, "message" => "State list.", "data" => $response]);
     }
+    
     public function sevice_timecard(Request $request)
     {
         $validator = Validator::make($request->all(), [

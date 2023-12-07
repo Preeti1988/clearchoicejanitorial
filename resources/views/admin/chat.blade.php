@@ -21,7 +21,7 @@
                                 stroke-linejoin="round"></path>
                         </svg>
                     </div>
-                    <h2>New Messages <span>08 New</span></h2>
+                    <h2>New Messages <span>{{ TotalCountMSG() }} New</span></h2>
                 </div>
                 <div class="chat-userlist-sidebar-body">
                     <form action="{{ route('Chats') }}" method="POST">
@@ -52,8 +52,15 @@
                                             <p>{{ $val->email }}</p>
                                         </div>
                                         <div class="chat-userlist-item-content">
-                                            <div class="chat-userlist-time">02:50 PM</div>
-                                            <div class="unread-message"><span class="badge">02</span></div>
+                                            {{-- <div class="chat-userlist-time">02:50 PM</div> --}}
+
+                                            @if (CountMSG($val->userid) > 0)
+                                                <div class="unread-message"><span
+                                                        class="badge">{{ CountMSG($val->userid) }}</span>
+                                                </div>
+                                            @endif
+
+
                                         </div>
                                     </div>
                                 </a>
@@ -109,7 +116,12 @@
                                     <input type="text" class="form-control" placeholder="Write a message." name="message"
                                         id="message-input">
                                     <span class="form-attachemnt-icon">
-                                        <img src="{{ asset('public/assets/admin-images/attachemnt.svg') }}">
+                                        <a class="fs-24 ms-3 text-muted" id="image-attach" href="#!">
+                                            <img class="la-paperclip"
+                                                src="{{ asset('public/assets/admin-images/attachemnt.svg') }}">
+                                        </a>
+                                        <input type="file" hidden accept="image/png, image/jpg, image/jpeg"
+                                            id="upload-file" name="image-attachment">
                                     </span>
                                 </div>
                             </div>
@@ -124,8 +136,18 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
+        $(document).on('click', "#image-attach", function() {
+
+            $("#upload-file").trigger('click');
+        })
+
+        $(document).on('change', "input[name='image-attachment']", function() {
+            $('.la-paperclip').css('color', '#0d6efd');
+        });
+
         $(document).ready(function() {
             // Get the container element
             var container = $('.items-container');
@@ -185,9 +207,15 @@
         }
         let random = result;
 
-        window.sendNewMessage = async function(group_id_new2, message, receiver_id, userName) {
+        window.sendNewMessage = async function(group_id_new2, message, receiver_id, userName, image = '') {
+            if (image != '') {
+                image = 'https://nileprojects.in/clearchoice-janitorial/public/upload/chat/' + image;
+            } else {
+                image = '';
+            }
             const chatCol = collection(defaultFirestore, 'chatrooms/' + group_id_new2 + '/messages');
             let data = {
+                image: image,
                 text: message,
                 status: 0,
                 sendBy: '1',
@@ -218,9 +246,10 @@
 
 
         window.getClientChat = async function(group_id, ajax_call = false) {
-            const chatCols = query(collection(defaultFirestore, 'chatrooms/' + group_id + '/messages'), orderBy(
-                'createdAt',
-                'asc'));
+            const chatCols = query(collection(defaultFirestore, 'chatrooms/' + group_id + '/messages'),
+                orderBy(
+                    'createdAt',
+                    'asc'));
             const chatSnapshot = await getDocs(chatCols);
             const chatList = chatSnapshot.docs.map(doc => doc.data());
 
@@ -232,12 +261,11 @@
     <script>
         $(document).ready(function() {
             $('#select_id').on('change', function() {
-                var value = this.value;
+                var value = this.value; /*Service Id*/
                 $('#ajax-chat-url-service-id').val(value);
                 var receiver_id = $("#ajax-chat-url").data('id');
                 var group_id = receiver_id + "-" + value;
                 getClientChat(group_id);
-
             });
             $(document).on('click', '.btnSend', function() {
                 const userName = $("#ajax-chat-url-first").data('id');
@@ -248,11 +276,65 @@
                     let message = $('#message-input').val();
                     $(this).val('');
                     let time = moment().format('MMM DD, YYYY HH:mm A');
-                    if (message != '') {
-                        sendNewMessage(group_id, message, receiver_id, userName);
-                        $('#message-input').val('');
-                        showMessage(message, time, userName);
+                    let image = '';
+                    if ($('#upload-file')[0].files[0]) image = URL.createObjectURL($('#upload-file')[0]
+                        .files[0]);
+                    else image = '';
+                    if (message != '' || image != '') {
+                        // image = 'https://nileprojects.in/clearchoice-janitorial/public/upload/chat/' +
+                        //     image;
+
+                        let formData = new FormData();
+                        formData.append('image', $('#upload-file')[0].files[0]);
+                        formData.append('_token', "{{ csrf_token() }}");
+                        if (image !== undefined && image !== '') {
+                            alert(1);
+                            $.ajax({
+                                type: 'post',
+                                url: "{{ url('/') }}" + '/support-save-img',
+                                data: formData,
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                success: function(res) {
+                                    console.log(res);
+                                    if (res.status == false) {
+                                        alert(res.msg);
+                                        return false;
+                                    }
+                                    if (res.status) {
+                                        sendNewMessage(group_id, message, receiver_id,
+                                            userName, res.url);
+                                        $('#message-input').val('');
+
+                                        $('#upload-file').val('');
+
+                                        $('.la-paperclip').css('color', '#6c757d');
+                                    }
+                                }
+                            })
+                        } else {
+                            alert(5);
+                            sendNewMessage(group_id, message, receiver_id, userName);
+                            $('#message-input').val('');
+                            showMessage(message, time, userName, image);
+                        }
                     }
+                    $.ajax({
+                        url: '{{ url('submit-chat-count') }}',
+                        method: 'GET',
+                        data: {
+                            serviceID: serviceID,
+                            receiver_id: receiver_id
+                        },
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(data) {
+
+                        }
+                    });
                 } else {
                     alert('Please select service');
                     $('#message-input').val('');
@@ -309,7 +391,8 @@
                             </div>
                             <div class="message-item-chat-content">
                                 <div class="message-content">
-                                    ${row.text}
+                                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
+                                    ${(row.text !== '' && row.text !== undefined) ? `<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">${row.text}</p>` : '' }
                                 </div>
                                 <div class="time">${formattedDate}</div>
                             </div>
@@ -326,7 +409,8 @@
                             </div>
                             <div class="message-item-chat-content">
                                 <div class="message-content">
-                                    ${row.text}
+                                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
+                                    ${(row.text !== '' && row.text !== undefined) ? `<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">${row.text}</p>` : '' }
                                 </div>
                                 <div class="time">${formattedDate}</div>
                             </div>
