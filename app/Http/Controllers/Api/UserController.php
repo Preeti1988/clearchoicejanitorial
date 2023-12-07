@@ -313,7 +313,7 @@ class UserController extends Controller
         }
         return response()->json(["status" => true, "message" => "Services Listing", "data" => $response]);
     }
-    
+
     public function submit_chat_count(Request $request)
     {
         try {
@@ -325,10 +325,10 @@ class UserController extends Controller
             }
             $user = Auth::user();
             $chat = ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->first();
-            if(!empty($chat)){
-                $count = $chat->read_status+1;
+            if (!empty($chat)) {
+                $count = $chat->read_status + 1;
                 ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
-            }else{
+            } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
                 $ChatCount->receiver_id = 1;
@@ -341,7 +341,7 @@ class UserController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
+
     public function update_chat_count(Request $request)
     {
         try {
@@ -353,10 +353,10 @@ class UserController extends Controller
             }
             $user = Auth::user();
             $chat = ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->first();
-            if(!empty($chat)){
+            if (!empty($chat)) {
                 $count = 0;
                 ChatCount::where('sender_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
-            }else{
+            } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
                 $ChatCount->receiver_id = 1;
@@ -369,7 +369,7 @@ class UserController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
+
     public function sevice_list(Request $request)
     {
         try {
@@ -378,7 +378,7 @@ class UserController extends Controller
 
                 $servise_list = ServiceMember::where('member_id', $user->userid)->whereDate('created_at', '=', Carbon::parse($request->date))->get();
             } else {
-    
+
                 $servise_list = ServiceMember::where('member_id', $user->userid)->orderBy('id', 'DESC')->get();
             }
 
@@ -390,7 +390,7 @@ class UserController extends Controller
                 $temp['admin_name'] = 'Admin';
                 $temp['admin_id'] = 1;
                 $temp['admin_image'] =  asset('public/assets/admin-images/hbgimg.png');
-                $count = ChatCount::where('sender_id',1)->where('service_id',$service->id)->first();
+                $count = ChatCount::where('sender_id', 1)->where('service_id', $service->id)->first();
                 $temp['msg_count'] =  $count->read_status ?? '0';
                 $response[] = $temp;
             }
@@ -670,6 +670,7 @@ class UserController extends Controller
             DB::raw('WEEK(date) as week_number'),
             DB::raw('DATE_FORMAT(date, "%Y-%m-%d") as formatted_date'),
             DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time)) / 3600) as total_hours_worked_on_day'),
+            DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time))) as total_hours_worked_on_day_format'),
         ])
             ->where('assign_member_id', $member_id)
             ->whereBetween('date', [$startPeriod, $endPeriod])
@@ -680,6 +681,8 @@ class UserController extends Controller
         $result = [];
         $currentWeek = null;
         $totalHoursInWeek = 0;
+        $totalHoursInWeekFormat = 0;
+
         $daysInWeek = [];
         foreach ($timesheet as $record) {
             if ($currentWeek !== $record->week_number) {
@@ -689,6 +692,7 @@ class UserController extends Controller
                     $result[] = [
                         'week_number' => $currentWeek,
                         'total_hours_in_week' => $totalHoursInWeek,
+                        'total_hours_in_week_format' => $this->formatTime($totalHoursInWeekFormat),
                         'avg_hours_in_week' => $totalHoursInWeek / count($daysInWeek),
                         'days' => $daysInWeek,
                         'total_days_worked' => count($daysInWeek)
@@ -707,10 +711,13 @@ class UserController extends Controller
                 'start_time' => $record->start_time,
                 'end_time' => $record->end_time,
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
+                'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
+
             ];
 
             // Update the total hours for the week
             $totalHoursInWeek += $record->total_hours_worked_on_day;
+            $totalHoursInWeekFormat += $record->total_hours_worked_on_day_format;
         }
 
         // Add the last week
@@ -718,6 +725,7 @@ class UserController extends Controller
             $result[] = [
                 'week_number' => $currentWeek,
                 'total_hours_in_week' => $totalHoursInWeek,
+                'total_hours_in_week_format' => $this->formatTime($totalHoursInWeekFormat),
                 'avg_hours_in_week' => $totalHoursInWeek / count($daysInWeek),
                 'days' => $daysInWeek,
                 'total_days_worked' => count($daysInWeek)
@@ -736,5 +744,27 @@ class UserController extends Controller
         ];
 
         return response()->json(["status" => true, "message" => "State list.", "data" => $data]);
+    }
+    function formatTime($totalSeconds)
+    {
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        $formattedTime = '';
+
+        if ($hours > 0) {
+            $formattedTime .= $hours . ' hours ';
+        }
+
+        if ($minutes > 0) {
+            $formattedTime .= $minutes . ' minutes ';
+        }
+
+        if ($minutes == 0 && $seconds > 0) {
+            $formattedTime .= $seconds . ' seconds';
+        }
+
+        return trim($formattedTime);
     }
 }
