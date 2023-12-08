@@ -238,6 +238,16 @@ class UserController extends Controller
             $service = Service::where('id', $value->service_id)->first();
             $temp['service_name'] = isset($service->name) ? $service->name : '';
             $temp['service_id'] = isset($service->id) ? $service->id : '';
+            $temp['service_id'] = isset($service->id) ? $service->id : '';
+
+            $temp['serviceScheduleEndDate'] = isset($service->scheduled_end_date) ? $service->scheduled_end_date : '';
+
+            $currentDate = Carbon::now()->toDateString();
+            $combinedDateTime = Carbon::parse("$currentDate $service->service_start_time");
+            $temp['start']  = $combinedDateTime->format('Y-m-d H:i:s');
+            $currentDate = Carbon::now()->toDateString();
+            $combinedDateTime = Carbon::parse("$currentDate $service->service_end_time");
+            $temp['end']  = $combinedDateTime->format('Y-m-d H:i:s');
 
             $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->whereDate('date', date('Y-m-d'))->first();
             if (!empty($timesheet)) {
@@ -785,10 +795,10 @@ class UserController extends Controller
     }
     public function serviceLogs()
     {
-        $timesheet = ServiceTimesheet::where("user_id", auth()->user()->id)->get();
+        $timesheet = ServiceTimesheet::where("assign_member_id", auth()->user()->userid)->get();
         foreach ($timesheet as $item) {
-            $item->service();
+            $item->service = Service::find($item->service_id);
         }
-        return response()->json(["status" => true, "message" => "State list.", "data" => $timesheet]);
+        return response()->json(["status" => true, "message" => "service logs.", "data" => $timesheet]);
     }
 }
