@@ -613,14 +613,6 @@ class HomeController extends Controller
         }
     }
     
-    public function filter_blog_subcategory(Request $request)
-    {
-        $query = $request['query']; /*Category Id*/
-        $subcategories = Blogsubcategory::where('cat_id',$query)->get();
-        $d_json = json_encode($subcategories);
-        return $d_json;
-    }
-    
     public function submit_chat_count(Request $request)
     {
         try {
@@ -630,6 +622,7 @@ class HomeController extends Controller
             $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->first();
             if(!empty($chat)){
                 $count = $chat->read_status+1;
+                //dd($count);
                 ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->update(['read_status' => $count]);
             }else{
                 $ChatCount = new ChatCount;
@@ -650,21 +643,13 @@ class HomeController extends Controller
         try {
             $serviceID = $request['serviceID']; /*service Id*/
             $receiver_id = $request['receiver_id']; /*receiver Id*/
-            return $serviceID;
-            $user = Auth::user();
-            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->first();
+            
+            $chat = ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->where('service_id', $serviceID)->first();
             if(!empty($chat)){
                 $count = 0;
-                ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->update(['read_status' => $count]);
-            }else{
-                $ChatCount = new ChatCount;
-                $ChatCount->sender_id = 1;
-                $ChatCount->receiver_id = $receiver_id;
-                $ChatCount->service_id = $request->service_id;
-                $ChatCount->read_status = 0;
-                $ChatCount->save();
+                ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->where('service_id', $serviceID)->update(['read_status' => $count]);
             }
-            
+            return 'Updated';
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -730,10 +715,10 @@ class HomeController extends Controller
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $id)->first();
-                if(!empty($chat))
-                {
-                    ChatCount::where('sender_id', 1)->where('receiver_id', $id)->update(['read_status' => 0]);
-                }
+                // if(!empty($chat))
+                // {
+                //     ChatCount::where('sender_id', 1)->where('receiver_id', $id)->update(['read_status' => 0]);
+                // }
                 return view('admin.chat', compact('datas','firstData','search','servise_list','servise_first'));
             }
         } catch (\Exception $e) {

@@ -184,9 +184,9 @@
             measurementId: "G-S14B9V3K3B"
         };
 
-        const receiver_id = $("#ajax-chat-url").data('id');
+        var receiver_id = $("#ajax-chat-url").data('id');
         var serviceID = $("#ajax-chat-url-service-id").val();
-        const group_id = receiver_id + "-" + serviceID;
+        var group_id = receiver_id + "-" + serviceID;
         const app = initializeApp(firebaseConfig);
         let defaultFirestore = getFirestore(app);
         const auth = getAuth(app);
@@ -206,6 +206,7 @@
             result += characters[Math.floor(Math.random() * characters.length)];
         }
         let random = result;
+
 
         window.sendNewMessage = async function(group_id_new2, message, receiver_id, userName, image = '') {
             if (image != '') {
@@ -254,9 +255,10 @@
             const chatList = chatSnapshot.docs.map(doc => doc.data());
 
             showAllMessages(chatList);
-            //getClientChat(group_id);
+
             //return chatList;
         }
+        //getClientChat(group_id);
     </script>
     <script>
         $(document).ready(function() {
@@ -266,6 +268,7 @@
                 var receiver_id = $("#ajax-chat-url").data('id');
                 var group_id = receiver_id + "-" + value;
                 getClientChat(group_id);
+                UpdateChatCount(value, receiver_id);
             });
             $(document).on('click', '.btnSend', function() {
                 const userName = $("#ajax-chat-url-first").data('id');
@@ -288,7 +291,7 @@
                         formData.append('image', $('#upload-file')[0].files[0]);
                         formData.append('_token', "{{ csrf_token() }}");
                         if (image !== undefined && image !== '') {
-                            alert(1);
+
                             $.ajax({
                                 type: 'post',
                                 url: "{{ url('/') }}" + '/support-save-img',
@@ -299,7 +302,7 @@
                                 success: function(res) {
                                     console.log(res);
                                     if (res.status == false) {
-                                        alert(res.msg);
+                                        //alert(res.msg);
                                         return false;
                                     }
                                     if (res.status) {
@@ -314,7 +317,7 @@
                                 }
                             })
                         } else {
-                            alert(5);
+
                             sendNewMessage(group_id, message, receiver_id, userName);
                             $('#message-input').val('');
                             showMessage(message, time, userName, image);
@@ -341,7 +344,26 @@
                 }
             })
         });
+        //Update count accoding to user-service based (manage accoding database)
+        function UpdateChatCount(serviceID, receiver_id) {
+            $.ajax({
+                url: '{{ url('update-chat-count') }}',
+                method: 'POST',
+                data: {
+                    serviceID: serviceID,
+                    receiver_id: receiver_id
+                },
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    alert(data);
+                }
+            });
+        }
 
+        //Showing all msg accoding user id and service id
         function showAllMessages(list, ajax_call = false) {
             if (list.length == 0) {
                 $('.messages-list').html('');
@@ -357,6 +379,7 @@
             // }
         }
 
+        //For showing one firebase msg after submit the input field
         function showMessage(message, time, userName) {
             let msg = `<div class="message-item  outgoing-message">
                         <div class="message-item-chat-card">
@@ -377,7 +400,7 @@
                 scrollTop: $(".chat-panel-chat-body")[0].scrollHeight
             }, 1000);
         }
-
+        //For showing all firebase msg
         function admin(row) {
             let html = '';
             var formattedDate = moment.unix(row.createdAt.seconds).format('MMM DD, YYYY HH:mm A');
@@ -421,9 +444,13 @@
             return html;
         }
     </script>
-    {{-- <script>
+    {{-- This function auto call after 5 second and show looping data accoding to service-ID   --}}
+    <script>
         setInterval(function() {
+            var receiver_id = $("#ajax-chat-url").data('id');
+            var serviceID = $("#ajax-chat-url-service-id").val();
+            var group_id = receiver_id + "-" + serviceID;
             getClientChat(group_id, true);
         }, 5000);
-    </script> --}}
+    </script>
 @endsection

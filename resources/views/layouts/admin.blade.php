@@ -167,7 +167,7 @@
                                             stroke-linejoin="round" />
                                     </svg>
                                 </span>
-                                <span class="menu-title">Chat Support</span>
+                                <span class="menu-title">Chat Support ({{ TotalCountMSG() }})</span>
                             </a>
                         </li>
 
