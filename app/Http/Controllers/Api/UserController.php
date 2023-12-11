@@ -369,17 +369,21 @@ class UserController extends Controller
     public function update_chat_count(Request $request)
     {
         try {
+            
             $validator = Validator::make($request->all(), [
                 'service_id' => 'required',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             }
+           
             $user = Auth::user();
-            $chat = ChatCount::where('sender_id', $$user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->first();
+            
+            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)->where('service_id', $request->service_id)->first();
+            
             if (!empty($chat)) {
                 $count = 0;
-                ChatCount::where('sender_id', $$user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->update(['read_status' => $count]);
+                ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
             } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;

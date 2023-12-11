@@ -52,7 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::match(['get', 'post'],'/chats', [App\Http\Controllers\HomeController::class, 'chats'])->name('Chats');
     Route::match(['get', 'post'],'/chat/{id}', [App\Http\Controllers\HomeController::class, 'chatsID'])->name('ChatsID');
     Route::get('/submit-chat-count', [App\Http\Controllers\HomeController::class, 'submit_chat_count'])->name('SubmitChatCount');
-    Route::get('/update-chat-count', [App\Http\Controllers\HomeController::class, 'update_chat_count'])->name('UpdateChatCount');
+    Route::post('/update-chat-count', [App\Http\Controllers\HomeController::class, 'update_chat_count'])->name('UpdateChatCount');
     Route::post('/support-save-img', [App\Http\Controllers\HomeController::class, 'help_support_save_img'])->name('SA.HelpSupport.Save.Img');
 
 

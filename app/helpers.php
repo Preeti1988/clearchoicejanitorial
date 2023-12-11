@@ -35,7 +35,7 @@ if (!function_exists('CountryCode')) {
 if (!function_exists('CountMSG')) {
     function CountMSG($id)
     {
-        $chats = ChatCount::where('service_id',$id)->sum('read_status');
+        $chats = ChatCount::where('sender_id',$id)->sum('read_status');
         
         return $chats;
     }
@@ -43,7 +43,7 @@ if (!function_exists('CountMSG')) {
 if (!function_exists('TotalCountMSG')) {
     function TotalCountMSG()
     {
-        $chats = ChatCount::sum('read_status');
+        $chats = ChatCount::where('sender_id','!=',1)->sum('read_status');
         
         return $chats;
     }
