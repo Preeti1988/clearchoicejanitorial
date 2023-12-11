@@ -707,6 +707,8 @@ class UserController extends Controller
         $currentWeek = null;
         $totalHoursInWeek = 0;
         $totalHoursInWeekFormat = 0;
+        $totalHours = 0;
+
 
         $daysInWeek = [];
         foreach ($timesheet as $record) {
@@ -720,8 +722,10 @@ class UserController extends Controller
                         'total_hours_in_week_format' => $this->formatTime($totalHoursInWeekFormat),
                         'avg_hours_in_week' => $totalHoursInWeek / count($daysInWeek),
                         'days' => $daysInWeek,
-                        'total_days_worked' => count($daysInWeek)
+                        'total_days_worked' => count($daysInWeek),
+
                     ];
+                    $totalHours += $totalHoursInWeekFormat;
                 }
 
                 // Initialize for the new week
@@ -756,6 +760,7 @@ class UserController extends Controller
                 'total_days_worked' => count($daysInWeek)
 
             ];
+            $totalHours += $totalHoursInWeekFormat;
         }
 
         $data = [
@@ -764,11 +769,11 @@ class UserController extends Controller
             'job_location' => $service->client ? $service->client->address : '',
             'store_name' => $service->client ? $service->client->name : '',
             'store_number' => $service->client ? $service->client->home_number : '',
-            'timesheet' => $result
+            'timesheet' => $result, 'total_hours' => $this->formatTime($totalHoursInWeekFormat),
 
         ];
 
-        return response()->json(["status" => true, "message" => "State list.", "data" => $data]);
+        return response()->json(["status" => true, "message" => "timesheet.", "data" => $data]);
     }
     function formatTime($totalSeconds)
 
@@ -787,7 +792,7 @@ class UserController extends Controller
             $formattedTime .= $minutes . ' minutes ';
         }
 
-        if ($minutes == 0 && $seconds > 0) {
+        if ($seconds > 0) {
             $formattedTime .= $seconds . ' seconds';
         }
 
