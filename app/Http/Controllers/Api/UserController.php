@@ -189,6 +189,8 @@ class UserController extends Controller
         $success['service_count'] = Service::where("status", "!=", "completed")->count();
         $success['service_log'] = Service::where("status",  "completed")->count();
         $success['status'] = $user->status;
+        $success['profile_image'] = $user->profile_image ? asset('public/upload') . "/" . $user->profile_image : '';
+
         $success['created_date'] = $user->created_date;
         return response()->json(["status" => true, "message" => "Profile.", "data" => $success]);
     }
@@ -584,7 +586,21 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
         }
-        User::where('userid', $user->userid)->update(['fullname' => $request->fullname, 'email' => $request->email, 'phonenumber' => $request->phonenumber]);
+
+
+        $user =  User::where('userid', $user->userid)->first();
+        $user->fullname = $request->fullname;
+        $user->email = $request->email;
+        $user->phonenumber = $request->phonenumber;
+        if ($request->hasFile('profile_image')) {
+            $file = $request->file('profile_image');
+            $image = uniqid() . "." . $file->getClientOriginalExtension();
+            $file->move("public/upload/", $image);
+            $user->profile_image = $image;
+        }
+        $user->save();
+
+
         $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
         $success['token'] = $token;
         $success['userid'] = $user->userid;
@@ -606,6 +622,13 @@ class UserController extends Controller
         $success['resume'] = $user->resume;
         $success['state_id'] = $user->state_id;
         $success['zipcode'] = $user->zipcode;
+
+        if ($user->profile_image) {
+            $success['profile_image'] = asset('public/upload/') . "/" . $user->profile_image;
+        } else {
+            $success['profile_image'] = '';
+        }
+
         if ($user->resume) {
             $success['resume'] = asset('public/assets/admin-images/') . $user->resume;
         } else {
@@ -702,6 +725,7 @@ class UserController extends Controller
             DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time))) as total_hours_worked_on_day_format'),
         ])
             ->where('assign_member_id', $member_id)
+            ->where('service_id', $service_id)
             ->whereBetween('date', [$startPeriod, $endPeriod])
             ->groupBy('id', 'service_id', 'assign_member_id', 'date', 'on_the_way_time', 'start_time', 'end_time', 'status', 'created_at', 'updated_at', DB::raw('WEEK(date)'))
             ->orderBy('date', 'asc')

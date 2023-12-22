@@ -40,4 +40,9 @@ class Client extends Model
     protected $table = 'clients';
     protected $key = 'id';
     public $timestamps = false;
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
 }

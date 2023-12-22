@@ -30,6 +30,9 @@
                             <input type="text" name="search" class="form-control" value="{{ $search ?? '' }}"
                                 placeholder="Search by Employee Name">
                             <button class="search-btn"type="submit"><i class="las la-search"></i></button>
+                            <a href="{{ route('Chats') }}" class="m-1 mx-3"><img
+                                    src="{{ asset('public/assets/admin-images/reset-icon.png') }}" style="height: 25px"
+                                    alt=""></a>
                         </div>
                     </form>
                     <div class="chat-userlist-info">
@@ -93,7 +96,8 @@
                     </div>
 
                     <div class="chat-panel-user-action">
-                        <a class="viewbtn" href="#">View Job Details</a>
+                        <a class="viewbtn" href="{{ route('services.edit', $servise_first->service_id) }}">View Job
+                            Details</a>
                     </div>
                 </div>
                 @if ($firstData)
@@ -117,7 +121,7 @@
                                         id="message-input">
                                     <span class="form-attachemnt-icon">
                                         <a class="fs-24 ms-3 text-muted" id="image-attach" href="#!">
-                                            <img class="la-paperclip"
+                                            <img class="la-paperclip" id="previewImage" style="height: 20px !important"
                                                 src="{{ asset('public/assets/admin-images/attachemnt.svg') }}">
                                         </a>
                                         <input type="file" hidden accept="image/png, image/jpg, image/jpeg"
@@ -452,5 +456,36 @@
             var group_id = receiver_id + "-" + serviceID;
             getClientChat(group_id, true);
         }, 5000);
+    </script>
+    <script>
+        // Wait for the document to be ready
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the file input and image element by their IDs
+            var fileInput = document.getElementById("upload-file");
+            var previewImage = document.getElementById("previewImage");
+
+            // Add a change event listener to the file input
+            fileInput.addEventListener("change", function() {
+                // Check if a file is selected
+                if (fileInput.files.length > 0) {
+                    // Get the selected file
+                    var selectedFile = fileInput.files[0];
+
+                    // Create a FileReader to read the selected file
+                    var reader = new FileReader();
+
+                    // Set up the FileReader onload event
+                    reader.onload = function(e) {
+                        // Update the src attribute of the image with the selected file's data URL
+                        previewImage.src = e.target.result;
+                        // Display the image
+                        // previewImage.style.display = "block";
+                    };
+
+                    // Read the selected file as a data URL
+                    reader.readAsDataURL(selectedFile);
+                }
+            });
+        });
     </script>
 @endsection

@@ -18,28 +18,28 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>First Name</h3>
+                                    <h3>First Name *</h3>
                                     <input type="text" class="form-control" name="first_name" placeholder="First Name"
-                                        value="{{ $data ?$data->name:old('first_name') }}" required>
+                                        value="{{ $data ? $data->name : old('first_name') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Last Name</h3>
+                                    <h3>Last Name*</h3>
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
                                         value="{{ old('last_name') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Email Address</h3>
+                                    <h3>Email Address*</h3>
                                     <input type="email" class="form-control" name="email_address"
                                         placeholder="Email Address" value="{{ old('email_address') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Display Name</h3>
+                                    <h3>Display Name*</h3>
                                     <input type="text" class="form-control" name="display_name"
                                         value="{{ old('display_name') }}" placeholder="Display Name">
                                 </div>
@@ -54,7 +54,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Mobile phone</h3>
+                                    <h3>Mobile phone*</h3>
                                     <input type="text" class="form-control" name="mobile_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('mobile_number') }}" placeholder="Mobile phone" required>
@@ -78,14 +78,14 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Role</h3>
+                                    <h3>Role*</h3>
                                     <input type="text" class="form-control" name="role" placeholder="Role">
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Owner Type</h3>
+                                    <h3>Owner Type *</h3>
                                     <ul class="Ownertype-list">
                                         <li>
                                             <div class="ccjradio">
@@ -133,7 +133,7 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <h3>Street</h3>
+                                    <h3>Street*</h3>
                                     <input type="text" class="form-control" name="street" required
                                         value="{{ old('street') }}"placeholder="Street">
                                 </div>
@@ -148,7 +148,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Country</h3>
+                                    <h3>Country*</h3>
                                     <select class="form-control"name="country_id" onchange="getState(this.value)"
                                         required>
                                         <option value="0">--Select--</option>
@@ -161,7 +161,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>State</h3>
+                                    <h3>State*</h3>
                                     <div id="state_container">
                                         <select class="form-control" name="state_id" onchange="getCity(this.value)"
                                             required>
@@ -177,7 +177,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>City</h3>
+                                    <h3>City*</h3>
                                     <div id="city_container">
                                         <select class="form-control" name="city" required>
                                             <option value="0">--Select--</option>
@@ -194,7 +194,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Zipcode</h3>
+                                    <h3>Zipcode*</h3>
                                     <input type="text" class="form-control" name="zipcode" placeholder="Zipcode"
                                         required>
                                 </div>
@@ -222,22 +222,22 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Client Notes</h3>
-                                    <input type="text" class="form-control" name="client_notes"
+                                    <h3>Client Notes*</h3>
+                                    <input type="text" class="form-control" name="client_notes" required
                                         value="{{ old('client_notes') }}" placeholder="Notes">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Client Tags</h3>
-                                    <input type="text" class="form-control" name="client_tags"
+                                    <h3>Client Tags*</h3>
+                                    <input type="text" class="form-control" name="client_tags" required
                                         value="{{ old('client_tags') }}" placeholder="Tags">
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>This Client bill's to</h3>
+                                    <h3>This Client bill's to*</h3>
                                     <input type="text" class="form-control" name="client_bills_to"
                                         value="{{ old('client_bills_to') }}" placeholder="This Client bill's to"
                                         required>
@@ -246,7 +246,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Lead Source </h3>
+                                    <h3>Lead Source* </h3>
                                     <input type="text" class="form-control" name="lead_source"
                                         value="{{ old('lead_source') }}" placeholder="Lead Resource" required>
                                 </div>

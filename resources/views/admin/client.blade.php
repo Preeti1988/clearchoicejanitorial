@@ -11,10 +11,10 @@
                     <div class="mr-auto">
                         <h4 class="heading-title">Client List</h4>
                     </div>
-                    <div class="btn-option-info wd40">
+                    <div class="btn-option-info wd50">
                         <div class="search-filter">
                             <div class="row g-2">
-                                <div class="col-md-5">
+                                <div class="col-md-4 pt-2">
                                     <a href="{{ url('addclient') }}" class="add-member-btn me-3">Add Client
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
@@ -25,11 +25,14 @@
                                         </svg>
                                     </a>
                                 </div>
-                                <div class="col-md-7">
+                                <div class="col-md-8 d-flex">
+                                    <a href="{{ route('Clients') }}" class="m-1 mx-3"><img
+                                            src="{{ asset('public/assets/admin-images/reset-icon.png') }}"
+                                            style="height: 25px" alt=""></a>
                                     <form action="">
                                         <div class="search-form-group">
-                                            <input type="text" name="search" class="form-control"
-                                                placeholder="Search by client Name, Date, Location, or Status">
+                                            <input type="text" name="search" class="form-control" style="width: 165%"
+                                                placeholder="Search by Client Name">
                                             <span class="search-icon"><img
                                                     src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
 

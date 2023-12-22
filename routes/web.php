@@ -49,8 +49,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::match(['get', 'post'], '/search-team-member-active', [App\Http\Controllers\HomeController::class, 'team_active'])->name('search.team-member-active');
     Route::match(['get', 'post'], '/search-team-member-inactive', [App\Http\Controllers\HomeController::class, 'team_inactive'])->name('search.team-member-inactive');
     Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeController::class, 'team'])->name('search.team-member');
-    Route::match(['get', 'post'],'/chats', [App\Http\Controllers\HomeController::class, 'chats'])->name('Chats');
-    Route::match(['get', 'post'],'/chat/{id}', [App\Http\Controllers\HomeController::class, 'chatsID'])->name('ChatsID');
+    Route::match(['get', 'post'], '/chats', [App\Http\Controllers\HomeController::class, 'chats'])->name('Chats');
+    Route::match(['get', 'post'], '/chat/{id}', [App\Http\Controllers\HomeController::class, 'chatsID'])->name('ChatsID');
     Route::get('/submit-chat-count', [App\Http\Controllers\HomeController::class, 'submit_chat_count'])->name('SubmitChatCount');
     Route::post('/update-chat-count', [App\Http\Controllers\HomeController::class, 'update_chat_count'])->name('UpdateChatCount');
     Route::post('/support-save-img', [App\Http\Controllers\HomeController::class, 'help_support_save_img'])->name('SA.HelpSupport.Save.Img');

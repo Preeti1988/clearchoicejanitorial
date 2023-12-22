@@ -40,7 +40,9 @@
                                     </div>
                                     <div class="client-contact-info-content">
                                         <h2>Phone Number</h2>
-                                        <p>+{{ $data->mobile_number ?? '' }}</p>
+                                        <p>+{{ $data->country ? $data->country->phonecode : '1' }}
+                                            {{ $data->mobile_number ?? '' }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -509,7 +511,8 @@
                         <div class="team-panel-sidebar">
 
                             <div class="count-bg-1 mt-2">
-                                <p class="p-0 m-0 text-center">{{ count($ongoing) + count($unassigned) }} Total Projects</p>
+                                <p class="p-0 m-0 text-center">{{ count($ongoing) + count($unassigned) }} Total Projects
+                                </p>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">

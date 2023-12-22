@@ -65,25 +65,35 @@
     <div class="body-main-content">
         <div class="create-service-section">
             <div class="create-service-heading">
-                <h3>Create Service</h3>
+                <h3>{{ $service ? 'Edit' : 'Create' }} Service</h3>
             </div>
             <div class="create-service-form">
-                <form action="{{ route('services.store') }}" method="POST" id="create-service">
+                <form action="{{ $service ? route('services.update', $service) : route('services.store') }}" method="POST"
+                    id="create-service">
                     @csrf
-                    <input type="hidden" id="redirect_url" value="{{ route('services.index') }}">
+                    @if ($service)
+                        @method('PUT')
+                    @endif
+                    @if ($service)
+                        <input type="hidden" id="redirect_url" value="{{ route('services.edit', $service) }}">
+                    @else
+                        <input type="hidden" id="redirect_url" value="{{ route('services.index') }}">
+                    @endif
+
                     <div class="create-service-form-box">
                         <h1>Client Info.</h1>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Billed to</h3>
+                                    <h3>Billed to * </h3>
                                     <select class="form-control" name="assigned_client_id"
                                         onchange="fetchClient(this.value)">
                                         <option value="0">
                                             Select Client
                                         </option>
                                         @foreach ($clients as $item)
-                                            <option value="{{ $item->id }}">
+                                            <option value="{{ $item->id }}"
+                                                @if ($service && $service->assigned_client_id == $item->id) selected @endif>
                                                 {{ $item->name }}
                                             </option>
                                         @endforeach
@@ -97,8 +107,8 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <h3>Business unit</h3>
-                                    <input type="text" class="form-control" name="" placeholder="Unit1" />
+                                    <h3>Business Unit</h3>
+                                    <input type="text" class="form-control" name= "" placeholder="Unit1" />
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -118,15 +128,18 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Address</h3>
-                                    <input type="text" class="form-control" name="" value=""
-                                        id="address" />
+                                    <input type="text" class="form-control"
+                                        value="{{ $service && $service->client ? $service->client->address : '' }}"
+                                        name="" value="" id="address" />
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Client name</h3>
-                                    <input type="text" class="form-control" name="" id="name" />
+                                    <h3>Client Name</h3>
+                                    <input type="text" class="form-control"
+                                        value="{{ $service && $service->client ? $service->client->name : '' }}"
+                                        name="" id="name" />
                                 </div>
                             </div>
 
@@ -134,7 +147,7 @@
                                 <div class="form-group">
                                     <h3>Client Email</h3>
                                     <input type="text" class="form-control" name="" id="email"
-                                        value="" />
+                                        value="{{ $service && $service->client ? $service->client->email_address : '' }}" />
                                 </div>
                             </div>
 
@@ -142,6 +155,7 @@
                                 <div class="form-group">
                                     <h3>Client Home Number</h3>
                                     <input type="text" class="form-control" id="home_number" name="home_number"
+                                        value="{{ $service && $service->client ? $service->client->home_number : '' }}"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="" />
                                 </div>
@@ -149,8 +163,9 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Client mobile number</h3>
+                                    <h3>Client Mobile Number</h3>
                                     <input type="text" class="form-control" name="mobile_number" id="mobile_number"
+                                        value="{{ $service && $service->client ? $service->client->mobile_number : '' }}"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="" />
                                 </div>
@@ -158,7 +173,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Client work number</h3>
+                                    <h3>Client work Number</h3>
                                     <input type="text" class="form-control" name="client_work_number"
                                         id="client_work_number" data-inputmask="'mask': '(999) 999-9999'"
                                         placeholder="(999) 999-9999" value="" />
@@ -167,7 +182,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Client lead source</h3>
+                                    <h3>Client Lead Source</h3>
                                     <input type="text" class="form-control" id="lead_source" name=""
                                         value="" />
                                 </div>
@@ -175,7 +190,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group mb-0">
-                                    <h3>Client tags</h3>
+                                    <h3>Client Tags</h3>
                                     <input type="text" class="form-control" name="" value="" />
                                 </div>
                             </div>
@@ -186,14 +201,14 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Discount amount</h3>
+                                    <h3>Discount Amount</h3>
                                     <input type="text" class="form-control" name="discount_amount"
                                         placeholder="0.00" />
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Due amount</h3>
+                                    <h3>Due Amount</h3>
                                     <input type="text" class="form-control" name="due_amount" placeholder="0.00" />
                                 </div>
                             </div>
@@ -211,8 +226,8 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service Frequency</h3>
-                                    <select class="form-control" name="frequency" required>
+                                    <h3>Service Frequency *</h3>
+                                    <select class="form-control" name="frequency" id="frequency" required>
 
                                         <option>7 x Weekly</option>
                                         <option>2 x Weekly</option>
@@ -224,61 +239,75 @@
                                         </option>
                                         <option>One Time</option>
                                     </select>
+                                    @if ($service)
+                                        <script>
+                                            $("#frequency").val("{{ $service->frequency }}")
+                                        </script>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service Name</h3>
-                                    <input type="text" class="form-control" name="name" required />
+                                    <h3>Service Name *</h3>
+                                    <input type="text" class="form-control" name="name"
+                                        value="{{ $service ? $service->name : '' }}" required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service scheduled for</h3>
-                                    <input type="text" class="form-control" name="scheduled_for" required />
+                                    <h3>Service scheduled for *</h3>
+                                    <input type="text" class="form-control" name="scheduled_for"
+                                        value="{{ $service ? $service->scheduled_for : '' }}" required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service lead source</h3>
-                                    <input type="text" class="form-control" name="lead_source" required />
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Service source</h3>
-                                    <input type="text" class="form-control" name="service_source" required />
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Service Revenue</h3>
-                                    <input type="text" class="form-control" name="revenue" placeholder="0.00" />
+                                    <h3>Service Lead Source *</h3>
+                                    <input type="text" class="form-control" name="lead_source"
+                                        value="{{ $service ? $service->lead_source : '' }}" required />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service start date</h3>
+                                    <h3>Service Source *</h3>
+                                    <input type="text" class="form-control"
+                                        value="{{ $service ? $service->service_source : '' }}" name="service_source"
+                                        required />
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service Revenue *</h3>
+                                    <input type="text" class="form-control"
+                                        value="{{ $service ? $service->revenue : '' }}" name="revenue"
+                                        placeholder="0.00" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service Start Date *</h3>
                                     <input type="date" class="form-control" min="<?= date('Y-m-d') ?>"
-                                        name="created_date" required />
+                                        name="created_date" value="{{ $service ? $service->created_date : '' }}"
+                                        required />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>
-                                        Service scheduled end date
+                                        Service scheduled End Date *
                                     </h3>
                                     <input type="date" class="form-control" name="scheduled_end_date"
+                                        value="{{ $service ? $service->scheduled_end_date : '' }}"
                                         min="<?= date('Y-m-d') ?>" required />
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Service type</h3>
+                                    <h3>Service Type *</h3>
                                     <ul class="servicetype-list">
                                         <li>
                                             <div class="ccjradio">
@@ -299,43 +328,48 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service Shift Start Time</h3>
+                                    <h3>Service Shift Start Time *</h3>
                                     <input type="time" class="form-control" id="startTime" name="service_start_time"
-                                        required />
+                                        value="{{ $service ? $service->service_start_time : '' }}" required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service Shift End Time</h3>
+                                    <h3>Service Shift End Time *</h3>
                                     <input type="time" class="form-control" id="endTime"
-                                        onchange="calculateTimeDifference(this.value)" name="service_end_time" required />
+                                        onchange="calculateTimeDifference(this.value)" name="service_end_time"
+                                        value="{{ $service ? $service->service_end_time : '' }}" required />
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service duration (In Hours)</h3>
-                                    <input type="text" class="form-control" id="result" name="service_duration" />
+                                    <h3>Service Duration (In Hours) *</h3>
+                                    <input type="text" class="form-control" id="result" name="service_duration"
+                                        value="{{ $service ? $service->service_duration : '' }}" />
                                 </div>
                             </div>
 
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <h3>Service travel duration</h3>
-                                    <input type="time" class="form-control" name="travel_duration" />
+                                    <h3>Service Travel Duration (In Hours) *</h3>
+                                    <input type="time" class="form-control" name="travel_duration"
+                                        value="{{ $service ? $service->travel_duration : '' }}" />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service tags</h3>
-                                    <input type="text" class="form-control" name="service_tags" />
+                                    <h3>Service Tags</h3>
+                                    <input type="text" class="form-control" name="service_tags"
+                                        value="{{ $service ? $service->service_tags : '' }}" />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service window</h3>
-                                    <input type="text" class="form-control" name="service_window" />
+                                    <h3>Service Window</h3>
+                                    <input type="text" class="form-control" name="service_window"
+                                        value="{{ $service ? $service->service_window : '' }}" />
                                 </div>
                             </div>
 
@@ -343,7 +377,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service Items</h3>
+                                    <h3>Service Items *</h3>
                                     <select class="form-control" onchange="AddServiceItem(this.value)">
                                         <option>
                                             Select &amp; Add
@@ -361,14 +395,14 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service Items value</h3>
+                                    <h3>Service Items value *</h3>
                                     <input type="text" class="form-control" id="itemValue" placeholder="$10" />
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <h3>Service Items Added</h3>
+                                    <h3>Service Items Added *</h3>
                                     <ul class="ServiceAdded-list">
                                         <li>
                                             No Items Added
@@ -380,8 +414,8 @@
 
                             <div class="col-md-12">
                                 <div class="form-group mb-0">
-                                    <h3>Service description</h3>
-                                    <textarea type="text" class="form-control" name="description"></textarea>
+                                    <h3>Service Description *</h3>
+                                    <textarea type="text" required class="form-control" name="description">{{ $service ? $service->description : '' }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -392,19 +426,21 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Labor cost</h3>
+                                    <h3>Labor Cost *</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="labour_cost"
-                                            placeholder="0.00" required />
+                                            value="{{ $service ? $service->labour_cost : '' }}" placeholder="0.00"
+                                            required />
                                     </div>
 
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Labor cost % of rev</h3>
+                                    <h3>Labor Cost % of rev</h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control cost" name="labour_cost_percent"
+                                            value="{{ $service ? $service->labour_cost_percent : '' }}"
                                             placeholder="0.00" />
                                     </div>
                                 </div>
@@ -413,18 +449,19 @@
                             <div class="col-md-3">
                                 <div class="form-group">
 
-                                    <h3>Material cost</h3>
+                                    <h3>Material Cost</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="material_cost"
-                                            placeholder="0.00" />
+                                            value="{{ $service ? $service->material_cost : '' }}" placeholder="0.00" />
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Material cost % of rev</h3>
+                                    <h3>Material Cost % of rev</h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control " name="material_cost_percent"
+                                            value="{{ $service ? $service->material_cost_percent : '' }}"
                                             placeholder="0.00" />
                                     </div>
                                 </div>
@@ -432,7 +469,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Miscellaneous cost</h3>
+                                    <h3>Miscellaneous Cost</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="miscellaneous_cost"
                                             placeholder="0.00" />
@@ -442,7 +479,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>
-                                        Miscellaneous cost % of rev
+                                        Miscellaneous Cost % of rev
                                     </h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control" name="" placeholder="0.00" />
@@ -455,35 +492,36 @@
                                     <h3>Paid Amount</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="paid_amount"
-                                            placeholder="0.00" />
+                                            value="{{ $service ? $service->paid_amount : '' }}" placeholder="0.00" />
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Profit margin</h3>
+                                    <h3>Profit Margin</h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control cost" name="profit_margin"
-                                            placeholder="0.00" />
+                                            value="{{ $service ? $service->profit_margin : '' }}" placeholder="0.00" />
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service cost</h3>
+                                    <h3>Service Cost *</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="service_cost"
-                                            placeholder="0.00" />
+                                            value="{{ $service ? $service->service_cost : '' }}"
+                                            value="{{ $service ? $service->service_cost : '' }}" placeholder="0.00" />
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Tax rate</h3>
+                                    <h3>Tax Rate</h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control cost" name="tax_rate"
-                                            placeholder="0.00" />
+                                            value="{{ $service ? $service->tax_rate : '' }}" placeholder="0.00" />
                                     </div>
                                 </div>
                             </div>
@@ -492,7 +530,7 @@
                                     <h3>Tax Amount</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="tax_amount"
-                                            placeholder="0.00" />
+                                            value="{{ $service ? $service->tax_amount : '' }}" placeholder="0.00" />
                                     </div>
                                 </div>
                             </div>
@@ -501,9 +539,27 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Tip amount</h3>
+                                    <h3>Tip Amount</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="tip_amount"
+                                            value="{{ $service ? $service->tip_amount : '' }}" placeholder="0.00" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Total Duration (In Hours) </h3>
+                                    <input type="text" class="form-control " name="total_duration"
+                                        value="{{ $service ? $service->total_duration : '' }}" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Total service Cost *</h3>
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control cost" name="total_service_cost"
+                                            value="{{ $service ? $service->total_service_cost : '' }}" required
                                             placeholder="0.00" />
                                     </div>
                                 </div>
@@ -511,42 +567,29 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Total duration</h3>
-                                    <input type="text" class="form-control " name="total_duration" />
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Total service cost</h3>
-                                    <div class="dollar-sign">
-                                        <input type="text" class="form-control cost" name="total_service_cost"
-                                            required placeholder="0.00" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Total labor hours</h3>
-                                    <input type="text" class="form-control" name="total_labour_hours" />
+                                    <h3>Total Labor Hours</h3>
+                                    <input type="text" class="form-control" name="total_labour_hours"
+                                        value="{{ $service ? $service->total_labour_hours : '' }}" />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>
-                                        Total time on job by Team
+                                        Total Time on Job by Team
                                     </h3>
-                                    <input type="text" class="form-control" name="total_time" />
+                                    <input type="text" class="form-control" name="total_time"
+                                        value="{{ $service ? $service->total_time : '' }}" />
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>
-                                        Total travel time by Team
+                                        Total travel Time By Team
                                     </h3>
-                                    <input type="text" class="form-control" name="travel_time_by_team" />
+                                    <input type="text" class="form-control" name="travel_time_by_team"
+                                        value="{{ $service ? $service->travel_time_by_team : '' }}" />
                                 </div>
                             </div>
                         </div>
@@ -562,7 +605,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <h3>In Scope Items</h3>
+                                                <h3>In Scope Items *</h3>
                                                 <select class="form-control" onchange="AddInScopeItem(this.value)">
                                                     <option>
                                                         Select &amp; Add
@@ -583,9 +626,22 @@
                                             <div class="form-group">
                                                 <h3>Service Items Added</h3>
                                                 <ul class="InScopeAdded-list">
-                                                    <li>
-                                                        No Items Added
-                                                    </li>
+                                                    @if ($service)
+                                                        @if (json_decode($service->service_items))
+                                                            @foreach (json_decode($service->service_items) as $item)
+                                                                <li>{{ $item->name }}</li>
+                                                            @endforeach
+                                                        @else
+                                                            <li>
+                                                                No Items Added
+                                                            </li>
+                                                        @endif
+                                                    @else
+                                                        <li>
+                                                            No Items Added
+                                                        </li>
+                                                    @endif
+
 
                                                 </ul>
                                             </div>
@@ -601,7 +657,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <h3>Out Of Scope Items</h3>
+                                                <h3>Out Of Scope Items *</h3>
                                                 <select class="form-control" onchange="AddOutScopeItem(this.value)">
                                                     <option>
                                                         Select &amp; Add
@@ -638,7 +694,7 @@
                     <div class="create-service-form-action">
                         <button class="cancelbtn"
                             onclick="location.replace('{{ route('services.index') }}')">Cancel</button>
-                        <button class="Savebtn" type="submit">Save</button>
+                        <button class="Savebtn" type="submit"> {{ $service ? 'Update' : 'Save' }}</button>
                     </div>
                 </form>
             </div>
@@ -792,7 +848,7 @@
         $(document).ready(function() {
             $.validator.addMethod("phoneValid", function(value) {
                 return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
-            }, 'Invalid phone number.');
+            }, 'Invalid phone Number.');
             $('#create-service').validate({
                 rules: {
                     client_work_number: {

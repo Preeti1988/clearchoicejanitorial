@@ -10,11 +10,13 @@
                 <div class="row g-1 align-items-center">
                     <div class="col-md-3">
                         <div class="side-profile-item align-items-center">
-                            <div class="side-profile-media"><img src="{{ asset('public/assets/admin-images/user-default.png') }}"></div>
+                            <div class="side-profile-media"><img
+                                    src="{{ asset('public/assets/admin-images/user-default.png') }}"></div>
                             <div class="side-profile-text ms-2">
-                                <h2 class="mb-0 pb-0 ">{{ ($data->fullname) ?? ''}}</h2>
-                                <p class="mb-0 pb-0 member-id">Member ID <b>{{ ($data->userid) ?? ''}}</b></p>
-                                <h6 class="mt-0 pt-0 mb-0 pb-0 join-date">Joined on: {{ date('M d, Y', strtotime($data->created_at)) }}</h6>
+                                <h2 class="mb-0 pb-0 ">{{ $data->fullname ?? '' }}</h2>
+                                <p class="mb-0 pb-0 member-id">Member ID: <b>{{ $data->userid ?? '' }}</b></p>
+                                <h6 class="mt-0 pt-0 mb-0 pb-0 join-date">Joined on:
+                                    {{ date('M d, Y', strtotime($data->created_at)) }}</h6>
                             </div>
                         </div>
                     </div>
@@ -27,7 +29,7 @@
                                     </div>
                                     <div class="client-contact-info-content">
                                         <h2>Email Address</h2>
-                                        <p>{{ ($data->email) ?? ''}}</p>
+                                        <p>{{ $data->email ?? '' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -39,7 +41,9 @@
                                     </div>
                                     <div class="client-contact-info-content">
                                         <h2>Phone Number</h2>
-                                        <p>+{{ ($data->phonenumber) ?? ''}}</p>
+                                        <p>+{{ $data->country ? $data->country->phonecode : '1' }}
+                                            {{ $data->phonenumber ?? '' }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -63,9 +67,10 @@
                                         <label class="label-switch" for="demo"></label>
                                         <span class="info-text"></span><br>
                                     </div>
-                                    <a href="#" class="resume-btn"><svg xmlns="http://www.w3.org/2000/svg"
-                                            width="16" height="16" fill="currentColor"
-                                            class="bi bi-arrow-down-square me-2" viewBox="0 0 16 16">
+                                    <a href="{{ asset('public/upload/resume/') . '/' . $data->resume }}" download="true"
+                                        class="resume-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                            height="16" fill="currentColor" class="bi bi-arrow-down-square me-2"
+                                            viewBox="0 0 16 16">
                                             <path fill-rule="evenodd"
                                                 d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z" />
                                         </svg>Resume</a>
@@ -162,7 +167,8 @@
                                                 <div class="col-md-4">
                                                     <div class="service-shift-card">
                                                         <div class="service-shift-card-image">
-                                                            <img src="{{ asset('public/assets/admin-images/people.svg') }}">
+                                                            <img
+                                                                src="{{ asset('public/assets/admin-images/people.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
@@ -173,7 +179,8 @@
                                                 <div class="col-md-4">
                                                     <div class="service-shift-card">
                                                         <div class="service-shift-card-image">
-                                                            <img src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
+                                                            <img
+                                                                src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service Frequency:</h2>
@@ -197,13 +204,15 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="service-shift-card">
-                                                        <a href="#" class="check-out-btn">Check in: 11:04 PM</a>
+                                                        <a href="#" class="check-out-btn">Check Out: 11:04 PM</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="ongoing-services-item-foot">
-                                            <div class="loaction-address"><img src="{{ asset('public/assets/admin-images/map.svg') }}"> 5331 Rexford Court,
+                                            <div class="loaction-address"><img
+                                                    src="{{ asset('public/assets/admin-images/map.svg') }}"> 5331 Rexford
+                                                Court,
                                                 Montgomery AL 36116</div>
                                         </div>
                                     </div>
@@ -222,7 +231,8 @@
                                         <div class="ongoing-services-item-body">
                                             <div class="service-shift-card">
                                                 <div class="service-shift-card-image">
-                                                    <img src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
+                                                    <img
+                                                        src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
                                                 </div>
                                                 <div class="service-shift-card-text">
                                                     <h2>Service Shift Timing:</h2>
@@ -238,7 +248,8 @@
                                                 <div class="col-md-4">
                                                     <div class="service-shift-card">
                                                         <div class="service-shift-card-image">
-                                                            <img src="{{ asset('public/assets/admin-images/people.svg') }}">
+                                                            <img
+                                                                src="{{ asset('public/assets/admin-images/people.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Job Assigned</h2>
@@ -261,7 +272,8 @@
                                                 <div class="col-md-4">
                                                     <div class="service-shift-card">
                                                         <div class="service-shift-card-image">
-                                                            <img src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
+                                                            <img
+                                                                src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Service Frequency:</h2>
@@ -273,7 +285,8 @@
                                                 <div class="col-md-4">
                                                     <div class="service-shift-card">
                                                         <div class="service-shift-card-image">
-                                                            <img src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
+                                                            <img
+                                                                src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
                                                             <h2>Price</h2>
@@ -286,7 +299,9 @@
                                             </div>
                                         </div>
                                         <div class="ongoing-services-item-foot">
-                                            <div class="loaction-address"><img src="{{ asset('public/assets/admin-images/map.svg') }}"> 5331 Rexford Court,
+                                            <div class="loaction-address"><img
+                                                    src="{{ asset('public/assets/admin-images/map.svg') }}"> 5331 Rexford
+                                                Court,
                                                 Montgomery AL 36116</div>
                                         </div>
                                     </div>
@@ -350,28 +365,30 @@
         </div>
     </div>
     <!-- -----------------view map modal------------------ -->
-    <div class="modal fade view-map" id="view-map" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade view-map" id="view-map" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="name-info">
+                            <h5 class="mb-0 pb-0">Jane Doe</h5>
+                            <p class="mb-0 pb-0 mt-0 pt-0">Location log</p>
+                        </div>
+                        <div class="d-flex">
+                            <a href="#" class="check-in-btn">Check in: 11:04 PM</a>
+                            <a href="#" class="check-out-btn ms-3">Check out: 11:04 PM</a>
+                        </div>
+                    </div>
+                    <div class="map-detail mt-3">
+                        <img src="{{ asset('public/assets/admin-images/map-info-image.svg') }}" alt="image"
+                            class="img-fluid">
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="name-info">
-                    <h5 class="mb-0 pb-0">Jane Doe</h5>
-                    <p class="mb-0 pb-0 mt-0 pt-0">Location log</p>
-                </div>
-                <div class="d-flex">
-                    <a href="#" class="check-in-btn">Check in: 11:04 PM</a>
-                    <a href="#" class="check-out-btn ms-3">Check out: 11:04 PM</a>
-                </div>
-              </div>
-              <div class="map-detail mt-3">
-                <img src="{{ asset('public/assets/admin-images/map-info-image.svg') }}" alt="image" class="img-fluid">
-                </div>
-            </div>
-          </div>
         </div>
     </div>
 @endsection

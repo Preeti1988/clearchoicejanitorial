@@ -62,10 +62,11 @@ class HomeController extends Controller
         if (request()->has('date')) {
             $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
         }
+        $msgs = User::where('status', 1)->orderBy('userid', 'DESC')->get();
 
         $unassigned = $unassigned->orderBy("id", "desc")->get();
         $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
-        return view('admin.dashboard', compact('services', 'members', 'ongoing', 'request_members', 'unassigned'));
+        return view('admin.dashboard', compact('services', 'members', 'msgs', 'ongoing', 'request_members', 'unassigned'));
     }
 
     public function dashboard()
@@ -77,10 +78,12 @@ class HomeController extends Controller
     {
         $datas = Client::query();
         if (request()->has('search')) {
-            $datas = $datas->where("name", "LIKE", "%" . trim(request('search')) . "%")->orwhereDate("created_at", Carbon::parse(request('date')))->orWhere("address", "LIKE", "%" . request('search'));
+            $datas = $datas->where(function ($query) {
+                $query->where("name", "LIKE", "%" . trim(request('search')) . "%")->orwhereDate("created_at", Carbon::parse(request('date')))->orWhere("address", "LIKE", "%" . request('search'));
+            });
         }
         $datas = $datas->orderBy('id', 'DESC')->paginate(10);
-        return view('admin.client', compact('datas'));
+        return view('admin.clients.index', compact('datas'));
     }
 
     public function EditTeamMember($id)
@@ -101,7 +104,7 @@ class HomeController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required|string|max:255|min:1',
                 'last_name' => 'required|string|max:255|min:1',
-                'email_address' => "required|email",
+                'email_address' => "required|email|unique:clients",
                 'mobile_number' => 'required',
             ]);
 
@@ -612,7 +615,7 @@ class HomeController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
+
     public function submit_chat_count(Request $request)
     {
         try {
@@ -620,11 +623,11 @@ class HomeController extends Controller
             $receiver_id = $request['receiver_id']; /*receiver_id Id*/
             $user = Auth::user();
             $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->first();
-            if(!empty($chat)){
-                $count = $chat->read_status+1;
+            if (!empty($chat)) {
+                $count = $chat->read_status + 1;
                 //dd($count);
                 ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->update(['read_status' => $count]);
-            }else{
+            } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = 1;
                 $ChatCount->receiver_id = $receiver_id;
@@ -637,15 +640,15 @@ class HomeController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
+
     public function update_chat_count(Request $request)
     {
         try {
             $serviceID = $request['serviceID']; /*service Id*/
             $receiver_id = $request['receiver_id']; /*receiver Id*/
-            
+
             $chat = ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->where('service_id', $serviceID)->first();
-            if(!empty($chat)){
+            if (!empty($chat)) {
                 $count = 0;
                 ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->where('service_id', $serviceID)->update(['read_status' => $count]);
             }
@@ -669,49 +672,47 @@ class HomeController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
+
     public function chats(Request $request)
     {
         try {
-            if(isset($request->search))
-            {
+            if (isset($request->search)) {
                 $search = $request->search;
-                $datas = User::where('fullname','like','%' .$search. '%')->where('status',1)->orderBy('userid', 'DESC')->get();
-                $firstData = User::where('fullname','like','%' .$search. '%')->where('status',1)->orderBy('userid', 'DESC')->first();
+                $datas = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy('userid', 'DESC')->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
-                return view('admin.chat', compact('datas','firstData','search','servise_first','servise_list'));
-            }else{
+                return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
+            } else {
                 $search = '';
-                $datas = User::where('status',1)->orderBy('userid', 'DESC')->get();
-                $firstData = User::where('status',1)->orderBy('userid', 'DESC')->first();
+                $datas = User::where('status', 1)->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('status', 1)->orderBy('userid', 'DESC')->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
-                return view('admin.chat', compact('datas','firstData','search','servise_first','servise_list'));
+                return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
-    public function chatsID(Request $request,$id)
+
+    public function chatsID(Request $request, $id)
     {
         try {
-            if(isset($request->search))
-            {
+            if (isset($request->search)) {
                 $id = encryptDecrypt('decrypt', $id);
                 $search = $request->search;
-                $datas = User::where('status',1)->where('fullname','like','%' .$search. '%')->orderBy('userid', 'DESC')->get();
-                $firstData = User::where('fullname','like','%' .$search. '%')->where('status',1)->where('userid',$id)
-                ->orderBy('userid', 'DESC')->first();
+                $datas = User::where('status', 1)->where('fullname', 'like', '%' . $search . '%')->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->where('userid', $id)
+                    ->orderBy('userid', 'DESC')->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
-                return view('admin.chat', compact('datas','firstData','search','servise_list','servise_first'));
-            }else{
+                return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_list', 'servise_first'));
+            } else {
                 $id = encryptDecrypt('decrypt', $id);
                 $search = '';
-                $datas = User::where('status',1)->orderBy('userid', 'DESC')->get();
-                $firstData = User::where('status',1)->where('userid',$id)->orderBy('userid', 'DESC')->first();
+                $datas = User::where('status', 1)->orderBy('userid', 'DESC')->get();
+                $firstData = User::where('status', 1)->where('userid', $id)->orderBy('userid', 'DESC')->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $id)->first();
@@ -719,7 +720,7 @@ class HomeController extends Controller
                 // {
                 //     ChatCount::where('sender_id', 1)->where('receiver_id', $id)->update(['read_status' => 0]);
                 // }
-                return view('admin.chat', compact('datas','firstData','search','servise_list','servise_first'));
+                return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_list', 'servise_first'));
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -738,14 +739,15 @@ class HomeController extends Controller
             $data = Client::where('id', $id)->first();
             $state = State::orderBy('id', 'DESC')->where("country_id", $data->country_id)->get();
             $city = City::orderBy('id', 'DESC')->where("state_id", $data->state_id)->get();
-            return view('admin.editclient', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
+            return view('admin.clients.edit', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    public function help_support_save_img(Request $request){
+    public function help_support_save_img(Request $request)
+    {
         try {
-           
+
             $file = $request->file("image");
             $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('upload/chat'), $imageName);

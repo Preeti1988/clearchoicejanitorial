@@ -10,7 +10,7 @@
                 <h3>Edit Client</h3>
             </div>
             <div class="create-service-form">
-                <form action="{{ route('UpdateClient') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('UpdateClient') }}" id="newteammember" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="id" value="{{ $data->id ?? '' }}">
                     <div class="create-service-form-box">
@@ -20,35 +20,35 @@
                                 <div class="form-group">
                                     <?php $arr = [];
                                     $arr = explode(' ', ucwords($data->name), 2); ?>
-                                    <h3>First Name</h3>
+                                    <h3>First Name *</h3>
                                     <input type="text" class="form-control" name="first_name" placeholder="First Name"
                                         value="{{ $arr[0] ?? '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Last Name</h3>
+                                    <h3>Last Name *</h3>
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
                                         value="{{ $arr[1] ?? '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Email Address</h3>
+                                    <h3>Email Address *</h3>
                                     <input type="text" class="form-control" name="email_address"
                                         placeholder="Email Address" value="{{ $data->email_address ?? '' }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Display Name</h3>
-                                    <input type="text" class="form-control" name="display_name"
+                                    <h3>Display Name *</h3>
+                                    <input type="text" class="form-control" name="display_name" required
                                         value="{{ $data->display_name ?? '' }}" placeholder="Display Name">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Company Name</h3>
+                                    <h3>Company Name </h3>
                                     <input type="text" class="form-control" name="company"
                                         value="{{ $data->company ?? '' }}" placeholder="Company Name">
                                 </div>
@@ -56,7 +56,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Mobile phone</h3>
+                                    <h3>Mobile phone*</h3>
                                     <input type="text" class="form-control" name="mobile_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ $data->mobile_number ?? '' }}" placeholder="Mobile phone" required>
@@ -80,9 +80,9 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Role</h3>
+                                    <h3>Role *</h3>
 
-                                    <input type="text" class="form-control" name="role"
+                                    <input type="text" class="form-control" name="role" required
                                         value="{{ $data->role ?? '' }}" placeholder="Role">
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Country</h3>
+                                    <h3>Country*</h3>
                                     <select class="form-control"name="country_id" onchange="getState(this.value)">
                                         @foreach ($country as $ctry)
                                             <option value="{{ $ctry->id }}"
@@ -158,7 +158,7 @@
 
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <h3>State</h3>
+                                    <h3>State*</h3>
                                     <div id="state_container">
                                         <select class="form-control"name="state_id" onchange="getCity(this.value)">
 
@@ -177,7 +177,7 @@
 
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <h3>City</h3>
+                                    <h3>City*</h3>
                                     <div id="city_container">
                                         <select class="form-control"name="city">
 
@@ -198,8 +198,8 @@
 
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <h3>Zipcode</h3>
-                                    <input type="text" class="form-control" name="zipcode"
+                                    <h3>Zipcode*</h3>
+                                    <input type="text" class="form-control" name="zipcode" required
                                         value="{{ $data->zipcode ?? '' }}" placeholder="Zipcode">
                                 </div>
                             </div>
@@ -223,22 +223,22 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Client Notes</h3>
+                                    <h3>Client Notes*</h3>
                                     <input type="text" class="form-control" name="client_notes"
                                         value="{{ $data->client_notes ?? '' }}" placeholder="Notes"required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Client Tags</h3>
+                                    <h3>Client Tags*</h3>
                                     <input type="text" class="form-control" name="client_tags"
-                                        value="{{ $data->client_tags ?? '' }}" placeholder="Tages"required>
+                                        value="{{ $data->client_tags ?? '' }}" placeholder="Tages" required>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>This Client bill's to</h3>
+                                    <h3>This Client bill's to *</h3>
                                     <input type="text" class="form-control" name="client_bills_to"
                                         value="{{ $data->client_bills_to ?? '' }}" placeholder="This Client bill's to"
                                         required>
@@ -247,7 +247,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Lead Source </h3>
+                                    <h3>Lead Source *</h3>
                                     <input type="text" class="form-control" name="lead_source"
                                         value="{{ $data->lead_source ?? '' }}" placeholder="Display Name" required>
                                 </div>
@@ -266,7 +266,7 @@
                     </div>
 
                     <div class="create-service-form-action">
-                        <button class="cancelbtn">cancel</button>
+                        <button class="cancelbtn">Cancel</button>
                         <button class="Savebtn" type="submit">Update</button>
                     </div>
                 </form>
@@ -307,5 +307,54 @@
                 $("#city_container").html(htm);
             })
         }
+        $(document).ready(function() {
+            $.validator.addMethod("phoneValid", function(value) {
+                return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
+            }, 'Invalid phone number.');
+            $.validator.addMethod("zeroValue", function(value) {
+                return value != 0;
+            }, 'Please select .');
+            $('#newteammember').validate({
+                rules: {
+                    mobile_number: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    home_phone: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    work_phone: {
+                        required: true,
+                        phoneValid: true
+                    },
+
+                    country_id: {
+                        required: true,
+                        zeroValue: true
+                    },
+                    state_id: {
+                        required: true,
+                        zeroValue: true
+                    },
+                    city: {
+                        required: true,
+                        zeroValue: true
+                    }
+                },
+                errorElement: "span",
+                errorPlacement: function(error, element) {
+                    element.addClass("invalid-feedback");
+                    element.closest(".field").append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $('.please-wait').click();
+                    $(element).addClass("invalid-feedback");
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass("invalid-feedback");
+                }
+            })
+        });
     </script>
 @endpush

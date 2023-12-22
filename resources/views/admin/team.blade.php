@@ -37,7 +37,7 @@
                                 <div class="ongoing-services-item">
                                     <div class="ongoing-services-item-head">
                                         <div class="row align-items-center">
-                                            <div class="col-md-8">
+                                            <div class="col-md-7">
                                                 {{-- @if ($type == 1)
                                                     <form action="{{ route('search.team-member-active') }}" method="POST">
                                                     @else
@@ -66,6 +66,11 @@
                                                         </div>
                                                     </div>
                                                 </form>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <a href="{{ route('TeamActive') }}" class="m-1 mx-3"><img
+                                                        src="{{ asset('public/assets/admin-images/reset-icon.png') }}"
+                                                        style="height: 25px" alt=""></a>
                                             </div>
                                             <div class="col-md-4 active-btns justify-content-end">
                                                 <div class="act-inact-info">

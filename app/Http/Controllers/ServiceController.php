@@ -46,7 +46,8 @@ class ServiceController extends Controller
         $InScope = InScope::whereNotNull('status')->orderBy('id', 'desc')->get();
         $OutScope = OutScope::whereNotNull('status')->orderBy('id', 'desc')->get();
         $scopes = [];
-        return view("admin.services.create", compact('clients', 'serviceValues', 'InScope', 'OutScope'));
+        $service = null;
+        return view("admin.services.create", compact('clients', 'serviceValues', 'InScope', 'OutScope', 'service'));
     }
 
     /**
@@ -117,7 +118,13 @@ class ServiceController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $clients = Client::all();
+        $serviceValues = ServicesValue::all();
+        $InScope = InScope::whereNotNull('status')->orderBy('id', 'desc')->get();
+        $OutScope = OutScope::whereNotNull('status')->orderBy('id', 'desc')->get();
+        $scopes = [];
+        $service = Service::find($id);
+        return view("admin.services.create", compact('clients', 'serviceValues', 'InScope', 'OutScope', 'service'));
     }
 
     /**

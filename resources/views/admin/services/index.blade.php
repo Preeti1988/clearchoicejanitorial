@@ -363,7 +363,7 @@
                 <div class="col-md-4">
                     <div class="completedservice-overview">
                         <div class="completedservice-overview-content">
-                            <h2>Total completed service</h2>
+                            <h2>Total Completed Service</h2>
                             <h1>{{ $completed }}</h1>
                             {{-- <p><i class="las la-check-circle"></i> Completed</p> --}}
                         </div>

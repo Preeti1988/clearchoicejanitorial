@@ -362,7 +362,7 @@
                                             stroke-linejoin="round" />
                                     </svg>
                                 </div>
-                                <h2>New Messages <span>08 New</span></h2>
+                                <h2>New Messages <span>{{ TotalCountMSG() }} New</span></h2>
                             </div>
                         </div>
                         <div class="chat-panel-sidebar-body">
@@ -371,55 +371,30 @@
                                     <a class="sendbroadcast-btn" href="#">Send Broadcast Message</a>
                                 </div>
                                 <div class="chat-panel-sidebar-list">
-                                    <div class="chat-panel-sidebar-item">
-                                        <div class="chat-panel-sidebar-item-image">
-                                            <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
-                                        </div>
-                                        <div class="chat-panel-sidebar-item-text">
-                                            <h2>John</h2>
-                                            <div class="msg-text-info">What’s should I do…?</div>
-                                        </div>
-                                    </div>
 
-                                    <div class="chat-panel-sidebar-item">
-                                        <div class="chat-panel-sidebar-item-image">
-                                            <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
-                                        </div>
-                                        <div class="chat-panel-sidebar-item-text">
-                                            <h2>KETTY P</h2>
-                                            <div class="msg-text-info">Hey please reponse sir..</div>
-                                        </div>
-                                    </div>
+                                    @if ($msgs->isEmpty())
 
-                                    <div class="chat-panel-sidebar-item">
-                                        <div class="chat-panel-sidebar-item-image">
-                                            <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
-                                        </div>
-                                        <div class="chat-panel-sidebar-item-text">
-                                            <h2>Hoàng Ðắc Cường</h2>
-                                            <div class="msg-text-info">I’m waiting for your response</div>
-                                        </div>
-                                    </div>
 
-                                    <div class="chat-panel-sidebar-item">
-                                        <div class="chat-panel-sidebar-item-image">
-                                            <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                        <div class="chat-panel-sidebar-item">
+                                            No record found
                                         </div>
-                                        <div class="chat-panel-sidebar-item-text">
-                                            <h2>Vũ Hải Bằng</h2>
-                                            <div class="msg-text-info">Please review the phot…</div>
-                                        </div>
-                                    </div>
+                                    @elseif(!$msgs->isEmpty())
+                                        @foreach ($msgs as $val)
+                                            <div class="chat-panel-sidebar-item"
+                                                onclick="location.replace('{{ url('chat/' . encryptDecrypt('encrypt', $val->userid)) }}')">
+                                                <div class="chat-panel-sidebar-item-image">
+                                                    <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                                </div>
+                                                <div class="chat-panel-sidebar-item-text">
+                                                    <h2>{{ $val->fullname }}</h2>
+                                                    <div class="msg-text-info">{{ $val->email }}</div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @endif
 
-                                    <div class="chat-panel-sidebar-item">
-                                        <div class="chat-panel-sidebar-item-image">
-                                            <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
-                                        </div>
-                                        <div class="chat-panel-sidebar-item-text">
-                                            <h2>Hoàng Ðắc Cường</h2>
-                                            <div class="msg-text-info">What will be my shift timing..</div>
-                                        </div>
-                                    </div>
+
+
                                 </div>
                             </div>
                         </div>
