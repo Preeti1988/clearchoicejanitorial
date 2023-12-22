@@ -72,72 +72,75 @@
                     </div>
                 </div>
             </div>
-            <div class="chat-panel-section">
-                <div class="chat-panel-chat-header">
-                    <div class="chat-panel-user-item">
-                        <div class="chat-panel-user-item-image"><img
-                                src="{{ asset('public/assets/admin-images/user-default.png') }}"></div>
-                        <div class="chat-panel-user-item-text">
-                            <h4>{{ $firstData->fullname }}</h4>
-                            <p>Emp Id: {{ $firstData->userid }}</p>
+            @if ($firstData)
+                <div class="chat-panel-section">
+                    <div class="chat-panel-chat-header">
+                        <div class="chat-panel-user-item">
+                            <div class="chat-panel-user-item-image"><img
+                                    src="{{ asset('public/assets/admin-images/user-default.png') }}"></div>
+                            <div class="chat-panel-user-item-text">
+                                <h4>{{ $firstData->fullname }}</h4>
+                                <p>Emp Id: {{ $firstData->userid }}</p>
+                            </div>
+                        </div>
+
+                        <div class="chat-panel-user-form">
+                            <div class="chat-panel-service-dropdown">
+                                <select class="form-control" id="select_id">
+                                    <option>Select Service</option>
+                                    @foreach ($servise_list as $cty)
+                                        <option value="{{ $cty->service_id }}">{{ ServiceName($cty->service_id) ?? '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="chat-panel-user-action">
+                            <a class="viewbtn"
+                                href="{{ $servise_first ? route('services.edit', $servise_first->service_id) : '#' }}">{{ $servise_first ? 'View Job Details' : 'No Job Assigned' }}</a>
                         </div>
                     </div>
+                    @if ($firstData)
+                        <input type="hidden" id="ajax-chat-url" data-id="{{ $firstData->userid }}">
+                        <input type="hidden" id="ajax-chat-url-first" data-id="{{ $firstData->fullname }}">
+                        <input type="hidden" id="ajax-chat-url-service-id" value="">
+                    @endif
+                    <div class="chat-panel-chat-body" tabindex="1" style="overflow: auto; outline: none;">
+                        <div class="chat-panel-chat-content">
+                            <div class="messages-list">
 
-                    <div class="chat-panel-user-form">
-                        <div class="chat-panel-service-dropdown">
-                            <select class="form-control" id="select_id">
-                                <option>Select Service</option>
-                                @foreach ($servise_list as $cty)
-                                    <option value="{{ $cty->service_id }}">{{ ServiceName($cty->service_id) ?? '' }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="chat-panel-user-action">
-                        <a class="viewbtn" href="{{ route('services.edit', $servise_first->service_id) }}">View Job
-                            Details</a>
-                    </div>
-                </div>
-                @if ($firstData)
-                    <input type="hidden" id="ajax-chat-url" data-id="{{ $firstData->userid }}">
-                    <input type="hidden" id="ajax-chat-url-first" data-id="{{ $firstData->fullname }}">
-                    <input type="hidden" id="ajax-chat-url-service-id" value="">
-                @endif
-                <div class="chat-panel-chat-body" tabindex="1" style="overflow: auto; outline: none;">
-                    <div class="chat-panel-chat-content">
-                        <div class="messages-list">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="chat-panel-chat-footer">
-                    <form>
-                        <div class="row">
-                            <div class="col-md-10">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Write a message." name="message"
-                                        id="message-input">
-                                    <span class="form-attachemnt-icon">
-                                        <a class="fs-24 ms-3 text-muted" id="image-attach" href="#!">
-                                            <img class="la-paperclip" id="previewImage" style="height: 20px !important"
-                                                src="{{ asset('public/assets/admin-images/attachemnt.svg') }}">
-                                        </a>
-                                        <input type="file" hidden accept="image/png, image/jpg, image/jpeg"
-                                            id="upload-file" name="image-attachment">
-                                    </span>
+                    <div class="chat-panel-chat-footer">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Write a message."
+                                            name="message" id="message-input">
+                                        <span class="form-attachemnt-icon">
+                                            <a class="fs-24 ms-3 text-muted" id="image-attach" href="#!">
+                                                <img class="la-paperclip" id="previewImage" style="height: 20px !important"
+                                                    src="{{ asset('public/assets/admin-images/attachemnt.svg') }}">
+                                            </a>
+                                            <input type="file" hidden accept="image/png, image/jpg, image/jpeg"
+                                                id="upload-file" name="image-attachment">
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn-send btnSend" title="" type="button">
+                                        <img src="{{ asset('public/assets/admin-images/direction.svg') }}"> Send
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <button class="btn-send btnSend" title="" type="button">
-                                    <img src="{{ asset('public/assets/admin-images/direction.svg') }}"> Send
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            @endif
+
         </div>
     </div>
 

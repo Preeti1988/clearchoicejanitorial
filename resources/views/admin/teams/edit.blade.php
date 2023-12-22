@@ -27,7 +27,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Last Name *</h3>
+                                    <h3>Last Name </h3>
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
                                         value="{{ $arr[1] ?? '' }}" required>
                                 </div>
@@ -241,6 +241,7 @@
                                 <div class="product-images-head">
                                     <p>PNG, JPG and GIF are allowed</p>
                                 </div>
+
                             </div>
                         </div>
                     </div>

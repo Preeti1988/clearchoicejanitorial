@@ -39,14 +39,14 @@
                         <h6>Employee Type</h6>
                         <p class="mt-2">New Joinee</p>
                     </div>
-                    <div class="col-md-3 account-status">
+                    <div class="col-md-2 account-status">
                         <h6>Account Status</h6>
                         <p class="mt-2"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                                 fill="currentColor" class="bi bi-circle-fill me-2" viewBox="0 0 16 16">
                                 <circle cx="6" cy="6" r="6" />
                             </svg>Pending For Approval</p>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="text-end action-buttons">
                             <div>
                                 <a href="{{ url('approve-member/' . encryptDecrypt('encrypt', $data->userid)) }}"

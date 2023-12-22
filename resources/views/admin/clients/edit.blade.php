@@ -232,7 +232,7 @@
                                 <div class="form-group">
                                     <h3>Client Tags*</h3>
                                     <input type="text" class="form-control" name="client_tags"
-                                        value="{{ $data->client_tags ?? '' }}" placeholder="Tages" required>
+                                        value="{{ $data->client_tags ?? '' }}" placeholder="tags" required>
                                 </div>
                             </div>
 

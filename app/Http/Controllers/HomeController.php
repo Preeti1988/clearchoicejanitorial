@@ -92,10 +92,11 @@ class HomeController extends Controller
         $designation = Designation::orderBy('id', 'DESC')->get();
         $country = Country::orderBy('id', 'DESC')->get();
         $state = State::orderBy('id', 'DESC')->get();
-        $city = City::orderBy('id', 'DESC')->get();
+
         $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
         $data = User::where('userid', $id)->first();
-        return view('admin.editteammember', compact('data', 'designation', 'country', 'state', 'city', 'data', 'MaritalStatus'));
+        $city = City::where("state_id", $data->state_id)->orderBy('id', 'DESC')->get();
+        return view('admin.teams.edit', compact('data', 'designation', 'country', 'state', 'city', 'data', 'MaritalStatus'));
     }
 
     public function SaveClient(Request $request)
@@ -256,7 +257,7 @@ class HomeController extends Controller
             $state = State::orderBy('id', 'DESC')->get();
             $city = City::orderBy('id', 'DESC')->take(1000)->get();
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
-            return view('admin.newteammember', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
+            return view('admin.members.create', compact('designation', 'country', 'state', 'city', 'MaritalStatus'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -277,11 +278,10 @@ class HomeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             if ($request->file('resume')) {
-                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $request->resume->extension();
-                $request->resume->move(public_path('upload/user-profile'), $imageName);
-                $resume = $imageName;
-                $resume_file_name = $request->resume->getClientOriginalName();
-                User::where('userid', $request->userid)->update(['resume' => $imageName, 'resume_file_name' => $resume_file_name]);
+                $file = $request->file('resume');
+                $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path("upload/resume"), $imageName);
+                User::where('userid', $request->userid)->update(['resume' => $imageName, 'resume_file_name' => $imageName]);
             }
 
             $user->fullname = $request->first_name . ' ' . $request->last_name;
@@ -461,14 +461,14 @@ class HomeController extends Controller
                         ->orwhere('userid', 'like', '%' . $search . '%')
                         ->orwhere('phonenumber', 'like', '%' . $search . '%');
                 })->orderBy('userid', 'DESC')->paginate(10);
-                return view('admin.team', compact('datas', 'search', 'type'));
+                return view('admin.teams.index', compact('datas', 'search', 'type'));
             } else {
                 $search = '';
                 $type = 1;
                 $datas = User::where('status', 1)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->paginate(10);
 
 
-                return view('admin.team', compact('datas', 'search', 'type'));
+                return view('admin.teams.index', compact('datas', 'search', 'type'));
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -487,12 +487,12 @@ class HomeController extends Controller
                     ->orwhere('userid', 'like', '%' . $search . '%')
                     ->orwhere('phonenumber', 'like', '%' . $search . '%')
                     ->orderBy('userid', 'DESC')->paginate(10);
-                return view('admin.team', compact('datas', 'search', 'type'));
+                return view('admin.teams.index', compact('datas', 'search', 'type'));
             } else {
                 $search = '';
                 $type = 2;
                 $datas = User::where('status', 2)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->paginate(10);
-                return view('admin.team', compact('datas', 'search', 'type'));
+                return view('admin.teams.index', compact('datas', 'search', 'type'));
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -567,7 +567,7 @@ class HomeController extends Controller
             }
             $unassigned = $unassigned->orderBy("id", "desc")->get();
 
-            return view('admin.client-details', compact('data', 'ongoing', 'completed', 'unassigned'));
+            return view('admin.clients.show', compact('data', 'ongoing', 'completed', 'unassigned'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -680,8 +680,8 @@ class HomeController extends Controller
                 $search = $request->search;
                 $datas = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy('userid', 'DESC')->get();
                 $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy('userid', 'DESC')->first();
-                $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
-                $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
+                $servise_list = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get() : [];
+                $servise_first = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first() : null;
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
             } else {
                 $search = '';

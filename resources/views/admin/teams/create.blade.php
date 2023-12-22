@@ -18,7 +18,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>First Name</h3>
+                                    <h3>First Name*</h3>
                                     <input type="text" class="form-control" name="first_name" placeholder="First Name"
                                         value="{{ old('first_name') }}" required>
                                 </div>
@@ -27,20 +27,20 @@
                                 <div class="form-group">
                                     <h3>Last Name</h3>
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
-                                        value="{{ old('last_name') }}" required>
+                                        value="{{ old('last_name') }}">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Email Address</h3>
+                                    <h3>Email Address *</h3>
                                     <input type="text" class="form-control" name="email" placeholder="Email Address"
                                         value="{{ old('email') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Display Name</h3>
-                                    <input type="text" class="form-control" name="display_name"
+                                    <h3>Display Name *</h3>
+                                    <input type="text" class="form-control" name="display_name" required
                                         value="{{ old('display_name') }}" placeholder="Display Name">
                                 </div>
                             </div>
@@ -54,7 +54,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Mobile phone</h3>
+                                    <h3>Mobile phone*</h3>
                                     <input type="text" class="form-control" name="phonenumber"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('mobile_phone') }}" placeholder="Mobile phone" required>
@@ -78,8 +78,8 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Role</h3>
-                                    <select class="form-control" name="role">
+                                    <h3>Role *</h3>
+                                    <select class="form-control" name="role" required>
                                         @foreach ($designation as $data)
                                             <option value="{{ $data->id }}">{{ $data->name }}</option>
                                         @endforeach
@@ -89,7 +89,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Maritial Status</h3>
+                                    <h3>Maritial Status *</h3>
                                     <select class="form-control" name="marital_status">
                                         @foreach ($MaritalStatus as $val)
                                             <option value="{{ $val->id }}">{{ $val->name }}</option>
@@ -100,7 +100,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Date Of birth</h3>
+                                    <h3>Date Of birth *</h3>
                                     <input type="date" class="form-control" name="dob" max="<?= date('Y-m-d') ?>"
                                         value="{{ old('dob') }}"required>
                                 </div>
@@ -155,22 +155,22 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Street</h3>
-                                    <input type="text" class="form-control" name="street"
+                                    <h3>Street*</h3>
+                                    <input type="text" class="form-control" name="street" required
                                         value="{{ old('street') }}"placeholder="Street">
                                 </div>
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Unit</h3>
-                                    <input type="text" class="form-control" name="unit"
+                                    <h3>Unit *</h3>
+                                    <input type="text" class="form-control" name="unit" required
                                         value="{{ old('unit') }}"placeholder="Unit">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Country</h3>
+                                    <h3>Country *</h3>
                                     <select class="form-control"name="country_id" onchange="getState(this.value)">
                                         <option value="0">--Select--</option>
                                         @foreach ($country as $crty)
@@ -182,7 +182,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>State</h3>
+                                    <h3>State*</h3>
                                     <div id="state_container">
                                         <select class="form-control" name="state_id" onchange="getCity(this.value)">
                                             <option value="0">--Select--</option>
@@ -197,7 +197,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>City</h3>
+                                    <h3>City*</h3>
                                     <div id="city_container">
                                         <select class="form-control" name="city">
                                             <option value="0">--Select--</option>
@@ -213,7 +213,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Zipcode</h3>
+                                    <h3>Zipcode *</h3>
                                     <input type="text" class="form-control" name="zipcode" placeholder="Zipcode">
                                 </div>
                             </div>
@@ -221,7 +221,7 @@
                     </div>
 
                     <div class="create-service-form-box">
-                        <h1>Upload Resume</h1>
+                        <h1>Upload Resume**</h1>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="product-images-upload">
@@ -258,7 +258,7 @@
                     </div>
 
                     <div class="create-service-form-action">
-                        <button class="cancelbtn">cancel</button>
+                        <button class="cancelbtn">Cancel</button>
                         <button class="Savebtn" type="submit">Save</button>
                     </div>
                 </form>

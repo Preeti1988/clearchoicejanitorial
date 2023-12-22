@@ -57,6 +57,10 @@
             margin: auto;
 
         }
+
+        .invalid-feedback {
+            margin-top: 0px !important;
+        }
     </style>
 @endpush
 @section('content')
@@ -349,7 +353,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Travel Duration (In Hours) *</h3>
                                     <input type="time" class="form-control" name="travel_duration"
@@ -365,7 +369,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <h3>Service Window</h3>
                                     <input type="text" class="form-control" name="service_window"
@@ -851,18 +855,12 @@
             }, 'Invalid phone Number.');
             $('#create-service').validate({
                 rules: {
-                    client_work_number: {
-                        required: true,
-                        phoneValid: true
-                    },
+
                     mobile_number: {
                         required: true,
                         phoneValid: true
                     },
-                    home_number: {
-                        required: true,
-                        phoneValid: true
-                    },
+
 
                 },
                 errorElement: "span",
@@ -881,6 +879,23 @@
                     $(".screen").show()
                     event.preventDefault();
                     let formData = new FormData(form);
+                    if (items.length == 0) {
+
+                        Swal.fire("Error", "Please select atleast one service item", 'error');
+                        return false;
+                    }
+                    if (ISitems.length == 0) {
+
+                        Swal.fire("Error", "Please select atleast one inscope item", 'error');
+
+                        return false;
+                    }
+                    if (OSitems.length == 0) {
+
+                        Swal.fire("Error", "Please select atleast one outscope item", 'error');
+
+                        return false;
+                    }
                     formData.append('service_items', JSON.stringify(items));
                     formData.append('inscopes', JSON.stringify(ISitems));
                     formData.append('outscopes', JSON.stringify(OSitems));

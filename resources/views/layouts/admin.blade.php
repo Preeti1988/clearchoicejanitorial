@@ -29,6 +29,15 @@
         .invalid-feedback {
             border: 1px solid red !important;
         }
+
+        input {
+            color: #000 !important;
+        }
+
+        input::placeholder {
+            color: rgb(180, 178, 178) !important;
+            /* Change this to your desired color */
+        }
     </style>
 
 </head>
