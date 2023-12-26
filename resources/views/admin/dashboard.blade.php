@@ -121,7 +121,7 @@
                                                 <div class="service-shift-card-text">
                                                     <h2>Service Shift Timing:</h2>
                                                     <p>{{ date('h:i A', strtotime($item->service_start_time)) }}
-                                                        -{{ date('h:i A', strtotime($item->service_end_time)) }}
+                                                        - {{ date('h:i A', strtotime($item->service_end_time)) }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -368,7 +368,7 @@
                         <div class="chat-panel-sidebar-body">
                             <div class="chat-panel-sidebar-scroll">
                                 <div class="chat-panel-sidebar-action">
-                                    <a class="sendbroadcast-btn" href="#">Send Broadcast Message</a>
+                                    {{-- <a class="sendbroadcast-btn" href="#">Send Broadcast Message</a> --}}
                                 </div>
                                 <div class="chat-panel-sidebar-list">
 

@@ -79,7 +79,7 @@
                                                 <div class="service-shift-card-text">
                                                     <h2>Service Shift Timing:</h2>
                                                     <p>{{ date('h:i A', strtotime($item->service_start_time)) }}
-                                                        -{{ date('h:i A', strtotime($item->service_end_time)) }}
+                                                        - {{ date('h:i A', strtotime($item->service_end_time)) }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -99,11 +99,13 @@
                                                             <h2>Job Assigned</h2>
                                                             <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
 
-                                                                @if ($item->members->count() - 1)
-                                                                    <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                @if ($item->members->count() - 1 > 0)
+                                                                    <a href="{{ route('services.assign', $item->id) }}">
+                                                                        + {{ $item->members->count() - 1 }}
                                                                         Employee</a>
                                                                 @else
-                                                                    <a href="{{ route('services.assign', $item->id) }}">+
+                                                                    <a href="{{ route('services.assign', $item->id) }}"> +
+                                                                        1
                                                                         Employee</a>
                                                                 @endif
 

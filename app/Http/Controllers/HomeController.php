@@ -158,30 +158,39 @@ class HomeController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            $Client = Client::where('id', $request->id)->first();
-            $Client->email_address = $request->email_address;
-            $Client->name = $request->first_name . ' ' . $request->last_name;
-            $Client->mobile_number = $request->mobile_number;
-            $Client->address = $request->address;
-            $Client->display_name = $request->display_name;
-            $Client->company = $request->company;
-            $Client->home_number = $request->home_number;
-            $Client->client_work_number = $request->client_work_number;
-            $Client->role = $request->role;
-            $Client->ownertype = $request->ownertype;
-            $Client->address_notes = $request->address_notes;
-            $Client->contractor = $request->contractor;
-            $Client->street = $request->street;
-            $Client->unit = $request->unit;
-            $Client->country_id = $request->country_id;
-            $Client->state_id = $request->state_id;
-            $Client->city = $request->city;
-            $Client->zipcode = $request->zipcode;
-            $Client->client_notes = $request->client_notes;
-            $Client->client_tags = $request->client_tags;
-            $Client->client_bills_to = $request->client_bills_to;
-            $Client->lead_source = $request->lead_source;
-            $Client->save();
+
+            if (Client::where('id', $request->id)->first()) {
+
+
+                $Client = Client::where('id', $request->id)->first();
+                if ($Client->email_address === $request->email_address || Client::where('email_address', $request->email_address)->count() == 0) {
+                } else {
+                    return redirect('client')->with('error', 'Email Already exists');
+                }
+                $Client->email_address = $request->email_address;
+                $Client->name = $request->first_name . ' ' . $request->last_name;
+                $Client->mobile_number = $request->mobile_number;
+                $Client->address = $request->address;
+                $Client->display_name = $request->display_name;
+                $Client->company = $request->company;
+                $Client->home_number = $request->home_number;
+                $Client->client_work_number = $request->client_work_number;
+                $Client->role = $request->role;
+                $Client->ownertype = $request->ownertype;
+                $Client->address_notes = $request->address_notes;
+                $Client->contractor = $request->contractor;
+                $Client->street = $request->street;
+                $Client->unit = $request->unit;
+                $Client->country_id = $request->country_id;
+                $Client->state_id = $request->state_id;
+                $Client->city = $request->city;
+                $Client->zipcode = $request->zipcode;
+                $Client->client_notes = $request->client_notes;
+                $Client->client_tags = $request->client_tags;
+                $Client->client_bills_to = $request->client_bills_to;
+                $Client->lead_source = $request->lead_source;
+                $Client->save();
+            }
             return redirect('client')->with('success', 'Client updated successfully');
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);

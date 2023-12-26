@@ -164,7 +164,7 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Street</h3>
+                                    <h3>Street*</h3>
                                     <input type="text" class="form-control" name="street"
                                         value="{{ $data->street ?? '' }}"placeholder="Street" required>
                                 </div>
@@ -192,7 +192,7 @@
 
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <h3>State</h3>
+                                    <h3>State *</h3>
                                     <select class="form-control"name="state_id">
                                         @foreach ($state as $value)
                                             <option value="{{ $value->id }}"
@@ -239,7 +239,7 @@
                                     </div>
                                 </div>
                                 <div class="product-images-head">
-                                    <p>PNG, JPG and GIF are allowed</p>
+                                    <p>PNG, JPG , JPEG and PDF are allowed</p>
                                 </div>
 
                             </div>

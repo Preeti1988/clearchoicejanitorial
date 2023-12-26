@@ -41,7 +41,7 @@
                                 <div class="form-group">
                                     <h3>Display Name*</h3>
                                     <input type="text" class="form-control" name="display_name"
-                                        value="{{ old('display_name') }}" placeholder="Display Name">
+                                        value="{{ old('display_name') }}" placeholder="Display Name" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -79,7 +79,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Role*</h3>
-                                    <input type="text" class="form-control" name="role" placeholder="Role">
+                                    <input type="text" class="form-control" name="role" placeholder="Role" required>
                                 </div>
                             </div>
 

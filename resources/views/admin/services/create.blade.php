@@ -157,7 +157,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Client Home Number</h3>
+                                    <h3>Client Home Number *</h3>
                                     <input type="text" class="form-control" id="home_number" name="home_number"
                                         value="{{ $service && $service->client ? $service->client->home_number : '' }}"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
@@ -167,7 +167,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Client Mobile Number</h3>
+                                    <h3>Client Mobile Number *</h3>
                                     <input type="text" class="form-control" name="mobile_number" id="mobile_number"
                                         value="{{ $service && $service->client ? $service->client->mobile_number : '' }}"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
@@ -177,7 +177,7 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <h3>Client work Number</h3>
+                                    <h3>Client Work Number *</h3>
                                     <input type="text" class="form-control" name="client_work_number"
                                         id="client_work_number" data-inputmask="'mask': '(999) 999-9999'"
                                         placeholder="(999) 999-9999" value="" />
@@ -302,7 +302,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>
-                                        Service scheduled End Date *
+                                        Service Scheduled End Date *
                                     </h3>
                                     <input type="date" class="form-control" name="scheduled_end_date"
                                         value="{{ $service ? $service->scheduled_end_date : '' }}"
@@ -441,7 +441,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Labor Cost % of rev</h3>
+                                    <h3>Labor Cost % Of Revenue</h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control cost" name="labour_cost_percent"
                                             value="{{ $service ? $service->labour_cost_percent : '' }}"
@@ -462,7 +462,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Material Cost % of rev</h3>
+                                    <h3>Material Cost % Of Revenue</h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control " name="material_cost_percent"
                                             value="{{ $service ? $service->material_cost_percent : '' }}"
@@ -483,7 +483,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>
-                                        Miscellaneous Cost % of rev
+                                        Miscellaneous Cost % Of Revenue
                                     </h3>
                                     <div class="per-sign">
                                         <input type="text" class="form-control" name="" placeholder="0.00" />
@@ -560,7 +560,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Total service Cost *</h3>
+                                    <h3>Total Service Cost *</h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control cost" name="total_service_cost"
                                             value="{{ $service ? $service->total_service_cost : '' }}" required
@@ -853,6 +853,9 @@
             $.validator.addMethod("phoneValid", function(value) {
                 return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
             }, 'Invalid phone Number.');
+            $.validator.addMethod("integerValue", function(value) {
+                return value != 0;
+            }, 'Invalid phone Number.');
             $('#create-service').validate({
                 rules: {
 
@@ -860,6 +863,18 @@
                         required: true,
                         phoneValid: true
                     },
+                    client_work_number: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    home_number: {
+                        required: true,
+                        phoneValid: true
+                    },
+                    assigned_client_id: {
+                        required: true,
+                        integerValue: true
+                    }
 
 
                 },
