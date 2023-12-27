@@ -94,7 +94,9 @@
                                             <div class="ongoing-services-item-head">
                                                 <div class="ongoing-services-item-title">
                                                     <div class="services-id">#{{ $item->id }}</div>
-                                                    <h2>Service 1: {{ $item->name }}</h2>
+                                                    <h2 style="cursor: pointer"
+                                                        onclick="location.replace('{{ route('services.edit', $item->id) }}') ">
+                                                        Service 1: {{ $item->name }}</h2>
                                                 </div>
                                                 <div class="ongoing-services-date">
                                                     {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}</div>

@@ -17,7 +17,9 @@ use App\Models\State;
 use App\Models\City;
 use Carbon\Carbon;
 use App\Models\ServiceMember;
+use App\Models\ServiceTimesheet;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
@@ -513,12 +515,76 @@ class HomeController extends Controller
         try {
             $id = encryptDecrypt('decrypt', $id);
             $data = User::where('userid', $id)->first();
-            return view('admin.team-detail', compact('data'));
+            $service_ids = ServiceMember::where("member_id", $id)->groupBy("service_id")->pluck("service_id")->toArray();
+
+            $services = Service::has("members");
+            if (request()->has('date')) {
+                $services = $services->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $services = $services->whereIn("id", $service_ids)->orderBy("id", "desc")->get();
+
+            $completed_services = Service::where("status", "completed");
+            if (request()->has('date')) {
+                $completed_services = $completed_services->whereDate("created_at", Carbon::parse(request('date')));
+            }
+            $completed_services = $completed_services->whereIn("id", $service_ids)->orderBy("id", "desc")->get();
+
+
+            $currentWeekStartDate = Carbon::now()->startOfWeek();
+            $currentWeekEndDate = Carbon::now()->endOfWeek();
+
+            $this_week = ServiceTimesheet::select([
+                'assign_member_id',
+                DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time)) ) as total_hours_worked_on_week'),
+            ])
+                ->where('assign_member_id', $id)
+
+                ->whereBetween('date', [$currentWeekStartDate, $currentWeekEndDate])
+                ->groupBy('assign_member_id')
+                ->first();
+
+            $this_week = $this_week ? $this->formatTime($this_week->total_hours_worked_on_week) : '0 hours';
+
+            $currentDate = Carbon::now()->toDateString();
+
+            $total_hours = ServiceTimesheet::select([
+                'assign_member_id',
+                DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time))) as total_hours_worked_till_date'),
+            ])
+                ->where('assign_member_id', $id)
+
+                ->where('date', '<=', $currentDate)
+                ->groupBy('assign_member_id')
+                ->first();
+            $total_hours = $total_hours ? $this->formatTime($total_hours->total_hours_worked_till_date) : '0 hours';
+            return view('admin.teams.show', compact('data', 'services', 'completed_services', 'this_week', 'total_hours'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+    function formatTime($totalSeconds)
 
+    {
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        $formattedTime = '';
+
+        if ($hours > 0) {
+            $formattedTime .= $hours . ' hours ';
+        }
+
+        if ($minutes > 0) {
+            $formattedTime .= $minutes . ' minutes ';
+        }
+
+        if ($seconds > 0) {
+            $formattedTime .= $seconds . ' seconds';
+        }
+
+        return trim($formattedTime);
+    }
     public function approve_member($id)
     {
         try {

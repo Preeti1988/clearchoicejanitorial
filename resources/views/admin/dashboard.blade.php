@@ -138,7 +138,7 @@
                                                                 src="{{ asset('public/assets/admin-images/people.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
-                                                            <h2>Job Assigned</h2>
+                                                            <h2>Job Assigned:</h2>
                                                             <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
 
                                                                 @if ($item->members->count() - 1)
@@ -218,7 +218,7 @@
                                                                 src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
-                                                            <h2>Price</h2>
+                                                            <h2>Price:</h2>
                                                             <p>${{ $item->total_service_cost }} + Tax Included</p>
                                                         </div>
                                                     </div>

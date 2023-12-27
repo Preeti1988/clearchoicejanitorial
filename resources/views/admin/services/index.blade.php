@@ -60,7 +60,10 @@
                                         <div class="ongoing-services-item-head">
                                             <div class="ongoing-services-item-title">
                                                 <div class="services-id">#{{ $item->id }}</div>
-                                                <h2>Service 1: {{ $item->name }}</h2>
+                                                <h2 style="cursor: pointer"
+                                                    onclick="location.replace('{{ route('services.edit', $item->id) }}')">
+                                                    Service 1:
+                                                    {{ $item->name }}</h2>
                                             </div>
                                             <div class="client-info">
                                                 <div class="client-info-icon">
@@ -96,7 +99,7 @@
                                                                 src="{{ asset('public/assets/admin-images/people.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
-                                                            <h2>Job Assigned</h2>
+                                                            <h2>Job Assigned:</h2>
                                                             <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
 
                                                                 @if ($item->members->count() - 1 > 0)
@@ -105,7 +108,7 @@
                                                                         Employee</a>
                                                                 @else
                                                                     <a href="{{ route('services.assign', $item->id) }}"> +
-                                                                        1
+
                                                                         Employee</a>
                                                                 @endif
 
@@ -175,7 +178,7 @@
                                                                 src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
-                                                            <h2>Price</h2>
+                                                            <h2>Price:</h2>
                                                             <p>${{ $item->total_service_cost }} + Tax Included</p>
                                                         </div>
                                                     </div>
@@ -214,7 +217,8 @@
                                         <div class="ongoing-services-item-head">
                                             <div class="ongoing-services-item-title">
                                                 <div class="services-id">#{{ $item->id }}</div>
-                                                <h2>Service 1: {{ $item->name }}</h2>
+                                                <h2>
+                                                    Service 1: {{ $item->name }}</h2>
                                             </div>
                                             <div class="client-info">
                                                 <div class="client-info-icon">
@@ -250,15 +254,13 @@
                                                                 src="{{ asset('public/assets/admin-images/people.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
-                                                            <h2>Job Assigned</h2>
+                                                            <h2>Job Assigned:</h2>
                                                             <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
 
-                                                                @if ($item->members->count() - 1)
-                                                                    + <a href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                @if ($item->members->count() - 1 > 0)
+                                                                    + <a href="#">{{ $item->members->count() - 1 }}
                                                                         Employee</a>
                                                                 @else
-                                                                    <a href="{{ route('services.assign', $item->id) }}">+
-                                                                        Employee</a>
                                                                 @endif
 
                                                             </p>
@@ -329,7 +331,7 @@
                                                                 src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                         </div>
                                                         <div class="service-shift-card-text">
-                                                            <h2>Price</h2>
+                                                            <h2>Price:</h2>
                                                             <p>${{ $item->total_service_cost }} + Tax Included</p>
                                                         </div>
                                                     </div>

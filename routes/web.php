@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\ServiceController;
+use App\Models\Service;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +17,15 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get("update-service", function () {
+    $services = Service::whereDate("scheduled_end_date", "<", now())->get();
+    foreach ($services as $item) {
+        $item->status = "completed";
+        $item->save();
+    }
+    return redirect(route("Home"));
+});
 
 Auth::routes();
 Route::group(['middleware' => ['auth']], function () {

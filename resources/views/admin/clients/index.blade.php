@@ -35,7 +35,7 @@
                                                 value="{{ request()->has('search') ? request('search') : '' }}"
                                                 class="form-control" style="width: 165%"
                                                 placeholder="Search by Client Name">
-                                            <span class="search-icon"><img
+                                            <span class="search-icon" onclick=""><img
                                                     src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
 
                                             <span class="search-icon"><img

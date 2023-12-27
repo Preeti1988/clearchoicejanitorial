@@ -151,7 +151,7 @@
                                                                     src="{{ asset('public/assets/admin-images/people.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
-                                                                <h2>Job Assigned</h2>
+                                                                <h2>Job Assigned:</h2>
                                                                 <p>John Doe + <a
                                                                         href="{{ route('services.assign', $item->id) }}">12
                                                                         Employee</a></p>
@@ -222,7 +222,7 @@
                                                                     src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
-                                                                <h2>Price</h2>
+                                                                <h2>Price:</h2>
                                                                 <p>${{ $item->total_service_cost }} + Tax Included</p>
                                                             </div>
                                                         </div>
@@ -389,7 +389,7 @@
                                                                     src="{{ asset('public/assets/admin-images/people.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
-                                                                <h2>Job Assigned</h2>
+                                                                <h2>Job Assigned:</h2>
                                                                 <p>John Doe + <a
                                                                         href="{{ route('services.assign', $item->id) }}">12
                                                                         Employee</a></p>
@@ -460,7 +460,7 @@
                                                                     src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
-                                                                <h2>Price</h2>
+                                                                <h2>Price:</h2>
                                                                 <p>${{ $item->total_service_cost }} + Tax Included</p>
                                                             </div>
                                                         </div>

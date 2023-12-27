@@ -55,6 +55,8 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+
+
         $service = new Service();
         $service->name = $request->name;
 
@@ -100,6 +102,12 @@ class ServiceController extends Controller
         $service->inscopes = json_encode(json_decode($request->inscopes, true));
         $service->outscopes =  json_encode(json_decode($request->outscopes, true));
         $service->service_items =  json_encode(json_decode($request->service_items, true));
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $image = uniqid() . "." . $file->getClientOriginalExtension();
+            $service->image = $image;
+            $file->move(public_path('upload/services'), $image);
+        }
         $service->save();
         return response()->json(['message' => 'Service Created Successfully', 'status' => 200]);
     }
@@ -132,7 +140,61 @@ class ServiceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+        $service =  Service::find($id);
+        $service->name = $request->name;
+
+        $service->assigned_client_id = $request->assigned_client_id;
+        $service->discount_amount = $request->discount_amount;
+        $service->due_amount = $request->due_amount;
+        $service->gross_profit = $request->gross_profit;
+        $service->frequency = $request->frequency;
+        $service->scheduled_for = $request->scheduled_for;
+        $service->scheduled_end_date = $request->scheduled_end_date;
+
+        $service->lead_source = $request->lead_source;
+        $service->service_source = $request->service_source;
+        $service->revenue = $request->revenue;
+        $service->created_date = $request->created_date;
+        $service->service_duration = $request->service_duration;
+        $service->travel_duration = $request->travel_duration;
+
+        $service->service_tags = $request->service_tags;
+        $service->service_window = $request->service_window;
+        $service->service_type = $request->servicetype;
+        $service->description = $request->description;
+
+        $service->status = "ongoing";
+        $service->labour_cost = $request->labour_cost;
+        $service->labour_cost_percent = $request->labour_cost_percent;
+        $service->material_cost = $request->material_cost;
+        $service->material_cost_percent = $request->material_cost_percent;
+        $service->miscellaneous_cost = $request->miscellaneous_cost;
+        $service->paid_amount = $request->paid_amount;
+        $service->profit_margin = $request->profit_margin;
+        $service->service_cost = $request->service_cost;
+        $service->tax_amount = $request->tax_amount;
+        $service->tax_rate = $request->tax_rate;
+        $service->tip_amount = $request->tip_amount;
+        $service->total_duration = $request->total_duration;
+        $service->total_service_cost = $request->total_service_cost;
+        $service->total_labour_hours = $request->total_labour_hours;
+        $service->total_time = $request->total_time;
+        $service->tax_amount = $request->tax_amount;
+        $service->service_start_time = $request->service_start_time;
+        $service->service_end_time = $request->service_end_time;
+        $service->inscopes = json_encode(json_decode($request->inscopes, true));
+        $service->outscopes =  json_encode(json_decode($request->outscopes, true));
+        $service->service_items =  json_encode(json_decode($request->service_items, true));
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $image = uniqid() . "." . $file->getClientOriginalExtension();
+            $service->image = $image;
+            $file->move(public_path('upload/services'), $image);
+        }
+        $service->save();
+        return response()->json(['message' => 'Service updated Successfully', 'status' => 200]);
     }
 
     /**

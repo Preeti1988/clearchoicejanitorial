@@ -29,7 +29,7 @@
                                 <div class="form-group">
                                     <h3>Last Name </h3>
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
-                                        value="{{ $arr[1] ?? '' }}" required>
+                                        value="{{ $arr[1] ?? '' }}">
                                 </div>
                             </div>
                             <div class="col-md-3">

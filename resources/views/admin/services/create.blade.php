@@ -259,7 +259,7 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Service scheduled for *</h3>
+                                    <h3>Service Scheduled for *</h3>
                                     <input type="text" class="form-control" name="scheduled_for"
                                         value="{{ $service ? $service->scheduled_for : '' }}" required />
                                 </div>
@@ -294,7 +294,8 @@
                                 <div class="form-group">
                                     <h3>Service Start Date *</h3>
                                     <input type="date" class="form-control" min="<?= date('Y-m-d') ?>"
-                                        name="created_date" value="{{ $service ? $service->created_date : '' }}"
+                                        name="created_date"
+                                        value="{{ $service ? date('Y-m-d', strtotime($service->created_date)) : '' }}"
                                         required />
                                 </div>
                             </div>
@@ -403,14 +404,48 @@
                                     <input type="text" class="form-control" id="itemValue" placeholder="$10" />
                                 </div>
                             </div>
-
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Service Image *</h3>
+                                    <input type="file" name="image" accept="image/png,image/jpeg,image/jpg"
+                                        class="form-control">
+                                </div>
+                            </div>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <h3>Service Items Added *</h3>
                                     <ul class="ServiceAdded-list">
-                                        <li>
-                                            No Items Added
-                                        </li>
+                                        @if ($service)
+                                            @if (json_decode($service->service_items))
+                                                @foreach (json_decode($service->service_items) as $item)
+                                                    <li>
+                                                        <div class="ServiceAddedcheckbox">
+                                                            <input type="checkbox" id="{{ $item->name }}" />
+                                                            <label for="{{ $item->name }}">
+
+                                                                <span class="ServiceAddedcheckbox-content">
+                                                                    <span
+                                                                        class="ServiceAddedcheckbox-text">{{ $item->name }}</span>
+                                                                    <span class="ServiceAddedcheckbox-action"
+                                                                        style="z-index:12"
+                                                                        onclick="removeItem({{ $item->id }},'service')"><a><img
+                                                                                src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                                    </span>
+                                                                </span>
+                                                            </label>
+                                                        </div>
+                                                    </li>
+                                                @endforeach
+                                            @else
+                                                <li>
+                                                    No Items Added
+                                                </li>
+                                            @endif
+                                        @else
+                                            <li>
+                                                No Items Added
+                                            </li>
+                                        @endif
 
                                     </ul>
                                 </div>
@@ -590,7 +625,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>
-                                        Total travel Time By Team
+                                        Total Travel Time By Team
                                     </h3>
                                     <input type="text" class="form-control" name="travel_time_by_team"
                                         value="{{ $service ? $service->travel_time_by_team : '' }}" />
@@ -628,12 +663,29 @@
 
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <h3>Service Items Added</h3>
+                                                <h3>In Scopes Added</h3>
                                                 <ul class="InScopeAdded-list">
                                                     @if ($service)
-                                                        @if (json_decode($service->service_items))
-                                                            @foreach (json_decode($service->service_items) as $item)
-                                                                <li>{{ $item->name }}</li>
+                                                        @if (json_decode($service->inscopes))
+                                                            @foreach (json_decode($service->inscopes) as $item)
+                                                                <li>
+                                                                    <div class="ServiceAddedcheckbox">
+                                                                        <input type="checkbox"
+                                                                            id="{{ $item->name }}" />
+                                                                        <label for="{{ $item->name }}">
+
+                                                                            <span class="ServiceAddedcheckbox-content">
+                                                                                <span
+                                                                                    class="ServiceAddedcheckbox-text">{{ $item->name }}</span>
+                                                                                <span class="ServiceAddedcheckbox-action"
+                                                                                    style="z-index:12"
+                                                                                    onclick="removeItem({{ $item->id }},'inscope')"><a><img
+                                                                                            src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                                                </span>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </li>
                                                             @endforeach
                                                         @else
                                                             <li>
@@ -682,9 +734,38 @@
                                             <div class="form-group">
                                                 <h3>Out Of Scope Added</h3>
                                                 <ul class="OutScopeAdded-list">
-                                                    <li>
-                                                        No Items Added
-                                                    </li>
+                                                    @if ($service)
+                                                        @if (json_decode($service->outscopes))
+                                                            @foreach (json_decode($service->outscopes) as $item)
+                                                                <li>
+                                                                    <div class="ServiceAddedcheckbox">
+                                                                        <input type="checkbox"
+                                                                            id="{{ $item->name }}" />
+                                                                        <label for="{{ $item->name }}">
+
+                                                                            <span class="ServiceAddedcheckbox-content">
+                                                                                <span
+                                                                                    class="ServiceAddedcheckbox-text">{{ $item->name }}</span>
+                                                                                <span class="ServiceAddedcheckbox-action"
+                                                                                    style="z-index:12"
+                                                                                    onclick="removeItem({{ $item->id }},'outscope')"><a><img
+                                                                                            src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                                                </span>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </li>
+                                                            @endforeach
+                                                        @else
+                                                            <li>
+                                                                No Items Added
+                                                            </li>
+                                                        @endif
+                                                    @else
+                                                        <li>
+                                                            No Items Added
+                                                        </li>
+                                                    @endif
 
                                                 </ul>
                                             </div>
@@ -708,11 +789,36 @@
     <div class="screen">
         <h2>Loading...</h2>
     </div>
+    @if ($service && json_decode($service->service_items))
+        <script>
+            var items = @json(json_decode($service->service_items));
+        </script>
+    @else
+        <script>
+            var items = [];
+        </script>
+    @endif
+    @if ($service && json_decode($service->inscopes))
+        <script>
+            var ISitems = @json(json_decode($service->inscopes));
+        </script>
+    @else
+        <script>
+            var ISitems = [];
+        </script>
+    @endif
+    @if ($service && json_decode($service->outscopes))
+        <script>
+            var OSitems = @json(json_decode($service->outscopes));
+        </script>
+    @else
+        <script>
+            var OSitems = [];
+        </script>
+    @endif
     <script>
         $(":input").inputmask();
-        var items = [];
-        var ISitems = [];
-        var OSitems = [];
+
 
         function fetchClient(id) {
             $.get("{{ route('fetchClient') }}" + "?id=" + id, function(data) {
@@ -813,10 +919,10 @@
                 htm += ` <li><div class="ServiceAddedcheckbox">
                                                 <input type="checkbox" id="${item.name}" />
                                                 <label for="${item.name}">
-                                                    <span class="ServiceAddedcheckbox-circle-mark"></span>
+                                                    
                                                     <span class="ServiceAddedcheckbox-content">
                                                         <span class="ServiceAddedcheckbox-text">${item.name}</span>
-                                                        <span class="ServiceAddedcheckbox-action"  style="z-index:12"  onclick="removeItem(${item.id},'${val}')"><a href="#" ><img
+                                                        <span class="ServiceAddedcheckbox-action"  style="z-index:12"  onclick="removeItem(${item.id},'${val}')"><a ><img
                                                                     src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
                                                         </span>
                                                     </span>
@@ -863,14 +969,7 @@
                         required: true,
                         phoneValid: true
                     },
-                    client_work_number: {
-                        required: true,
-                        phoneValid: true
-                    },
-                    home_number: {
-                        required: true,
-                        phoneValid: true
-                    },
+
                     assigned_client_id: {
                         required: true,
                         integerValue: true

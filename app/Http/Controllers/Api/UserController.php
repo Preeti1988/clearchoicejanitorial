@@ -37,7 +37,7 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
+                'email' => 'required|email|exists:user,email',
                 'password' => 'required',
             ]);
             if ($validator->fails()) {
@@ -119,6 +119,15 @@ class UserController extends Controller
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
         $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
+
+        if ($request->hasFile('profile_image')) {
+            $file = $request->file('profile_image');
+            $image = uniqid() . "." . $file->getClientOriginalExtension();
+            $file->move("public/upload/", $image);
+            $user->profile_image = $image;
+            $user->save();
+            $success['profile_image'] = asset('public/upload/') . "/" . $user->profile_image;
+        }
         $success['token'] = $token;
         $success['userId'] = $user->userid;
         $success['fullname'] = $user->fullname;
@@ -190,7 +199,33 @@ class UserController extends Controller
         $success['service_log'] = Service::where("status",  "completed")->count();
         $success['status'] = $user->status;
         $success['profile_image'] = $user->profile_image ? asset('public/upload') . "/" . $user->profile_image : '';
+        $success['designation_id'] = ($user->designation_id) ?? '';
+        $success['DOB'] = ($user->DOB) ?? '';
+        $success['marital_status'] = ($user->marital_status) ?? '';
+        $success['dependents'] = ($user->dependents) ?? '';
+        $success['address'] = ($user->address) ?? '';
+        $success['city'] = ($user->city) ?? '';
+        $success['state_id'] = ($user->state_id) ?? '';
+        $success['country_id'] = ($user->country_id) ?? '';
+        $success['zipcode'] = ($user->zipcode) ?? '';
+        $success['resume'] = ($user->resume) ?? '';
+        $success['applying_letter'] = ($user->applying_letter) ?? '';
+        $success['status'] = $user->status;
+        $success['created_date'] = $user->created_date;
+        $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
 
+        if ($user->profile_image) {
+            $success['profile_image'] = asset('public/upload/') . "/" . $user->profile_image;
+        } else {
+            $success['profile_image'] = '';
+        }
+
+        if ($user->resume) {
+            $success['resume'] = asset('public/assets/admin-images/') . $user->resume;
+        } else {
+            $success['resume'] = '';
+        }
+        $success['resume_file_name'] = $user->resume_file_name;
         $success['created_date'] = $user->created_date;
         return response()->json(["status" => true, "message" => "Profile.", "data" => $success]);
     }
@@ -480,9 +515,9 @@ class UserController extends Controller
         $inscope = InScope::orderBy('id', 'DESC')->get();
         $outscope = OutScope::orderBy('id', 'DESC')->get();
         $services_values = ServicesValue::orderBy('id', 'DESC')->get();
-        $temp['inscope'] = $inscope;
-        $temp['OutScope'] = $outscope;
-        $temp['ServicesItems'] = $services_values;
+        $temp['inscope'] = json_decode($service->inscopes);
+        $temp['OutScope'] =  json_decode($service->outscopes);
+        $temp['ServicesItems'] =  json_decode($service->service_items);
 
         $temp['service'] = $service;
 
@@ -505,7 +540,11 @@ class UserController extends Controller
             ],
             'list' => $members
         ];
-        $temp['total'] = 200;
+        $total = 0;
+        foreach (json_decode($service->service_items) as  $value) {
+            $total += $value->price;
+        }
+        $temp['total'] = $total;
 
 
         return response()->json(["status" => true, "message" => "Service Details", "data" => $temp]);
@@ -591,6 +630,10 @@ class UserController extends Controller
         $user =  User::where('userid', $user->userid)->first();
         $user->fullname = $request->fullname;
         $user->email = $request->email;
+        if ($request->has('designation_id')) {
+            $user->designation_id = $request->designation_id;
+        }
+
         $user->phonenumber = $request->phonenumber;
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
@@ -619,6 +662,8 @@ class UserController extends Controller
         $success['country_id'] = $user->country_id;
         $success['dependents'] = $user->dependents;
         $success['designation_id'] = $user->designation_id;
+        $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
+
         $success['resume'] = $user->resume;
         $success['state_id'] = $user->state_id;
         $success['zipcode'] = $user->zipcode;

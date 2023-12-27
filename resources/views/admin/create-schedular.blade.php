@@ -144,7 +144,7 @@
                                                         <img src="{{ asset('assets/admin-images/people.svg') }}">
                                                     </div>
                                                     <div class="service-shift-card-text">
-                                                        <h2>Job Assigned</h2>
+                                                        <h2>Job Assigned:</h2>
                                                         <p>John Doe + <a href="#">12 Employee</a></p>
                                                     </div>
                                                 </div>
@@ -179,7 +179,7 @@
                                                         <img src="{{ asset('assets/admin-images/dollar-circle.svg') }}">
                                                     </div>
                                                     <div class="service-shift-card-text">
-                                                        <h2>Price</h2>
+                                                        <h2>Price:</h2>
                                                         <p>$299.00 + Tax Included</p>
                                                     </div>
                                                 </div>

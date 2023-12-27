@@ -87,224 +87,365 @@
                     <div class="col-md-8">
                         <div class="services-tabs">
                             <ul class="nav nav-tabs">
-                                <li><a class="active" href="#OngoingServices" data-bs-toggle="tab">Ongoing Services</a></li>
-                                <li><a href="#UnAssignedServices" data-bs-toggle="tab"> Completed Services</a></li>
+                                <li><a class="active" href="#Ongoing" data-bs-toggle="tab">Ongoing</a></li>
+                                <li><a href="#Completed" data-bs-toggle="tab">Completed</a>
+                                </li>
                             </ul>
                         </div>
                         <div class="Ongoing-calender-list">
                             <div id="Ongoingcalender" class="owl-carousel owl-theme">
-                                <div class="item">
-                                    <div class="Ongoing-calender-item">
-                                        <h3>Sun</h3>
-                                        <h2>01</h2>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="Ongoing-calender-item">
-                                        <h3>Mon</h3>
-                                        <h2>02</h2>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="Ongoing-calender-item">
-                                        <h3>Tue</h3>
-                                        <h2>03</h2>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="Ongoing-calender-item">
-                                        <h3>Wed</h3>
-                                        <h2>04</h2>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="Ongoing-calender-item">
-                                        <h3>Thu</h3>
-                                        <h2>05</h2>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="Ongoing-calender-item">
-                                        <h3>Fri</h3>
-                                        <h2>06</h2>
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="Ongoing-calender-item">
-                                        <h3>Sat</h3>
-                                        <h2>07</h2>
-                                    </div>
-                                </div>
+                                @php
+                                    $arr = [];
+                                    // Get the current month and year
+                                    $currentMonth = now()->format('F');
+                                    $currentYear = now()->year;
+
+                                    // Get the number of days in the current month
+                                    $daysInMonth = date('j');
+                                    // Get the current month and year
+                                    $currentMonth = date('n'); // n represents the month without leading zeros
+                                    $currentYear = date('Y');
+
+                                    // Get the number of days in the current month
+                                    $numDaysInMonth = cal_days_in_month(CAL_GREGORIAN, $currentMonth, $currentYear);
+
+                                    // Loop through each day in the month
+                                    for ($day = 1; $day <= $numDaysInMonth; $day++) {
+                                        $date = now()->setDay($day);
+                                        $dayOfWeek = $date->format('D');
+                                        $formattedDate = $date->format('d');
+                                        $arr[] = ['w' => $dayOfWeek, 'd' => $formattedDate, 'date' => date('Y-m-d', strtotime($date))];
+                                    }
+                                @endphp
+                                @foreach ($arr as $item)
+                                    <a class="item" href="{{ route('services.index', 'date=' . $item['date']) }}">
+                                        <div class="Ongoing-calender-item">
+                                            <h3>{{ $item['w'] }}</h3>
+                                            <h2>{{ $item['d'] }}</h2>
+                                        </div>
+                                    </a>
+                                @endforeach
+
+
                             </div>
                         </div>
+
                         <div class="tasks-content-info tab-content">
-                            <div class="tab-pane active" id="OngoingServices">
+                            <div class="tab-pane active" id="Ongoing">
                                 <div class="ongoing-services-list">
-                                    <div class="ongoing-services-item">
-                                        <div class="ongoing-services-item-head">
-                                            <div class="ongoing-services-item-title">
-                                                <div class="services-id">#6828823</div>
-                                                <h2>Service 1: Testla Motors HQ</h2>
-                                            </div>
-                                            <div class="ongoing-services-date">Tuesday, 10 Aug 09:02:17 pm</div>
-                                        </div>
-                                        <div class="ongoing-services-item-body">
-                                            <div class="service-shift-card">
-                                                <div class="service-shift-card-image">
-                                                    <img src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
+                                    @forelse ($services as $item)
+                                        <div class="ongoing-services-item">
+                                            <div class="ongoing-services-item-head">
+                                                <div class="ongoing-services-item-title">
+                                                    <div class="services-id">#{{ $item->id }}</div>
+                                                    <h2>Service 1: {{ $item->name }}</h2>
                                                 </div>
-                                                <div class="service-shift-card-text">
-                                                    <h2>Service Shift Timing:</h2>
-                                                    <p>11:00AM-02:00PM</p>
+                                                <div class="client-info">
+                                                    <div class="client-info-icon">
+                                                        {{ $item->client ? substr($item->client->name, 0, 1) : 'N/A' }}
+                                                    </div>
+                                                    <div class="client-info-text">
+                                                        {{ $item->client ? $item->client->name : 'N/A' }}
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="instructions-text">
-                                                <h3>Primary Instructions: Clean the CEO’S Cabin at lunch</h3>
                                             </div>
+                                            <div class="ongoing-services-item-body">
+                                                <div class="service-shift-card">
+                                                    <div class="service-shift-card-image">
+                                                        <img
+                                                            src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
+                                                    </div>
+                                                    <div class="service-shift-card-text">
+                                                        <h2>Service Shift Timing:</h2>
+                                                        <p>{{ date('h:i A', strtotime($item->service_start_time)) }}
+                                                            - {{ date('h:i A', strtotime($item->service_end_time)) }}
+                                                        </p>
+                                                    </div>
+                                                </div>
 
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <div class="service-shift-card-image">
-                                                            <img
-                                                                src="{{ asset('public/assets/admin-images/people.svg') }}">
-                                                        </div>
-                                                        <div class="service-shift-card-text">
-                                                            <h2>Job Assigned</h2>
-                                                            <p>John Doe + <a href="#">12 Employee</a></p>
+                                                <div class="instructions-text">
+                                                    <h3>Primary Instructions: {{ $item->description }}</h3>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/people.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Job Assigned:</h2>
+                                                                <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
+
+                                                                    @if ($item->members->count() - 1 > 0)
+                                                                        <a
+                                                                            href="{{ route('services.assign', $item->id) }}">
+                                                                            + {{ $item->members->count() - 1 }}
+                                                                            Employee</a>
+                                                                    @else
+                                                                        <a
+                                                                            href="{{ route('services.assign', $item->id) }}">
+                                                                            +
+
+                                                                            Employee</a>
+                                                                    @endif
+
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <div class="service-shift-card-image">
-                                                            <img
-                                                                src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
-                                                        </div>
-                                                        <div class="service-shift-card-text">
-                                                            <h2>Service Frequency:</h2>
-                                                            <p>Monthly</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <div class="service-shift-card-image">
-                                                            <a href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#view-map"><img
-                                                                    src="{{ asset('public/assets/admin-images/map-img.svg') }}"></a>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service Frequency:</h2>
+                                                                <p>{{ $item->frequency }}</p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <a href="#" class="check-in-btn">Check in: 11:04 PM</a>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/buildings.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service Type:</h2>
+                                                                <p>{{ $item->service_type }}</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <a href="#" class="check-out-btn">Check Out: 11:04 PM</a>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service Start Time:</h2>
+                                                                <p>{{ date('M d,Y', strtotime($item->created_date)) }},
+                                                                    {{ date('h:i A', strtotime($item->service_start_time)) }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service End Time:</h2>
+                                                                <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }}
+                                                                    {{ date('h:i A', strtotime($item->service_end_time)) }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Price:</h2>
+                                                                <p>${{ $item->total_service_cost }} + Tax Included</p>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="ongoing-services-item-foot">
+                                                <div class="loaction-address"><img
+                                                        src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
+                                                </div>
+                                                <div class="ongoing-services-date">
+                                                    {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="ongoing-services-item-foot">
-                                            <div class="loaction-address"><img
-                                                    src="{{ asset('public/assets/admin-images/map.svg') }}"> 5331 Rexford
-                                                Court,
-                                                Montgomery AL 36116</div>
+                                    @empty
+                                        <div class="ongoing-services-item">
+                                            <div class="ongoing-services-item-head">
+                                                <div class="ongoing-services-item-title">
+
+                                                    <h2>No Services</h2>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endforelse
+
+
+
                                 </div>
                             </div>
-                            <div class="tab-pane" id="UnAssignedServices">
+
+                            <div class="tab-pane" id="Completed">
                                 <div class="ongoing-services-list">
-                                    <div class="ongoing-services-item">
-                                        <div class="ongoing-services-item-head">
-                                            <div class="ongoing-services-item-title">
-                                                <div class="services-id">#6828823</div>
-                                                <h2>Service 1: Testla Motors HQ</h2>
+                                    @forelse ($completed_services as $item)
+                                        <div class="ongoing-services-item">
+                                            <div class="ongoing-services-item-head">
+                                                <div class="ongoing-services-item-title">
+                                                    <div class="services-id">#{{ $item->id }}</div>
+                                                    <h2>Service 1: {{ $item->name }}</h2>
+                                                </div>
+                                                <div class="client-info">
+                                                    <div class="client-info-icon">
+                                                        {{ $item->client ? substr($item->client->name, 0, 1) : 'N/A' }}
+                                                    </div>
+                                                    <div class="client-info-text">
+                                                        {{ $item->client ? $item->client->name : 'N/A' }}
+                                                    </div>
+                                                </div>
+
                                             </div>
-                                            <div class="ongoing-services-date">Tuesday, 10 Aug 09:02:17 pm</div>
+                                            <div class="ongoing-services-item-body">
+                                                <div class="service-shift-card">
+                                                    <div class="service-shift-card-image">
+                                                        <img
+                                                            src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
+                                                    </div>
+                                                    <div class="service-shift-card-text">
+                                                        <h2>Service Shift Timing:</h2>
+                                                        <p>{{ date('h:i A', strtotime($item->service_start_time)) }}
+                                                            -{{ date('h:i A', strtotime($item->service_end_time)) }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="instructions-text">
+                                                    <h3>Primary Instructions: {{ $item->description }}</h3>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/people.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Job Assigned:</h2>
+                                                                <p>{{ $item->members->first() ? ($item->members->first()->member ? $item->members->first()->member->fullname : '') : '' }}
+
+                                                                    @if ($item->members->count() - 1)
+                                                                        + <a
+                                                                            href="{{ route('services.assign', $item->id) }}">{{ $item->members->count() - 1 }}
+                                                                            Employee</a>
+                                                                    @else
+                                                                        <a
+                                                                            href="{{ route('services.assign', $item->id) }}">+
+                                                                            Employee</a>
+                                                                    @endif
+
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service Frequency:</h2>
+                                                                <p>{{ $item->frequency }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/buildings.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service Type:</h2>
+                                                                <p>{{ $item->service_type }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service Start Time:</h2>
+                                                                <p>{{ date('M d,Y', strtotime($item->created_date)) }},
+                                                                    {{ date('h:i A', strtotime($item->service_start_time)) }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Service End Time:</h2>
+                                                                <p>{{ date('M d,Y', strtotime($item->scheduled_end_date)) }}
+                                                                    {{ date('h:i A', strtotime($item->service_end_time)) }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="service-shift-card">
+                                                            <div class="service-shift-card-image">
+                                                                <img
+                                                                    src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
+                                                            </div>
+                                                            <div class="service-shift-card-text">
+                                                                <h2>Price:</h2>
+                                                                <p>${{ $item->total_service_cost }} + Tax Included</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="ongoing-services-item-foot">
+                                                <div class="loaction-address"><img
+                                                        src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
+                                                </div>
+                                                <div class="ongoing-services-date">
+                                                    {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="ongoing-services-item-body">
-                                            <div class="service-shift-card">
-                                                <div class="service-shift-card-image">
-                                                    <img
-                                                        src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
-                                                </div>
-                                                <div class="service-shift-card-text">
-                                                    <h2>Service Shift Timing:</h2>
-                                                    <p>11:00AM-02:00PM</p>
-                                                </div>
-                                            </div>
+                                    @empty
+                                        <div class="ongoing-services-item">
+                                            <div class="ongoing-services-item-head">
+                                                <div class="ongoing-services-item-title">
 
-                                            <div class="instructions-text">
-                                                <h3>Primary Instructions: Clean the CEO’S Cabin at lunch</h3>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <div class="service-shift-card-image">
-                                                            <img
-                                                                src="{{ asset('public/assets/admin-images/people.svg') }}">
-                                                        </div>
-                                                        <div class="service-shift-card-text">
-                                                            <h2>Job Assigned</h2>
-                                                            <p>John Doe + <a href="#">12 Employee</a></p>
-                                                        </div>
-                                                    </div>
+                                                    <h2>No Services</h2>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <div class="service-shift-card-image">
-                                                            <img src="{{ asset('public/assets/admin-images/Qty.svg') }}">
-                                                        </div>
-                                                        <div class="service-shift-card-text">
-                                                            <h2>Qty:</h2>
-                                                            <p>1</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <div class="service-shift-card-image">
-                                                            <img
-                                                                src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
-                                                        </div>
-                                                        <div class="service-shift-card-text">
-                                                            <h2>Service Frequency:</h2>
-                                                            <p>Monthly</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <div class="service-shift-card">
-                                                        <div class="service-shift-card-image">
-                                                            <img
-                                                                src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
-                                                        </div>
-                                                        <div class="service-shift-card-text">
-                                                            <h2>Price</h2>
-                                                            <p>$299.00 + Tax Included</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
                                             </div>
                                         </div>
-                                        <div class="ongoing-services-item-foot">
-                                            <div class="loaction-address"><img
-                                                    src="{{ asset('public/assets/admin-images/map.svg') }}"> 5331 Rexford
-                                                Court,
-                                                Montgomery AL 36116</div>
-                                        </div>
-                                    </div>
+                                    @endforelse
+
+
                                 </div>
                             </div>
                         </div>
@@ -312,20 +453,13 @@
 
                     <div class="col-md-4">
                         <div class="team-panel-sidebar side-bar-1">
-                            <h6 class="mb-0 pb-0">This Week Worked Hours</h6>
-                            <p class="hour-info text-center mt-0">1368 Hours</p>
-                            <h6 class="mb-0 pb-0 mt-3">Total Assigned Service Worked Hours</h6>
-                            <p class="hour-info text-center mt-0">1368 Hours</p>
-                            <a href="#" class="view-log-btn mt-3"><svg xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" fill="currentColor" class="bi bi-eye me-2"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                    <path
-                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                                </svg>View Log</a>
+                            <h6 class="mb-0 pb-0">This Week Worked </h6>
+                            <p class="hour-info text-center mt-0">{{ $this_week }} </p>
+                            <h6 class="mb-0 pb-0 mt-3">Total Assigned Service Worked </h6>
+                            <p class="hour-info text-center mt-0">{{ $total_hours }}</p>
+
                         </div>
-                        <a href="#" class="view-roster-btn mt-3"><svg xmlns="http://www.w3.org/2000/svg"
+                        {{-- <a href="#" class="view-roster-btn mt-3"><svg xmlns="http://www.w3.org/2000/svg"
                                 width="16" height="16" fill="currentColor" class="bi bi-eye me-2"
                                 viewBox="0 0 16 16">
                                 <path
@@ -358,7 +492,7 @@
                                     <p class="text-center">Late</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

@@ -62,18 +62,18 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Home phone</h3>
+                                    <h3>Home phone *</h3>
                                     <input type="text" class="form-control" name="home_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ old('home_number') }}" placeholder="Home phone">
+                                        value="{{ old('home_number') }}" placeholder="Home phone" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Work phone</h3>
+                                    <h3>Work phone*</h3>
                                     <input type="text" class="form-control" name="client_work_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ old('client_work_number') }}" placeholder="Work phone">
+                                        value="{{ old('client_work_number') }}" placeholder="Work phone" required>
                                 </div>
                             </div>
                             <div class="col-md-3">

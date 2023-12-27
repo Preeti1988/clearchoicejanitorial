@@ -26,25 +26,25 @@ if (!function_exists('errorMsg')) {
 if (!function_exists('CountryCode')) {
     function CountryCode($id)
     {
-        $country = Country::where('id',$id)->first();
+        $country = Country::where('id', $id)->first();
         $phonecode = $country->phonecode;
         return $phonecode;
     }
 }
-            
+
 if (!function_exists('CountMSG')) {
     function CountMSG($id)
     {
-        $chats = ChatCount::where('sender_id',$id)->sum('read_status');
-        
+        $chats = ChatCount::where('sender_id', $id)->sum('read_status');
+
         return $chats;
     }
 }
 if (!function_exists('TotalCountMSG')) {
     function TotalCountMSG()
     {
-        $chats = ChatCount::where('sender_id','!=',1)->sum('read_status');
-        
+        $chats = ChatCount::where('sender_id', '!=', 1)->sum('read_status');
+
         return $chats;
     }
 }
@@ -52,7 +52,7 @@ if (!function_exists('TotalCountMSG')) {
 if (!function_exists('ServiceName')) {
     function ServiceName($id)
     {
-        $Service = Service::where('id',$id)->first();
+        $Service = Service::where('id', $id)->first();
         $name = $Service->name;
         return $name;
     }
@@ -81,7 +81,7 @@ if (!function_exists('TotalYear')) {
     function TotalYear($Year)
     {
         $dob = $Year;
-        $year = (date('Y') - date('Y',strtotime($dob)));
+        $year = (date('Y') - date('Y', strtotime($dob)));
         return $year;
     }
 }
@@ -89,28 +89,24 @@ if (!function_exists('TotalYear')) {
 if (!function_exists('Designation')) {
     function Designation($id)
     {
-        $Designation = Designation::where('id',$id)->first();
-        if(!empty($Designation))
-        {
+        $Designation = Designation::where('id', $id)->first();
+        if (!empty($Designation)) {
             return $Designation->name;
-        }else{
+        } else {
             return '';
         }
-        
     }
 }
 
 if (!function_exists('MaritalStatus')) {
     function MaritalStatus($id)
     {
-        
-        $MaritalStatus = MaritalStatus::where('id',$id)->first();
-        if(!empty($Designation))
-        {
+
+        $MaritalStatus = MaritalStatus::where('id', $id)->first();
+        if (!empty($Designation)) {
             return $MaritalStatus->name;
-        }else{
+        } else {
             return '';
         }
-        
     }
 }
