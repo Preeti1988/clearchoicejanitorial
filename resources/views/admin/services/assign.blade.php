@@ -1,10 +1,11 @@
 @extends('layouts.admin')
 @section('title', 'Clear-ChoiceJanitorial - Client')
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/assign-service.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/assign-service.css') }}">
     <link rel="stylesheet" type="text/css"
-        href="{{ asset('public/assets/admin-plugins/OwlCarousel/assets/owl.carousel.min.css') }}" />
-    <script src="{{ asset('public/assets/admin-plugins/OwlCarousel/owl.carousel.js') }}" type="text/javascript"></script>
+        href="{{ custom_asset('public/assets/admin-plugins/OwlCarousel/assets/owl.carousel.min.css') }}" />
+    <script src="{{ custom_asset('public/assets/admin-plugins/OwlCarousel/owl.carousel.js') }}" type="text/javascript">
+    </script>
     <style>
         #search-results {
             position: absolute;
@@ -51,7 +52,7 @@
                                 <div class="assign-Services-item-body">
                                     <div class="assign-service-shift-card">
                                         <div class="assign-service-shift-card-image">
-                                            <img src="{{ asset('public/assets/admin-images/id-card.svg') }}">
+                                            <img src="{{ custom_asset('public/assets/admin-images/id-card.svg') }}">
                                         </div>
                                         <div class="assign-service-shift-card-text">
                                             <h2>Service ID:</h2>
@@ -68,7 +69,7 @@
                     </div>
 
                     <div class="assign-service-image">
-                        <img src="{{ asset('public/assets/admin-images/cleaning service-rafiki.svg') }}">
+                        <img src="{{ custom_asset('public/assets/admin-images/cleaning service-rafiki.svg') }}">
                     </div>
 
 
@@ -78,7 +79,7 @@
                             <input type="text" name="" class="form-control" onkeyup="searhcUser(this.value)"
                                 placeholder="Search By Employees Name or ID">
                             <span class="search-icon"><img
-                                    src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
+                                    src="{{ custom_asset('public/assets/admin-images/search-icon.svg') }}"></span>
                         </div>
                         <div class="assign-service-Search-action">
                             <button class="Searchbtn" type="button">Search</button>
@@ -222,7 +223,7 @@
                 htm += `<div class="item" style="padding:10px" >
                             <div class="assign-service-member-item" data-id="${item.id}" onclick="setShift(this)" >
                                 <div class="assign-service-member-item-media">
-                                    <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                    <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}">
                                 </div>
                                 <div class="assign-service-member-item-text">
                                     <h2>${item.name}</h2>
@@ -231,7 +232,7 @@
                                 </div>
 
                                 <div class="assign-service-close-card-action" style="z-index:1000;position:absolute" onclick="removeUser(${item.id})">
-                                    <img  src="{{ asset('public/assets/admin-images/close-circle.svg') }}">
+                                    <img  src="{{ custom_asset('public/assets/admin-images/close-circle.svg') }}">
                                 </div>
                             </div>
                         </div>`;

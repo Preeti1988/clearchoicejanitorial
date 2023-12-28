@@ -102,7 +102,7 @@ class UserController extends Controller
             'marital_status' => 'required',
             'gender' => 'required',
             'dependents' => 'required',/* No of dependents people*/
-            'profile_image' => 'required',
+            // 'profile_image' => 'required',
             'address' => 'required',
             'country_id' => 'required',
             'state_id' => 'required',
@@ -119,15 +119,30 @@ class UserController extends Controller
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
         $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
-
+        $success = [];
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $image = uniqid() . "." . $file->getClientOriginalExtension();
-            $file->move("public/upload/", $image);
+            $file->move("public/upload/user-profile/", $image);
             $user->profile_image = $image;
             $user->save();
-            $success['profile_image'] = asset('public/upload/') . "/" . $user->profile_image;
+            $success['profile_image'] = asset('public/upload/user-profile') . "/" . $user->profile_image;
         }
+        if ($request->hasFile('resume')) {
+            $file = $request->file("resume");
+            $imageName = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move("public/upload/resume/", $imageName);
+            $user->resume = $imageName;
+            $user->resume_file_name = asset('public/upload/resume/')  . "/" . $imageName;;
+            $user->save();
+
+            $success['resume'] = asset('public/upload/resume/') . "/" . $imageName;
+            $success['resume_file_name'] = $imageName;
+        } else {
+            $success['resume'] = '';
+            $success['resume_file_name'] = '';
+        }
+
         $success['token'] = $token;
         $success['userId'] = $user->userid;
         $success['fullname'] = $user->fullname;
@@ -147,18 +162,7 @@ class UserController extends Controller
         $success['status'] = $user->status;
         $success['created_date'] = $user->created_date;
         $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
-        if ($request->file('resume')) {
-            $file = $request->file("resume");
-            $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('upload/resume'), $imageName);
 
-            $success['resume'] = asset('public/assets/admin-images/') . $imageName;
-            $success['resume_file_name'] = $imageName;
-            User::where('userid', $user->userid)->update(['resume' => $imageName, 'resume_file_name' => $imageName]);
-        } else {
-            $success['resume'] = '';
-            $success['resume_file_name'] = '';
-        }
 
         return response()->json(["status" => true, "message" => "Registered successfully.", "data" => $success]);
         //return response()->json(['success' => $success], $this->successStatus);
@@ -630,6 +634,17 @@ class UserController extends Controller
         $user =  User::where('userid', $user->userid)->first();
         $user->fullname = $request->fullname;
         $user->email = $request->email;
+        $user->DOB = $request->DOB;
+        $user->marital_status = $request->marital_status;
+        $user->gender = $request->gender;
+        $user->dependents = $request->dependents;
+        $user->address = $request->address;
+        $user->zipcode = $request->zipcode;
+        $user->country_id = $request->country_id;
+        $user->city = $request->city;
+        $user->state_id = $request->state_id;
+
+
         if ($request->has('designation_id')) {
             $user->designation_id = $request->designation_id;
         }

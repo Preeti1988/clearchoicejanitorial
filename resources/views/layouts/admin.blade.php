@@ -8,21 +8,23 @@
 
     <title> @yield('title', config('app.name'))</title>
     @stack('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/header-footer.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/header-footer.css') }}">
     <link rel="stylesheet" type="text/css"
-        href="{{ asset('public/assets/admin-plugins/OwlCarousel/assets/owl.carousel.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/responsive.css') }}">
+        href="{{ custom_asset('public/assets/admin-plugins/OwlCarousel/assets/owl.carousel.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/responsive.css') }}">
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="{{ asset('public/assets/admin-js/jquery-3.7.0.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('public/assets/admin-plugins/bootstrap/js/bootstrap.bundle.min.js') }}" type="text/javascript">
+    <script src="{{ custom_asset('public/assets/admin-js/jquery-3.7.0.min.js') }}" type="text/javascript"></script>
+    <script src="{{ custom_asset('public/assets/admin-plugins/bootstrap/js/bootstrap.bundle.min.js') }}"
+        type="text/javascript"></script>
+    <script src="{{ custom_asset('public/assets/admin-plugins/OwlCarousel/owl.carousel.js') }}" type="text/javascript">
     </script>
-    <script src="{{ asset('public/assets/admin-plugins/OwlCarousel/owl.carousel.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('public/assets/admin-js/function.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('public/assets/admin-plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ custom_asset('public/assets/admin-js/function.js') }}" type="text/javascript"></script>
+    <script src="{{ custom_asset('public/assets/admin-plugins/jquery-validation/jquery.validate.min.js') }}"></script>
 
-    <script src="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
-    <link rel="stylesheet"href="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.css') }}"
+    <script src="{{ custom_asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript">
+    </script>
+    <link rel="stylesheet"href="{{ custom_asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.css') }}"
         type="text/css" />
 
     <style>
@@ -50,10 +52,11 @@
         <div class="sidebar-wrapper sidebar-offcanvas" id="sidebar">
             <div class="sidebar-logo">
                 <a class="brand-logo" href="{{ url('/') }}">
-                    <img class="" src="{{ asset('public/assets/admin-images/logo.webp') }}" alt="">
+                    <img class="" src="{{ custom_asset('public/assets/admin-images/logo.webp') }}"
+                        alt="">
                 </a>
                 <!--<a class="brand-logo-mini" href="index.html">-->
-                <!--    <img class="" src="{{ asset('public/assets/admin-images/logo-icon.svg') }}" alt="">-->
+                <!--    <img class="" src="{{ custom_asset('public/assets/admin-images/logo-icon.svg') }}" alt="">-->
                 <!--</a>-->
             </div>
             <div class="sidebar-nav">
@@ -294,7 +297,7 @@
                         <ul class="navbar-nav f-navbar-nav">
                             <!-- <li class="nav-item">
                                 <a class="nav-link nav-toggler" data-toggle="minimize">
-                                   <img src="{{ asset('public/assets/admin-images/menu-icon.svg') }}">
+                                   <img src="{{ custom_asset('public/assets/admin-images/menu-icon.svg') }}">
                                 </a>
                             </li> -->
                             <li class="nav-item">
@@ -348,7 +351,7 @@
                             <li class="nav-item noti-dropdown dropdown">
                                 <a class="nav-link  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="noti-icon">
-                                        <img src="{{ asset('public/assets/admin-images/notification.svg') }}"
+                                        <img src="{{ custom_asset('public/assets/admin-images/notification.svg') }}"
                                             alt="user">
                                         <span class="noti-badge">3</span>
                                     </div>
@@ -362,7 +365,7 @@
                                     aria-expanded="false">
                                     <div class="profile-pic">
                                         <div class="profile-pic-image">
-                                            <img src="{{ asset('public/assets/admin-images/userprofile.png') }}"
+                                            <img src="{{ custom_asset('public/assets/admin-images/userprofile.png') }}"
                                                 alt="user">
                                         </div>
                                         <div class="profile-pic-text">
@@ -386,7 +389,7 @@
                                 <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
                                     type="button" data-toggle="offcanvas">
                                     <span class="icon-menu"><img
-                                            src="{{ asset('public/assets/admin-images/menu-icon.svg') }}"></span>
+                                            src="{{ custom_asset('public/assets/admin-images/menu-icon.svg') }}"></span>
                                 </button>
                             </li>
                         </ul>

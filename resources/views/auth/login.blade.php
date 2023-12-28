@@ -6,21 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Janitorial Services | Clear Choice Janitorial</title>
     <link rel="stylesheet" type="text/css"
-        href="{{ asset('public/assets/admin-plugins/bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/auth.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/responsive.css') }}">
-    <script src="{{ asset('public/assets/admin-js/jquery-3.7.0.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('public/assets/admin-plugins/bootstrap/js/bootstrap.bundle.min.js') }}" type="text/javascript">
-    </script>
-    <script src="{{ asset('public/assets/admin-js/function.js') }}" type="text/javascript"></script>
+        href="{{ custom_asset('public/assets/admin-plugins/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/auth.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/responsive.css') }}">
+    <script src="{{ custom_asset('public/assets/admin-js/jquery-3.7.0.min.js') }}" type="text/javascript"></script>
+    <script src="{{ custom_asset('public/assets/admin-plugins/bootstrap/js/bootstrap.bundle.min.js') }}"
+        type="text/javascript"></script>
+    <script src="{{ custom_asset('public/assets/admin-js/function.js') }}" type="text/javascript"></script>
 </head>
 
 <body>
     <div class="auth-section auth-height">
         <div class="auth-bg-video">
             <video id="background-video" autoplay loop muted
-                poster="{{ asset('assets/admin-images/Janitorial-Cleaning-Video-1.mp4') }}">
-                <source src="{{ asset('public/assets/admin-images/Janitorial-Cleaning-Video-1.mp4') }}"
+                poster="{{ custom_asset('assets/admin-images/Janitorial-Cleaning-Video-1.mp4') }}">
+                <source src="{{ custom_asset('public/assets/admin-images/Janitorial-Cleaning-Video-1.mp4') }}"
                     type="video/mp4">
             </video>
         </div>
@@ -40,7 +40,7 @@
                                             Panel.</p>
 
                                         <div class="auth-illustration">
-                                            <img src="{{ asset('public/assets/admin-images/Admin-amico.svg') }}"
+                                            <img src="{{ custom_asset('public/assets/admin-images/Admin-amico.svg') }}"
                                                 alt="" height="330">
                                         </div>
                                     </div>
@@ -49,7 +49,8 @@
                             <div class="col-md-6 auth-form-info">
                                 <div class="auth-form">
                                     <div class="brand-logo">
-                                        <img src="{{ asset('public/assets/admin-images/logo.webp') }}" alt="logo">
+                                        <img src="{{ custom_asset('public/assets/admin-images/logo.webp') }}"
+                                            alt="logo">
                                     </div>
                                     <h2>Admin Login</h2>
                                     <p>To Get Into Clear Choice Janitorial Control Panal</p>

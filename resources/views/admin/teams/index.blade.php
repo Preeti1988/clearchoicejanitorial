@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 @section('title', 'Clear-ChoiceJanitorial - Client-Details')
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/teams.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-plugins/fontawesome/css/font-awesome.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-plugins/fontawesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/teams.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-plugins/fontawesome/css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-plugins/fontawesome/css/font-awesome.min.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -69,7 +69,7 @@
                                             </div>
                                             <div class="col-md-1">
                                                 <a href="{{ route('TeamActive') }}" class="m-1 mx-3"><img
-                                                        src="{{ asset('public/assets/admin-images/reset-icon.png') }}"
+                                                        src="{{ custom_asset('public/assets/admin-images/reset-icon.png') }}"
                                                         style="height: 25px" alt=""></a>
                                             </div>
                                             <div class="col-md-4 active-btns justify-content-end">
@@ -124,7 +124,7 @@
                                                         <div class="col-md-3">
                                                             <div class="d-flex align-items-center">
                                                                 <div class="profile-img">
-                                                                    <img src="{{ asset('public/assets/admin-images/user-default.png') }}"
+                                                                    <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}"
                                                                         alt="image" class="img-fluid">
                                                                 </div>
                                                                 <h6 class="ms-2 mt-0 mb-0">
@@ -188,7 +188,7 @@
                         <div class="team-panel-sidebar">
                             <h2>Good Projects Check-in & Check-out</h2>
                             <div class="service-log-media">
-                                <img src="{{ asset('public/assets/admin-images/checkout.svg') }}">
+                                <img src="{{ custom_asset('public/assets/admin-images/checkout.svg') }}">
                             </div>
                         </div>
                         <div class="team-panel-sidebar">

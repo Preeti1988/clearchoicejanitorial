@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 @section('title', 'Clear Choice Janitorial - Profile')
 @push('css')
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-css/profile.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-plugins/fontawesome/css/font-awesome.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-plugins/fontawesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-css/profile.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-plugins/fontawesome/css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-plugins/fontawesome/css/font-awesome.min.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -13,7 +13,7 @@
                     <div class="d-flex align-items-center">
                         <div class="profile-card-image">
                             <img
-                                src="{{ Auth::user()->profile_image ? asset('public/assets/admin-images/admin-profile.svg') : asset('public/upload/profile-image/' . Auth::user()->profile_image) }}">
+                                src="{{ Auth::user()->profile_image ? custom_asset('public/assets/admin-images/admin-profile.svg') : custom_asset('public/upload/profile-image/' . Auth::user()->profile_image) }}">
                         </div>
                         <div class="profile-card-head">
                             <h2 class="ms-2 mb-0">Profile Overview</h2>
@@ -25,7 +25,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-4">
                         <div class="owner-details  mt-4 d-flex align-items-center">
-                            <img src="{{ asset('public/assets/admin-images/user-default.png') }}" alt="image"
+                            <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}" alt="image"
                                 class="img-fluid">
                             <div class="name-details ms-3">
                                 <p class="info-title">Owner's Name</p>
@@ -60,8 +60,8 @@
                                 <div class="col-md-6">
                                     <div class="d-flex">
                                         <div class="icon-image">
-                                            <img src="{{ asset('public/assets/admin-images/envelope.svg') }}" alt="image"
-                                                class="img-fluid">
+                                            <img src="{{ custom_asset('public/assets/admin-images/envelope.svg') }}"
+                                                alt="image" class="img-fluid">
                                         </div>
                                         <div class="detail-info ms-3">
                                             <p class="mb-0 info-title">Email Address</p>
@@ -72,7 +72,7 @@
                                 <div class="col-md-6">
                                     <div class="d-flex">
                                         <div class="icon-image">
-                                            <img src="{{ asset('public/assets/admin-images/phone-call.svg') }}"
+                                            <img src="{{ custom_asset('public/assets/admin-images/phone-call.svg') }}"
                                                 alt="image" class="img-fluid">
                                         </div>
                                         <div class="detail-info ms-3">
@@ -84,8 +84,8 @@
                                 <div class="col-md-12 mt-4">
                                     <div class="d-flex">
                                         <div class="icon-image">
-                                            <img src="{{ asset('public/assets/admin-images/address.svg') }}" alt="image"
-                                                class="img-fluid">
+                                            <img src="{{ custom_asset('public/assets/admin-images/address.svg') }}"
+                                                alt="image" class="img-fluid">
                                         </div>
                                         <div class="detail-info ms-3">
                                             <p class="mb-0 info-title">Address</p>
@@ -205,5 +205,5 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('public/assets/admin-js/profile.js') }}"></script>
+    <script src="{{ custom_asset('public/assets/admin-js/profile.js') }}"></script>
 @endsection

@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 @section('title', 'Clear-ChoiceJanitorial - Client-Details')
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/client.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/teams.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/client.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/teams.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -12,7 +12,7 @@
                     <div class="col-md-3">
                         <div class="side-profile-item">
                             <div class="side-profile-media"><img
-                                    src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                    src="{{ custom_asset('public/assets/admin-images/user-default.png') }}">
                             </div>
                             <div class="side-profile-text">
                                 <h2>{{ $data->name ?? '' }}</h2>
@@ -24,7 +24,7 @@
                             <div class="col-md-4">
                                 <div class="client-contact-info">
                                     <div class="client-contact-info-icon">
-                                        <img src="{{ asset('public/assets/admin-images/email-icon.svg') }}">
+                                        <img src="{{ custom_asset('public/assets/admin-images/email-icon.svg') }}">
                                     </div>
                                     <div class="client-contact-info-content">
                                         <h2>Email Address</h2>
@@ -36,7 +36,7 @@
                             <div class="col-md-3">
                                 <div class="client-contact-info">
                                     <div class="client-contact-info-icon">
-                                        <img src="{{ asset('public/assets/admin-images/phone-icon.svg') }}">
+                                        <img src="{{ custom_asset('public/assets/admin-images/phone-icon.svg') }}">
                                     </div>
                                     <div class="client-contact-info-content">
                                         <h2>Phone Number</h2>
@@ -50,7 +50,7 @@
                             <div class="col-md-5">
                                 <div class="client-contact-info">
                                     <div class="client-contact-info-icon">
-                                        <img src="{{ asset('public/assets/admin-images/map.svg') }}">
+                                        <img src="{{ custom_asset('public/assets/admin-images/map.svg') }}">
                                     </div>
                                     <div class="client-contact-info-content">
                                         <h2>Client Default Address</h2>
@@ -129,7 +129,7 @@
                                                 <div class="service-shift-card">
                                                     <div class="service-shift-card-image">
                                                         <img
-                                                            src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
+                                                            src="{{ custom_asset('public/assets/admin-images/calendar-tick.svg') }}">
                                                     </div>
                                                     <div class="service-shift-card-text">
                                                         <h2>Service Shift Timing:</h2>
@@ -148,7 +148,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/people.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/people.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Job Assigned:</h2>
@@ -163,7 +163,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/ServiceFrequency.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service Frequency:</h2>
@@ -176,7 +176,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/buildings.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/buildings.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service Type:</h2>
@@ -189,7 +189,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/clock.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service Start Time:</h2>
@@ -204,7 +204,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/clock.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service End Time:</h2>
@@ -219,7 +219,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Price:</h2>
@@ -231,7 +231,7 @@
                                             </div>
                                             <div class="ongoing-services-item-foot">
                                                 <div class="loaction-address"><img
-                                                        src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
+                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
                                                 </div>
                                                 <div class="ongoing-services-date">
                                                     {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}
@@ -266,7 +266,7 @@
                                                 <div class="service-shift-card">
                                                     <div class="service-shift-card-image">
                                                         <img
-                                                            src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
+                                                            src="{{ custom_asset('public/assets/admin-images/calendar-tick.svg') }}">
                                                     </div>
                                                     <div class="service-shift-card-text">
                                                         <h2>Service Shift Timing:</h2>
@@ -284,7 +284,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/Qty.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/Qty.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Qty:</h2>
@@ -297,7 +297,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/ServiceFrequency.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service Frequency:</h2>
@@ -310,7 +310,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Price</h2>
@@ -324,7 +324,7 @@
                                             </div>
                                             <div class="ongoing-services-item-foot">
                                                 <div class="loaction-address"><img
-                                                        src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? $item->client->address : '' }}
+                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? $item->client->address : '' }}
                                                 </div>
                                                 <div class="ongoing-services-action"><a
                                                         href="{{ route('services.assign', $item->id) }}">Assign Team
@@ -367,7 +367,7 @@
                                                 <div class="service-shift-card">
                                                     <div class="service-shift-card-image">
                                                         <img
-                                                            src="{{ asset('public/assets/admin-images/calendar-tick.svg') }}">
+                                                            src="{{ custom_asset('public/assets/admin-images/calendar-tick.svg') }}">
                                                     </div>
                                                     <div class="service-shift-card-text">
                                                         <h2>Service Shift Timing:</h2>
@@ -386,7 +386,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/people.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/people.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Job Assigned:</h2>
@@ -401,7 +401,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/ServiceFrequency.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/ServiceFrequency.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service Frequency:</h2>
@@ -414,7 +414,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/buildings.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/buildings.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service Type:</h2>
@@ -427,7 +427,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/clock.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service Start Time:</h2>
@@ -442,7 +442,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/clock.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/clock.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Service End Time:</h2>
@@ -457,7 +457,7 @@
                                                         <div class="service-shift-card">
                                                             <div class="service-shift-card-image">
                                                                 <img
-                                                                    src="{{ asset('public/assets/admin-images/dollar-circle.svg') }}">
+                                                                    src="{{ custom_asset('public/assets/admin-images/dollar-circle.svg') }}">
                                                             </div>
                                                             <div class="service-shift-card-text">
                                                                 <h2>Price:</h2>
@@ -469,7 +469,7 @@
                                             </div>
                                             <div class="ongoing-services-item-foot">
                                                 <div class="loaction-address"><img
-                                                        src="{{ asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
+                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
                                                 </div>
                                                 <div class="ongoing-services-date">
                                                     {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}
@@ -495,7 +495,7 @@
                         <div class="service-panel-sidebar">
                             <h2>{{ $data->name ?? '' }} Ongoing, Assigned & Completed Projects logs</h2>
                             <div class="service-log-media">
-                                <img src="{{ asset('public/assets/admin-images/service-log-icon.svg') }}">
+                                <img src="{{ custom_asset('public/assets/admin-images/service-log-icon.svg') }}">
                             </div>
 
                             {{-- <div class="service-log-overview">

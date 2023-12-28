@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Clear-ChoiceJanitorial - Chats')
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/chat.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/chat.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -31,8 +31,8 @@
                                 placeholder="Search by Employee Name">
                             <button class="search-btn"type="submit"><i class="las la-search"></i></button>
                             <a href="{{ route('Chats') }}" class="m-1 mx-3"><img
-                                    src="{{ asset('public/assets/admin-images/reset-icon.png') }}" style="height: 25px"
-                                    alt=""></a>
+                                    src="{{ custom_asset('public/assets/admin-images/reset-icon.png') }}"
+                                    style="height: 25px" alt=""></a>
                         </div>
                     </form>
                     <div class="chat-userlist-info">
@@ -47,7 +47,7 @@
                                 <a href="{{ url('chat/' . encryptDecrypt('encrypt', $val->userid)) }}">
                                     <div class="chat-userlist-item">
                                         <div class="chat-userlist-item-image">
-                                            <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                            <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}">
                                             <span class="user-status"></span>
                                         </div>
                                         <div class="chat-userlist-item-content">
@@ -77,7 +77,7 @@
                     <div class="chat-panel-chat-header">
                         <div class="chat-panel-user-item">
                             <div class="chat-panel-user-item-image"><img
-                                    src="{{ asset('public/assets/admin-images/user-default.png') }}"></div>
+                                    src="{{ custom_asset('public/assets/admin-images/user-default.png') }}"></div>
                             <div class="chat-panel-user-item-text">
                                 <h4>{{ $firstData->fullname }}</h4>
                                 <p>Emp Id: {{ $firstData->userid }}</p>
@@ -123,7 +123,7 @@
                                         <span class="form-attachemnt-icon">
                                             <a class="fs-24 ms-3 text-muted" id="image-attach" href="#!">
                                                 <img class="la-paperclip" id="previewImage" style="height: 20px !important"
-                                                    src="{{ asset('public/assets/admin-images/attachemnt.svg') }}">
+                                                    src="{{ custom_asset('public/assets/admin-images/attachemnt.svg') }}">
                                             </a>
                                             <input type="file" hidden accept="image/png, image/jpg, image/jpeg"
                                                 id="upload-file" name="image-attachment">
@@ -132,7 +132,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <button class="btn-send btnSend" title="" type="button">
-                                        <img src="{{ asset('public/assets/admin-images/direction.svg') }}"> Send
+                                        <img src="{{ custom_asset('public/assets/admin-images/direction.svg') }}"> Send
                                     </button>
                                 </div>
                             </div>
@@ -391,7 +391,7 @@
             let msg = `<div class="message-item  outgoing-message">
                         <div class="message-item-chat-card">
                             <div class="message-item-user">
-                                <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}">
                             </div>
                             <div class="message-item-chat-content">
                                 <div class="message-content">
@@ -417,7 +417,7 @@
                 <div class="message-item  outgoing-message">
                         <div class="message-item-chat-card">
                             <div class="message-item-user">
-                                <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}">
                             </div>
                             <div class="message-item-chat-content">
                                 <div class="message-content">
@@ -435,7 +435,7 @@
                 <div class="message-item ">
                         <div class="message-item-chat-card">
                             <div class="message-item-user">
-                                <img src="{{ asset('public/assets/admin-images/user-default.png') }}">
+                                <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}">
                             </div>
                             <div class="message-item-chat-content">
                                 <div class="message-content">

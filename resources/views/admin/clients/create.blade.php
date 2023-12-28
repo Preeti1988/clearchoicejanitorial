@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Clear Choice Janitorial - Master')
 @push('css')
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-css/newteammeber.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-css/newteammeber.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">

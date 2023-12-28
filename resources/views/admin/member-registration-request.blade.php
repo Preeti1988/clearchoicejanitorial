@@ -1,9 +1,10 @@
 @extends('layouts.admin')
 @section('title', 'Clear Choice Janitorial - Member-register-request')
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/member-registration-request.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-plugins/fontawesome/css/font-awesome.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/assets/admin-plugins/fontawesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="{{ custom_asset('public/assets/admin-css/member-registration-request.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-plugins/fontawesome/css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-plugins/fontawesome/css/font-awesome.min.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -27,8 +28,8 @@
                             <div class="col-md-3">
                                 <div class="d-flex align-items-center">
                                     <div class="info-image">
-                                        <img src="{{ asset('public/assets/admin-images/user-default.png') }}" alt="image"
-                                            class="img-fluid">
+                                        <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}"
+                                            alt="image" class="img-fluid">
                                     </div>
                                     <div class="name-info ms-3">
                                         <p>{{ $val->fullname ?? '' }}</p>

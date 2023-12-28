@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Clear-ChoiceJanitorial - Client')
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/create-service.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/create-service.css') }}">
     <style>
         .dollar-sign::before {
             content: "$";
@@ -73,7 +73,7 @@
             </div>
             <div class="create-service-form">
                 <form action="{{ $service ? route('services.update', $service) : route('services.store') }}" method="POST"
-                    id="create-service">
+                    id="create-service" enctype="multipart/form-data">
                     @csrf
                     @if ($service)
                         @method('PUT')
@@ -429,7 +429,7 @@
                                                                     <span class="ServiceAddedcheckbox-action"
                                                                         style="z-index:12"
                                                                         onclick="removeItem({{ $item->id }},'service')"><a><img
-                                                                                src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                                                src="{{ custom_asset('public/assets/admin-images/trash.svg') }}" /></a>
                                                                     </span>
                                                                 </span>
                                                             </label>
@@ -680,7 +680,7 @@
                                                                                 <span class="ServiceAddedcheckbox-action"
                                                                                     style="z-index:12"
                                                                                     onclick="removeItem({{ $item->id }},'inscope')"><a><img
-                                                                                            src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                                                            src="{{ custom_asset('public/assets/admin-images/trash.svg') }}" /></a>
                                                                                 </span>
                                                                             </span>
                                                                         </label>
@@ -749,7 +749,7 @@
                                                                                 <span class="ServiceAddedcheckbox-action"
                                                                                     style="z-index:12"
                                                                                     onclick="removeItem({{ $item->id }},'outscope')"><a><img
-                                                                                            src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                                                            src="{{ custom_asset('public/assets/admin-images/trash.svg') }}" /></a>
                                                                                 </span>
                                                                             </span>
                                                                         </label>
@@ -923,7 +923,7 @@
                                                     <span class="ServiceAddedcheckbox-content">
                                                         <span class="ServiceAddedcheckbox-text">${item.name}</span>
                                                         <span class="ServiceAddedcheckbox-action"  style="z-index:12"  onclick="removeItem(${item.id},'${val}')"><a ><img
-                                                                    src="{{ asset('public/assets/admin-images/trash.svg') }}" /></a>
+                                                                    src="{{ custom_asset('public/assets/admin-images/trash.svg') }}" /></a>
                                                         </span>
                                                     </span>
                                                 </label>

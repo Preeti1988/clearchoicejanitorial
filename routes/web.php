@@ -57,6 +57,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/update-user', [App\Http\Controllers\HomeController::class, 'Updateuser'])->name('UpdateUser');
     Route::post('/update-password', [App\Http\Controllers\HomeController::class, 'changeSetting'])->name('changeSetting');
     Route::post('/save-master', [App\Http\Controllers\HomeController::class, 'Savemaster'])->name('SaveMaster');
+    Route::post('/update-master', [App\Http\Controllers\HomeController::class, 'UpdateMaster'])->name('UpdateMaster');
+
     Route::match(['get', 'post'], '/search-team-member-active', [App\Http\Controllers\HomeController::class, 'team_active'])->name('search.team-member-active');
     Route::match(['get', 'post'], '/search-team-member-inactive', [App\Http\Controllers\HomeController::class, 'team_inactive'])->name('search.team-member-inactive');
     Route::match(['get', 'post'], '/search-team-member', [App\Http\Controllers\HomeController::class, 'team'])->name('search.team-member');

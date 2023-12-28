@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Clear-ChoiceJanitorial - Client')
 @push('css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/client.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/client.css') }}">
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -27,7 +27,7 @@
                                 </div>
                                 <div class="col-md-8 d-flex">
                                     <a href="{{ route('Clients') }}" class="m-1 mx-3"><img
-                                            src="{{ asset('public/assets/admin-images/reset-icon.png') }}"
+                                            src="{{ custom_asset('public/assets/admin-images/reset-icon.png') }}"
                                             style="height: 25px" alt=""></a>
                                     <form action="">
                                         <div class="search-form-group">
@@ -36,10 +36,10 @@
                                                 class="form-control" style="width: 165%"
                                                 placeholder="Search by Client Name">
                                             <span class="search-icon" onclick=""><img
-                                                    src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
+                                                    src="{{ custom_asset('public/assets/admin-images/search-icon.svg') }}"></span>
 
                                             <span class="search-icon"><img
-                                                    src="{{ asset('public/assets/admin-images/search-icon.svg') }}"></span>
+                                                    src="{{ custom_asset('public/assets/admin-images/search-icon.svg') }}"></span>
 
                                         </div>
                                     </form>
@@ -120,11 +120,13 @@
                                             <td style="white-space:nowrap;">
                                                 <a class="viewbtn"
                                                     href="{{ url('client-details/' . encryptDecrypt('encrypt', $val->id)) }}">
-                                                    <img src="{{ asset('public/assets/admin-images/view-icon.svg') }}">
+                                                    <img
+                                                        src="{{ custom_asset('public/assets/admin-images/view-icon.svg') }}">
                                                 </a>
                                                 <a class="viewbtn"
                                                     href="{{ url('edit-client/' . encryptDecrypt('encrypt', $val->id)) }}') }}">
-                                                    <img src="{{ asset('public/assets/admin-images/edit-icon.svg') }}">
+                                                    <img
+                                                        src="{{ custom_asset('public/assets/admin-images/edit-icon.svg') }}">
                                                 </a>
                                             </td>
                                         </tr>

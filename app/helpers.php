@@ -15,6 +15,25 @@ if (!function_exists('successMsg')) {
         return response()->json(['status' => true, 'message' => $msg, 'data' => $data]);
     }
 }
+// app/helpers.php
+
+if (!function_exists('custom_asset')) {
+    function custom_asset($path, $secure = null)
+    {
+        if (request()->isSecure()) {
+
+            $scheme = request()->isSecure() ? 'https' : null;
+
+            if (is_null($secure)) {
+                $secure = request()->isSecure();
+            }
+
+            return app('url')->assetFrom($secure, $path, $scheme);
+        } else {
+            return asset($path);
+        }
+    }
+}
 
 if (!function_exists('errorMsg')) {
     function errorMsg($msg, $data = [])

@@ -428,7 +428,47 @@ class HomeController extends Controller
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
         }
     }
+    public function UpdateMaster(Request $request)
+    {
+        try {
+            $tag_id = $request->tag_id;
+            if ($tag_id == 4) {
+                $name = 'Designation';
 
+                Designation::where("id", $request->id)->update(['name' => $request->name]);
+            } elseif ($tag_id == 5) {
+                $name = 'Marital Status';
+
+                MaritalStatus::where("id", $request->id)->update(['name' => $request->name]);
+            } elseif ($tag_id == 3) {
+
+                $name = 'Services';
+
+                ServicesValue::where("id", $request->id)->update([
+                    'name' => $request->name,
+                    'price' => $request->price,
+                ]);
+
+                // dd($request->all());
+            } elseif ($tag_id == 2) {
+                $name = 'Out Of Scope';
+
+                OutScope::where("id", $request->id)->update([
+                    'name' => $request->name,
+                ]);
+            } elseif ($tag_id == 1) {
+                $name = 'In Scope';
+
+                InScope::where("id", $request->id)->update([
+                    'name' => $request->name,
+                ]);
+            } else {
+            }
+            return redirect('master')->with('message', $name . ' update successfully');
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
+        }
+    }
     public function delete_master_items($type, $id)
     {
         try {
