@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 @section('title', 'Clear-ChoiceJanitorial - Client')
 @push('css')
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/create-service.css') }}">
     <style>
         .dollar-sign::before {
@@ -133,8 +135,8 @@
                                 <div class="form-group">
                                     <h3>Address</h3>
                                     <input type="text" class="form-control"
-                                        value="{{ $service && $service->client ? $service->client->address : '' }}"
-                                        name="" value="" id="address" />
+                                        value="{{ $service && $service->client ? $service->client->street : '' }}" required
+                                        name="client_address" value="" id="address" />
                                 </div>
                             </div>
 
@@ -404,13 +406,9 @@
                                     <input type="text" class="form-control" id="itemValue" placeholder="$10" />
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Service Image *</h3>
-                                    <input type="file" name="image" accept="image/png,image/jpeg,image/jpg"
-                                        class="form-control">
-                                </div>
-                            </div>
+
+
+
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <h3>Service Items Added *</h3>
@@ -455,6 +453,16 @@
                                 <div class="form-group mb-0">
                                     <h3>Service Description *</h3>
                                     <textarea type="text" required class="form-control" name="description">{{ $service ? $service->description : '' }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group mb-0">
+                                    <h3>Service Image *</h3>
+                                    <div class="card mt-2 common-shadow">
+                                        <div class="dropzone" id="myDropzone"></div>
+                                    </div>
+                                    <input type="hidden" id="image" name="image"
+                                        value="{{ $service ? $service->image : '' }}" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -993,6 +1001,14 @@
                     $(".screen").show()
                     event.preventDefault();
                     let formData = new FormData(form);
+
+
+                    if ($("#image").val() == "") {
+
+                        Swal.fire("Error", "Please select atleast one image", 'error');
+                        return false;
+                    }
+
                     if (items.length == 0) {
 
                         Swal.fire("Error", "Please select atleast one service item", 'error');
@@ -1129,5 +1145,84 @@
 
             $("#result").val(totalHours);
         }
+    </script>
+    <script type="text/javascript">
+        var uploaded = false;
+        Dropzone.options.myDropzone = {
+            maxFilesize: 1,
+            renameFile: function(file) {
+                var dt = new Date();
+                var time = dt.getTime();
+                return time + file.name;
+            },
+            maxFiles: 1,
+            acceptedFiles: ".jpeg,.jpg,.png",
+            timeout: 5000,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            url: "{{ route('image-upload') }}",
+            addRemoveLinks: true,
+            removedfile: function(file) {
+                var name = file.upload ? file.upload.filename : file.name;
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    type: 'POST',
+                    url: "{{ route('image-delete') }}",
+                    data: {
+                        filename: name
+                    },
+                    success: function(data) {
+
+
+                        $("#image").val("");
+                    },
+                    error: function(e) {
+                        console.log(e);
+                    }
+                });
+                var fileRef;
+                return (fileRef = file.previewElement) != null ?
+                    fileRef.parentNode.removeChild(file.previewElement) : void 0;
+            },
+            success: function(file, response) {
+                $("#image").val(response);
+
+            },
+            error: function(file, response) {
+                return false;
+            },
+
+
+
+            init: function() {
+
+                @if ($service && $service->image)
+                    var imageName = "{{ $service->image }}";
+                    var imagePath = "{{ asset("public/upload/services/$service->image") }}";
+
+                    var myDropzone = this;
+
+                    // Add existing images to Dropzone
+
+
+                    var mockFile = {
+                        name: imageName,
+                        size: 200,
+                        id: 1
+                    };
+
+                    myDropzone.displayExistingFile(mockFile, imagePath);
+                @endif
+                this.on('addedfile', function(file) {
+                    if (this.files.length > 1) {
+                        this.removeFile(this.files[0]);
+                    }
+                });
+            }
+
+        };
     </script>
 @endsection

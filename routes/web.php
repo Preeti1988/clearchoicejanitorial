@@ -80,3 +80,7 @@ Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchC
 Route::get("search-user", [AjaxController::class, 'searchUser'])->name('searhcUser');
 Route::get("get-state", [AjaxController::class, 'getState'])->name('getState');
 Route::get("get-city", [AjaxController::class, 'getCity'])->name('getCity');
+
+
+Route::post('upload-image', [AjaxController::class, 'uploadImage'])->name('image-upload');
+Route::post('delete-image', [AjaxController::class, 'deleteImage'])->name('image-delete');

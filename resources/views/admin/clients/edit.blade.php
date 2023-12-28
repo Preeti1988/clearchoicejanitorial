@@ -132,7 +132,7 @@
                                 <div class="form-group">
                                     <h3>Street</h3>
                                     <input type="text" class="form-control" name="street"
-                                        value="{{ $data->street ?? '' }}"placeholder="Street">
+                                        value="{{ $data->street ?? '' }}"placeholder="Street" required>
                                 </div>
                             </div>
 
@@ -337,10 +337,7 @@
                         required: true,
                         zeroValue: true
                     },
-                    city: {
-                        required: true,
-                        zeroValue: true
-                    }
+
                 },
                 errorElement: "span",
                 errorPlacement: function(error, element) {

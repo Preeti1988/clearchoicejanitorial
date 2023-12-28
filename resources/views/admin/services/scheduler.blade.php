@@ -165,7 +165,7 @@
 
                                             <div class="ongoing-services-item-foot">
                                                 <div class="loaction-address"><img
-                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ isset($item->client->address) ? $item->client->address : '' }}
+                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ isset($item->client->street) ? $item->client->street : '' }}
                                                 </div>
                                                 <div class="ongoing-services-action"><a
                                                         href="{{ route('services.assign', $item->id) }}">Assign Team

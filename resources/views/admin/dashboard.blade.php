@@ -102,7 +102,9 @@
                                         <div class="ongoing-services-item-head">
                                             <div class="ongoing-services-item-title">
                                                 <div class="services-id">#{{ $item->id }}</div>
-                                                <h2>Service 1: {{ $item->name }}</h2>
+                                                <h2 style="cursor: pointer"
+                                                    onclick="location.replace('{{ route('services.edit', $item->id) }}')">
+                                                    Service 1: {{ $item->name }}</h2>
                                             </div>
                                             <div class="client-info">
                                                 <div class="client-info-icon">
@@ -230,7 +232,7 @@
                                         </div>
                                         <div class="ongoing-services-item-foot">
                                             <div class="loaction-address"><img
-                                                    src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
+                                                    src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->street : '') : 'N/A' }}
                                             </div>
                                             <div class="ongoing-services-date">
                                                 {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
@@ -257,7 +259,9 @@
                                         <div class="ongoing-services-item-head">
                                             <div class="ongoing-services-item-title">
                                                 <div class="services-id">#{{ $item->id }}</div>
-                                                <h2>Service 1: {{ $item->name }}</h2>
+                                                <h2 style="cursor: pointer"
+                                                    onclick="location.replace('{{ route('services.edit', $item->id) }}')">
+                                                    Service 1: {{ $item->name }}</h2>
                                             </div>
                                             <div class="ongoing-services-date">
                                                 {{ date('l, j M h:i:s A', strtotime($item->created_at)) }}</div>
@@ -324,7 +328,7 @@
                                         </div>
                                         <div class="ongoing-services-item-foot">
                                             <div class="loaction-address"><img
-                                                    src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? $item->client->address : '' }}
+                                                    src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? $item->client->street : '' }}
                                             </div>
                                             <div class="ongoing-services-action"><a
                                                     href="{{ route('services.assign', $item->id) }}">Assign Team

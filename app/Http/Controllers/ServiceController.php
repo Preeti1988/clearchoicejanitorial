@@ -23,7 +23,7 @@ class ServiceController extends Controller
         if (request()->has('date')) {
             $services = $services->whereDate("created_at", Carbon::parse(request('date')));
         }
-        $services = $services->orderBy("id", "desc")->get();
+        $services = $services->where("status", "ongoing")->orderBy("id", "desc")->get();
 
         $completed_services = Service::where("status", "completed");
         if (request()->has('date')) {
@@ -107,6 +107,9 @@ class ServiceController extends Controller
             $image = uniqid() . "." . $file->getClientOriginalExtension();
             $service->image = $image;
             $file->move(public_path('upload/services'), $image);
+        }
+        if ($request->has('image')) {
+            $service->image = $request->image;
         }
         $service->save();
         return response()->json(['message' => 'Service Created Successfully', 'status' => 200]);
@@ -192,6 +195,9 @@ class ServiceController extends Controller
             $image = uniqid() . "." . $file->getClientOriginalExtension();
             $service->image = $image;
             $file->move(public_path('upload/services'), $image);
+        }
+        if ($request->has('image')) {
+            $service->image = $request->image;
         }
         $service->save();
         return response()->json(['message' => 'Service updated Successfully', 'status' => 200]);

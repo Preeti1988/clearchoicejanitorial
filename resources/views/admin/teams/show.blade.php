@@ -269,7 +269,7 @@
                                             </div>
                                             <div class="ongoing-services-item-foot">
                                                 <div class="loaction-address"><img
-                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
+                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->street : '') : 'N/A' }}
                                                 </div>
                                                 <div class="ongoing-services-date">
                                                     {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}
@@ -427,7 +427,7 @@
                                             </div>
                                             <div class="ongoing-services-item-foot">
                                                 <div class="loaction-address"><img
-                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->address : '') : 'N/A' }}
+                                                        src="{{ custom_asset('public/assets/admin-images/map.svg') }}">{{ $item->client ? ($item->client ? $item->client->street : '') : 'N/A' }}
                                                 </div>
                                                 <div class="ongoing-services-date">
                                                     {{ date('M d,Y  h:i A', strtotime($item->created_at)) }}

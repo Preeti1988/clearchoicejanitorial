@@ -183,8 +183,8 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('services.scheduler') }}">
+                        <li class="nav-item @if (Route::is('services.scheduler') || Route::is('services.create')) active @endif">
+                            <a class="nav-link " href="{{ route('services.scheduler') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none">
@@ -216,7 +216,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
+                        <li class="nav-item @if (Route::is('services.index') || Route::is('services.assign')) active @endif">
                             <a class="nav-link" href="{{ route('services.index') }}">
                                 <span class="menu-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -374,14 +374,14 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="dropdown-menu">
+                                <div class="dropdown-menu p-2">
                                     <a href="{{ url('/profile') }}" class="dropdown-item">
-                                        <i class="las la-user"></i> Profile
+                                        <i class="las la-user" style="font-size: 19px"></i> Profile
                                     </a>
                                     <a href="{{ route('logout') }}"
                                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                                         class="dropdown-item">
-                                        <i class="las la-sign-out-alt"></i> Logout
+                                        <i class="las la-sign-out-alt" style="font-size: 19px"></i> Logout
                                     </a>
                                 </div>
                             </li>

@@ -54,7 +54,7 @@ class UserController extends Controller
                 $success['designation_id'] = ($user->designation_id) ?? '';
                 $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
                 $success['DOB'] = ($user->DOB) ? date("m-d-Y", strtotime($user->DOB)) : '';
-                $success['profile_image'] = ($user->profile_image) ? $user->profile_image : '';
+                $success['profile_image'] = ($user->profile_image) ? asset('public/upload/user-profile/' . $user->profile_image, 'https') : '';
                 $success['marital_status'] = ($user->marital_status) ?? '';
                 $success['dependents'] = ($user->dependents) ?? '';
                 $success['address'] = ($user->address) ?? '';
@@ -67,7 +67,7 @@ class UserController extends Controller
                 $success['status'] = $user->status;
                 $success['created_date'] = $user->created_date;
                 if ($user->resume) {
-                    $success['resume'] = asset('public/assets/admin-images/') . $user->resume;
+                    $success['resume'] = asset('public/assets/admin-images/', 'https') . $user->resume;
                 } else {
                     $success['resume'] = '';
                 }
@@ -126,17 +126,17 @@ class UserController extends Controller
             $file->move("public/upload/user-profile/", $image);
             $user->profile_image = $image;
             $user->save();
-            $success['profile_image'] = asset('public/upload/user-profile') . "/" . $user->profile_image;
+            $success['profile_image'] = asset('public/upload/user-profile', 'https') . "/" . $user->profile_image;
         }
         if ($request->hasFile('resume')) {
             $file = $request->file("resume");
             $imageName = uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move("public/upload/resume/", $imageName);
             $user->resume = $imageName;
-            $user->resume_file_name = asset('public/upload/resume/')  . "/" . $imageName;;
+            $user->resume_file_name = asset('public/upload/resume/', 'https')  . "/" . $imageName;;
             $user->save();
 
-            $success['resume'] = asset('public/upload/resume/') . "/" . $imageName;
+            $success['resume'] = asset('public/upload/resume/', 'https') . "/" . $imageName;
             $success['resume_file_name'] = $imageName;
         } else {
             $success['resume'] = '';
@@ -199,10 +199,12 @@ class UserController extends Controller
         $success['fullname'] = $user->fullname;
         $success['emailid'] = $user->email;
         $success['phonenumber'] = ($user->phonenumber) ?? '';
-        $success['service_count'] = Service::where("status", "!=", "completed")->count();
-        $success['service_log'] = Service::where("status",  "completed")->count();
+        $servic_ids = ServiceMember::where("member_id", $user->id)->groupBy("service_id")->pluck("service_id")->toArray();
+
+        $success['service_count'] = Service::where("status", "!=", "completed")->whereIn("id", $servic_ids)->count();
+        $success['service_log'] = Service::where("status",  "completed", $servic_ids)->count();
         $success['status'] = $user->status;
-        $success['profile_image'] = $user->profile_image ? asset('public/upload') . "/" . $user->profile_image : '';
+        $success['profile_image'] = $user->profile_image ? asset('public/upload/user-profile', 'https') . "/" . $user->profile_image : '';
         $success['designation_id'] = ($user->designation_id) ?? '';
         $success['DOB'] = ($user->DOB) ?? '';
         $success['marital_status'] = ($user->marital_status) ?? '';
@@ -219,13 +221,13 @@ class UserController extends Controller
         $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
 
         if ($user->profile_image) {
-            $success['profile_image'] = asset('public/upload/') . "/" . $user->profile_image;
+            $success['profile_image'] = asset('public/upload/user-profile', 'https') . "/" . $user->profile_image;
         } else {
             $success['profile_image'] = '';
         }
 
         if ($user->resume) {
-            $success['resume'] = asset('public/assets/admin-images/') . $user->resume;
+            $success['resume'] = asset('public/upload/resume/', 'https') . $user->resume;
         } else {
             $success['resume'] = '';
         }
@@ -256,7 +258,7 @@ class UserController extends Controller
             $file = $request->file("image");
             $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('upload/chat'), $imageName);
-            $chat = asset('public/upload/chat') . '/' . $imageName;
+            $chat = asset('public/upload/chat', 'https') . '/' . $imageName;
             return response()->json(['status' => true, 'url' => $chat, 'message' => 'image upload successfully.']);
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -280,6 +282,7 @@ class UserController extends Controller
             $temp['service_name'] = isset($service->name) ? $service->name : '';
             $temp['service_id'] = isset($service->id) ? $service->id : '';
             $temp['service_id'] = isset($service->id) ? $service->id : '';
+            $temp['image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : '';
 
             $temp['serviceScheduleEndDate'] = isset($service->scheduled_end_date) ? $service->scheduled_end_date : '';
 
@@ -312,7 +315,7 @@ class UserController extends Controller
             $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
             $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
             $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
-            $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
+            $temp['service_image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
             $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
             $client = Client::where('id', $service->assigned_client_id)->first();
             $temp['clientname'] = isset($client->name) ? $client->name : '';
@@ -365,7 +368,7 @@ class UserController extends Controller
             $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
             $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
             $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
-            $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
+            $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png', 'https');
             $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
             $client = Client::where('id', $service->assigned_client_id)->first();
             $temp['clientname'] = isset($client->name) ? $client->name : '';
@@ -458,7 +461,7 @@ class UserController extends Controller
                 $temp['service_id'] = isset($service->id) ? $service->id : '';
                 $temp['admin_name'] = 'Admin';
                 $temp['admin_id'] = 1;
-                $temp['admin_image'] =  asset('public/assets/admin-images/hbgimg.png');
+                $temp['admin_image'] =  $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : '';
                 $count = ChatCount::where('sender_id', 1)->where('service_id', $service->id)->first();
                 $temp['msg_count'] =  $count->read_status ?? '0';
                 $response[] = $temp;
@@ -507,7 +510,7 @@ class UserController extends Controller
         $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
         $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
         $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
-        $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png');
+        $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png', 'https');
         $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
         $client = Client::where('id', $service->assigned_client_id)->first();
         $temp['clientname'] = isset($client->name) ? $client->name : '';
@@ -653,7 +656,7 @@ class UserController extends Controller
         if ($request->hasFile('profile_image')) {
             $file = $request->file('profile_image');
             $image = uniqid() . "." . $file->getClientOriginalExtension();
-            $file->move("public/upload/", $image);
+            $file->move("public/upload/user-profile/", $image);
             $user->profile_image = $image;
         }
         $user->save();
@@ -684,13 +687,13 @@ class UserController extends Controller
         $success['zipcode'] = $user->zipcode;
 
         if ($user->profile_image) {
-            $success['profile_image'] = asset('public/upload/') . "/" . $user->profile_image;
+            $success['profile_image'] = asset('public/upload/user-profile', 'https') . "/" . $user->profile_image;
         } else {
             $success['profile_image'] = '';
         }
 
         if ($user->resume) {
-            $success['resume'] = asset('public/assets/admin-images/') . $user->resume;
+            $success['resume'] = asset('public/upload/resume/', 'https') . $user->resume;
         } else {
             $success['resume'] = '';
         }

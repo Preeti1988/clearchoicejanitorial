@@ -179,7 +179,7 @@
                                 <div class="form-group">
                                     <h3>City*</h3>
                                     <div id="city_container">
-                                        <select class="form-control" name="city" required>
+                                        <select class="form-control" name="city">
                                             <option value="0">--Select--</option>
                                             @foreach ($city as $cty)
                                                 <option value="{{ $cty->id }}">{{ $cty->name }}</option>
@@ -342,10 +342,7 @@
                         required: true,
                         zeroValue: true
                     },
-                    city: {
-                        required: true,
-                        zeroValue: true
-                    }
+
                 },
                 errorElement: "span",
                 errorPlacement: function(error, element) {

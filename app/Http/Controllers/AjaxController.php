@@ -6,9 +6,9 @@ use App\Models\City;
 use App\Models\Client;
 use App\Models\State;
 use App\Models\User;
+
 use Illuminate\Http\Request;
-
-
+use Illuminate\Support\Facades\File;
 
 class AjaxController extends Controller
 {
@@ -56,6 +56,26 @@ class AjaxController extends Controller
             return $members;
         } else {
             return [];
+        }
+    }
+
+    public function uploadImage(Request $request)
+    {
+        // dd($request->all());
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $image = uniqid() . "." . $file->getClientOriginalExtension();
+            $file->move('public/upload/services/', $image);
+            return $image;
+        }
+    }
+
+    public function deleteImage(Request $request)
+    {
+        // dd($request->all());
+        if (File::exists("public/upload/service/$request->filename")) {
+            // File::delete("uploads/products/$request->filename");
+            return $request->filename;
         }
     }
 }

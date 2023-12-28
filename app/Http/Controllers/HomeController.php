@@ -529,15 +529,15 @@ class HomeController extends Controller
     public function team_inactive(Request $request)
     {
         try {
-            if (isset($request->search)) {
+            if ($request->has("search")) {
                 $search = $request->search;
                 $type = 2;
-                $datas = User::where('status', 2)->where('userid', '!=', 1)
-                    ->orwhere('fullname', 'like', '%' . $search . '%')
-                    ->orwhere('email', 'like', '%' . $search . '%')
-                    ->orwhere('userid', 'like', '%' . $search . '%')
-                    ->orwhere('phonenumber', 'like', '%' . $search . '%')
-                    ->orderBy('userid', 'DESC')->paginate(10);
+                $datas = User::where('status', 2)->where('userid', '!=', 1)->where(function ($query) use ($search) {
+                    $query->orwhere('fullname', 'like', '%' . $search . '%')
+                        ->orwhere('email', 'like', '%' . $search . '%')
+                        ->orwhere('userid', 'like', '%' . $search . '%')
+                        ->orwhere('phonenumber', 'like', '%' . $search . '%');
+                })->orderBy('userid', 'DESC')->paginate(10);
                 return view('admin.teams.index', compact('datas', 'search', 'type'));
             } else {
                 $search = '';

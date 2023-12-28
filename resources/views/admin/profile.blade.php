@@ -12,8 +12,7 @@
                 <div class="profile-item-title d-flex align-items-center">
                     <div class="d-flex align-items-center">
                         <div class="profile-card-image">
-                            <img
-                                src="{{ Auth::user()->profile_image ? custom_asset('public/assets/admin-images/admin-profile.svg') : custom_asset('public/upload/profile-image/' . Auth::user()->profile_image) }}">
+                            <img src="{{ custom_asset('public/assets/admin-images/admin-profile.svg') }}">
                         </div>
                         <div class="profile-card-head">
                             <h2 class="ms-2 mb-0">Profile Overview</h2>
@@ -25,8 +24,8 @@
                 <div class="row align-items-center">
                     <div class="col-md-4">
                         <div class="owner-details  mt-4 d-flex align-items-center">
-                            <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}" alt="image"
-                                class="img-fluid">
+                            <img src="{{ !Auth::user()->profile_image ? custom_asset('public/assets/admin-images/user-default.svg') : custom_asset('public/upload/user-profile/' . Auth::user()->profile_image) }}"
+                                alt="image" class="img-fluid">
                             <div class="name-details ms-3">
                                 <p class="info-title">Owner's Name</p>
                                 <h4 class="mt-3">{{ Auth::user()->fullname ?? '' }}</h4>

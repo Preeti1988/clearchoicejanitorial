@@ -235,11 +235,11 @@
                                 <div class="product-images-upload">
                                     <div class="file-form-group">
                                         <input type="file" class="file-form-control" name="resume"
-                                            accept=".png, .jpg, .jpeg, .pdf">
+                                            accept=".pdf, .doc, .docx, .pdf">
                                     </div>
                                 </div>
                                 <div class="product-images-head">
-                                    <p>PNG, JPG , JPEG and PDF are allowed</p>
+                                    <p>PDF, DOC and DOCX are allowed</p>
                                 </div>
 
                             </div>
