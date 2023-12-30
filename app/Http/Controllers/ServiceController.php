@@ -8,12 +8,14 @@ use App\Models\OutScope;
 use App\Models\Service;
 use App\Models\ServiceMember;
 use App\Models\ServicesValue;
+use App\Traits\NotificationTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Exists;
 
 class ServiceController extends Controller
 {
+    use NotificationTrait;
     /**
      * Display a listing of the resource.
      */
@@ -23,11 +25,17 @@ class ServiceController extends Controller
         if (request()->has('date')) {
             $services = $services->whereDate("created_at", Carbon::parse(request('date')));
         }
+        if (request()->has('search')) {
+            $services = $services->where("name", request('search'));
+        }
         $services = $services->where("status", "ongoing")->orderBy("id", "desc")->get();
 
         $completed_services = Service::where("status", "completed");
         if (request()->has('date')) {
             $completed_services = $completed_services->whereDate("created_at", Carbon::parse(request('date')));
+        }
+        if (request()->has('search')) {
+            $completed_services = $completed_services->where("name", request('search'));
         }
         $completed_services = $completed_services->orderBy("id", "desc")->get();
         $completed =  Service::where("status", 'completed')->count();
@@ -121,12 +129,14 @@ class ServiceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $service = Service::find($id);
+        return view('admin.services.show', compact('service'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
+    
     public function edit(string $id)
     {
         $clients = Client::all();
@@ -231,6 +241,14 @@ class ServiceController extends Controller
             $exists = ServiceMember::where("member_id", $item->id)->where("service_id", $request->service_id)->count();
             if ($exists) {
                 $serviceMember = ServiceMember::where("member_id", $item->id)->where("service_id", $request->service_id)->first();
+            } else {
+                $data = [
+                    'user_id' => $item->id,
+                    'title' => 'Assigned to new service',
+                    'details' => 'You are assigned to ' .  Service::find($request->service_id)->name,
+                    'device_key' => null,
+                ];
+                $this->sendNotification($data);
             }
 
             $serviceMember->shift_start_time = $item->shift_start_time;

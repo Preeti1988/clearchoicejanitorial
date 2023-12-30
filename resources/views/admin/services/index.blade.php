@@ -2,6 +2,12 @@
 @section('title', 'Clear-ChoiceJanitorial - Client')
 @push('css')
     <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/service.css') }}">
+    <style>
+        input[type="date"] {
+            border: none;
+            outline: none;
+        }
+    </style>
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -15,7 +21,49 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="Ongoing-calender-list">
+                    <div class="row align-items-center my-2">
+                        <div class="col-md-7">
+                            {{-- @if ($type == 1)
+                                <form action="{{ route('search.team-member-active') }}" method="POST">
+                                @else
+                                    <form action="{{ route('search.team-member-inactive') }}"
+                                        method="POST">
+                                        @csrf
+                            @endif --}}
+                            <form action="">
+
+                                <div class="search-input">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search by Service Name."
+                                            name="search" value="{{ $search ?? '' }}" aria-label="Recipient's username"
+                                            aria-describedby="button-addon2">
+                                        <button class="btn btn-outline-secondary" type="submit" style="background: #7BC043"
+                                            id="button-addon2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="white" class="bi bi-search" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="">
+                                <a class="item" style="width:40%">
+                                    <div class="Ongoing-calender-item" style="padding: 3px">
+
+                                        <input type="date" name="date" id="date" class="form-control"
+                                            value="{{ request()->has('date') ? request('date') : '' }}"
+                                            onchange="location.replace('{{ route('services.index') }}'+'?date='+this.value)">
+                                    </div>
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    {{-- <div class="Ongoing-calender-list">
                         <div id="Ongoingcalender" class="owl-carousel owl-theme">
                             @php
                                 $arr = [];
@@ -51,7 +99,7 @@
 
 
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="tasks-content-info tab-content">
                         <div class="tab-pane active" id="Ongoing">
                             <div class="ongoing-services-list">

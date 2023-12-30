@@ -83,7 +83,7 @@
                     @if ($service)
                         <input type="hidden" id="redirect_url" value="{{ route('services.edit', $service) }}">
                     @else
-                        <input type="hidden" id="redirect_url" value="{{ route('services.index') }}">
+                        <input type="hidden" id="redirect_url" value="{{ route('services.scheduler') }}">
                     @endif
 
                     <div class="create-service-form-box">

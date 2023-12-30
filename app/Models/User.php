@@ -36,13 +36,15 @@ class User extends Authenticatable
         'addres_notes',
         'contractor',
         'street',
+        'gender',
+
         'unit',
         'country_id',
         'state_id',
         'city',
         'zipcode',
         'resume',
-        'resume_file_name',                
+        'resume_file_name',
         'password',
         'status',
     ];

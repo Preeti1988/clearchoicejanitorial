@@ -199,10 +199,27 @@ class UserController extends Controller
         $success['fullname'] = $user->fullname;
         $success['emailid'] = $user->email;
         $success['phonenumber'] = ($user->phonenumber) ?? '';
-        $servic_ids = ServiceMember::where("member_id", $user->id)->groupBy("service_id")->pluck("service_id")->toArray();
 
-        $success['service_count'] = Service::where("status", "!=", "completed")->whereIn("id", $servic_ids)->count();
-        $success['service_log'] = Service::where("status",  "completed", $servic_ids)->count();
+
+
+        $assigned_services = ServiceMember::where("member_id", $user->userid)->groupBy("service_id")->pluck("service_id")->toArray();
+        $completed_services = ServiceTimesheet::where("assign_member_id", $user->userid)->groupBy("service_id")->pluck("service_id")->toArray();
+        $incomplete_services = [];
+        $complete_services = [];
+
+        foreach ($assigned_services as $id) {
+            if (!in_array($id, $completed_services)) {
+                $incomplete_services[] = $id;
+            } else {
+                $complete_services[] = $id;
+            }
+        }
+
+
+        $success['incomplete_service_count'] = Service::where("status", "completed")->whereIn("id", $incomplete_services)->count();
+        $success['service_log'] = Service::where("status",  "completed")->whereIn("id", $complete_services)->count();
+        $success['service_count'] = Service::where("status", "ongoing")->whereIn("id", $assigned_services)->count();
+
         $success['status'] = $user->status;
         $success['profile_image'] = $user->profile_image ? asset('public/upload/user-profile', 'https') . "/" . $user->profile_image : '';
         $success['designation_id'] = ($user->designation_id) ?? '';
@@ -211,6 +228,7 @@ class UserController extends Controller
         $success['dependents'] = ($user->dependents) ?? '';
         $success['address'] = ($user->address) ?? '';
         $success['city'] = ($user->city) ?? '';
+        $success['gender'] = ($user->gender) ?? '';
         $success['state_id'] = ($user->state_id) ?? '';
         $success['country_id'] = ($user->country_id) ?? '';
         $success['zipcode'] = ($user->zipcode) ?? '';
@@ -368,7 +386,8 @@ class UserController extends Controller
             $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
             $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
             $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
-            $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png', 'https');
+            $temp['service_image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
+
             $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
             $client = Client::where('id', $service->assigned_client_id)->first();
             $temp['clientname'] = isset($client->name) ? $client->name : '';
@@ -460,6 +479,9 @@ class UserController extends Controller
                 $temp['service_name'] = isset($service->name) ? $service->name : '';
                 $temp['service_id'] = isset($service->id) ? $service->id : '';
                 $temp['admin_name'] = 'Admin';
+
+                $temp['service_description'] = isset($service->description) ? $service->description : '';
+
                 $temp['admin_id'] = 1;
                 $temp['admin_image'] =  $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : '';
                 $count = ChatCount::where('sender_id', 1)->where('service_id', $service->id)->first();
@@ -510,7 +532,8 @@ class UserController extends Controller
         $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
         $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
         $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
-        $temp['service_image'] = asset('public/assets/admin-images/hbgimg.png', 'https');
+        $temp['service_image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
+
         $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
         $client = Client::where('id', $service->assigned_client_id)->first();
         $temp['clientname'] = isset($client->name) ? $client->name : '';
@@ -638,6 +661,8 @@ class UserController extends Controller
         $user->fullname = $request->fullname;
         $user->email = $request->email;
         $user->DOB = $request->DOB;
+        $user->gender = $request->gender;
+
         $user->marital_status = $request->marital_status;
         $user->gender = $request->gender;
         $user->dependents = $request->dependents;
@@ -811,7 +836,7 @@ class UserController extends Controller
                         'week_number' => $currentWeek,
                         'total_hours_in_week' => $totalHoursInWeek,
                         'total_hours_in_week_format' => $this->formatTime($totalHoursInWeekFormat),
-                        'avg_hours_in_week' => $totalHoursInWeek / count($daysInWeek),
+                        'avg_hours_in_week' => $this->formatTime(intval($totalHoursInWeekFormat / count($daysInWeek))),
                         'days' => $daysInWeek,
                         'total_days_worked' => count($daysInWeek),
 
@@ -846,7 +871,7 @@ class UserController extends Controller
                 'week_number' => $currentWeek,
                 'total_hours_in_week' => $totalHoursInWeek,
                 'total_hours_in_week_format' => $this->formatTime($totalHoursInWeekFormat),
-                'avg_hours_in_week' => $totalHoursInWeek / count($daysInWeek),
+                'avg_hours_in_week' => $this->formatTime(intval($totalHoursInWeekFormat / count($daysInWeek))),
                 'days' => $daysInWeek,
                 'total_days_worked' => count($daysInWeek)
 
@@ -891,10 +916,34 @@ class UserController extends Controller
     }
     public function serviceLogs()
     {
-        $timesheet = ServiceTimesheet::where("assign_member_id", auth()->user()->userid)->get();
+        $timesheet = ServiceTimesheet::when(request()->has("date"), function ($query) {
+            return  $query->whereDate("date", Carbon::parse(request('date')));
+        })->where("assign_member_id", auth()->user()->userid)->get();
         foreach ($timesheet as $item) {
-            $item->service = Service::find($item->service_id);
+            $service = Service::find($item->service_id);
+            $service->address = $service->client ? $service->client->street : '';
+            $item->service = $service;
         }
         return response()->json(["status" => true, "message" => "service logs.", "data" => $timesheet]);
+    }
+    public function incompleteServices()
+    {
+        $user = Auth::user();
+        $assigned_services = ServiceMember::where("member_id", $user->userid)->groupBy("service_id")->pluck("service_id")->toArray();
+        $completed_services = ServiceTimesheet::where("assign_member_id", $user->userid)->groupBy("service_id")->pluck("service_id")->toArray();
+
+        $incomplete_services = [];
+        foreach ($assigned_services as $id) {
+            if (!in_array($id, $completed_services)) {
+                $incomplete_services[] = $id;
+            }
+        }
+        $services = Service::where("status", "completed")->whereIn("id", $incomplete_services)->get();
+
+        foreach ($services as $service) {
+            $service->address = $service->client ? $service->client->street : "";
+            $service->service_image = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
+        }
+        return response()->json(["status" => true, "message" => "incompleted services.", "data" => $services]);
     }
 }

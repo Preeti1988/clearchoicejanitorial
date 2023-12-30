@@ -40,7 +40,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("service_timecard", [UserController::class, 'sevice_timecard']);
     Route::post("uploadchatimage", [UserController::class, 'uploadchatimage']);
     Route::get("service-logs", [UserController::class, 'serviceLogs']);
+    Route::get("incompleted-services", [UserController::class, 'incompleteServices']);
 
     Route::get("notifications", [NotificationController::class, 'index']);
-    Route::get("notifications/store", [NotificationController::class, 'store']);
+
+    Route::post("notifications/read", [NotificationController::class, 'read']);
 });
