@@ -457,9 +457,12 @@
                             <p class="hour-info text-center mt-0">{{ $this_week }} </p>
                             <h6 class="mb-0 pb-0 mt-3">Total Assigned Service Worked </h6>
                             <p class="hour-info text-center mt-0">{{ $total_hours }}</p>
-
+                            <br>
+                            <p class="hour-info text-center mt-0" style="cursor: pointer"
+                                onclick="location.replace('{{ route('timecard', $data->userid) }}')">
+                                View Timecard</p>
                         </div>
-                        {{-- <a href="#" class="view-roster-btn mt-3"><svg xmlns="http://www.w3.org/2000/svg"
+                        {{-- <a href="#" class="view-roster-btn mt-3"><svg xmlnwe s="http://www.w3.org/2000/svg"
                                 width="16" height="16" fill="currentColor" class="bi bi-eye me-2"
                                 viewBox="0 0 16 16">
                                 <path

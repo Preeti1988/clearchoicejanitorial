@@ -208,20 +208,28 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Discount Amount</h3>
-                                    <input type="text" class="form-control" name="discount_amount"
-                                        placeholder="0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control" name="discount_amount"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Due Amount</h3>
-                                    <input type="text" class="form-control" name="due_amount" placeholder="0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control" name="due_amount"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Gross Profit</h3>
-                                    <input type="text" class="form-control" name="gross_profit" placeholder="0.00" />
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control" name="gross_profit"
+                                            placeholder="0.00" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -257,12 +265,26 @@
                                     <h3>Service Name *</h3>
                                     <input type="text" class="form-control" name="name"
                                         value="{{ $service ? $service->name : '' }}" required />
+
+                                    <select class="form-control" name="name">
+                                        <option>
+                                            Select &amp; Add
+                                        </option>
+                                        @foreach ($serviceValues as $item)
+                                            <option @if ($service && $service->name == $item->name) selected @endif
+                                                value="{{ $item->name }}">
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+
+
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Scheduled for *</h3>
-                                    <input type="text" class="form-control" name="scheduled_for"
+                                    <input type="date" class="form-control" name="scheduled_for"
                                         value="{{ $service ? $service->scheduled_for : '' }}" required />
                                 </div>
                             </div>
@@ -1003,11 +1025,11 @@
                     let formData = new FormData(form);
 
 
-                    if ($("#image").val() == "") {
+                    // if ($("#image").val() == "") {
 
-                        Swal.fire("Error", "Please select atleast one image", 'error');
-                        return false;
-                    }
+                    //     Swal.fire("Error", "Please select atleast one image", 'error');
+                    //     return false;
+                    // }
 
                     if (items.length == 0) {
 

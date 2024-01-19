@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    {{-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> --}}
 
     <title> @yield('title', config('app.name'))</title>
     @stack('css')
@@ -45,9 +45,9 @@
 </head>
 
 <body class="main-site ccj-panel">
-    <?php
-    $currentURL = Route::currentRouteName();
-    ?>
+    @php
+        $currentURL = Route::currentRouteName();
+    @endphp
     <div class="page-body-wrapper">
         <div class="sidebar-wrapper sidebar-offcanvas" id="sidebar">
             <div class="sidebar-logo">

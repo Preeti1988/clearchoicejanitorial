@@ -20,18 +20,18 @@ if (!function_exists('successMsg')) {
 if (!function_exists('custom_asset')) {
     function custom_asset($path, $secure = null)
     {
-        if (request()->isSecure()) {
+        // if (request()->isSecure()) {
 
-            $scheme = request()->isSecure() ? 'https' : null;
+        //     $scheme = request()->isSecure() ? 'https' : null;
 
-            if (is_null($secure)) {
-                $secure = request()->isSecure();
-            }
+        //     if (is_null($secure)) {
+        //         $secure = request()->isSecure();
+        //     }
 
-            return app('url')->assetFrom($secure, $path, $scheme);
-        } else {
-            return asset($path);
-        }
+        //     return app('url')->assetFrom($secure, $path, $scheme);
+        // } else {
+        return  asset($path);
+        // }
     }
 }
 

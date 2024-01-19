@@ -78,6 +78,14 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <h3>Emergrncy Contact</h3>
+                                    <input type="text" class="form-control" name="emergency_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
+                                        value="{{ old('emergency_phone') }}" placeholder="Emergrncy Contact">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     <h3>Role *</h3>
                                     <select class="form-control" name="role" required>
                                         @foreach ($designation as $data)

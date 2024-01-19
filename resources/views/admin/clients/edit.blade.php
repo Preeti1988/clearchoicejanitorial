@@ -59,7 +59,7 @@
                                     <h3>Mobile phone*</h3>
                                     <input type="text" class="form-control" name="mobile_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ $data->mobile_number ?? '' }}" placeholder="Mobile phone" required>
+                                        value="{{ $data->mobile_number ?? '' }}" placeholder="Mobile phone">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -225,14 +225,14 @@
                                 <div class="form-group">
                                     <h3>Client Notes*</h3>
                                     <input type="text" class="form-control" name="client_notes"
-                                        value="{{ $data->client_notes ?? '' }}" placeholder="Notes"required>
+                                        value="{{ $data->client_notes ?? '' }}" placeholder="Notes">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Client Tags*</h3>
                                     <input type="text" class="form-control" name="client_tags"
-                                        value="{{ $data->client_tags ?? '' }}" placeholder="tags" required>
+                                        value="{{ $data->client_tags ?? '' }}" placeholder="tags">
                                 </div>
                             </div>
 
@@ -317,15 +317,12 @@
             $('#newteammember').validate({
                 rules: {
                     mobile_number: {
-                        required: true,
                         phoneValid: true
                     },
                     home_phone: {
-                        required: true,
                         phoneValid: true
                     },
                     work_phone: {
-                        required: true,
                         phoneValid: true
                     },
 

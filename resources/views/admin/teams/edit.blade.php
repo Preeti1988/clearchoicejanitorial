@@ -2,6 +2,28 @@
 @section('title', 'Clear Choice Janitorial - Edit Team Member')
 @push('css')
     <link rel="stylesheet" href="{{ custom_asset('public/assets/admin-css/newteammeber.css') }}">
+    <style>
+        .dollar-sign::before {
+            content: "$";
+            position: absolute;
+            margin-left: 1px;
+            background: rgb(237, 233, 233);
+            width: 20px;
+
+            padding: 10px 5px;
+            font-weight: normal;
+            color: #000;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+
+            /* Adjust the margin as needed */
+        }
+
+        .dollar-sign input {
+            padding-left: 25px !important;
+            /* Adjust the padding to make space for  the dollar sign */
+        }
+    </style>
 @endpush
 @section('content')
     <div class="body-main-content">
@@ -80,6 +102,15 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    <h3>Emergency Contact </h3>
+                                    <input type="text" class="form-control" name="emergency_phone"
+                                        data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
+                                        value="{{ $data->emergency_phone ? $data->emergency_phone : old('emergency_phone') }}"
+                                        placeholder="Emergency Contact">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     <h3>Role *</h3>
                                     <select class="form-control" name="role" required>
                                         @foreach ($designation as $desi)
@@ -111,27 +142,62 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-9">
+                            <div class="col-md-5">
                                 <div class="form-group">
                                     <h3>Owner Type</h3>
                                     <ul class="Ownertype-list">
                                         <li>
                                             <div class="ccjradio">
-                                                <input type="radio" checked name="ownertype" id="Home Owner"
-                                                    value="Home Owner"
-                                                    {{ $data->ownertype == 'Home Owner' ? 'checked' : '' }}>
-                                                <label for="Home Owner">Home Owner</label>
+                                                <input type="radio" checked name="ownertype" id="Employee"
+                                                    value="Employee"
+                                                    {{ $data->ownertype == 'Employee' ? 'checked' : '' }}>
+                                                <label for="Employee">Employee</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="ccjradio">
                                                 <input type="radio" name="ownertype"
-                                                    {{ $data->ownertype == 'Business' ? 'checked' : '' }} value="Business"
-                                                    id="Business">
-                                                <label for="Business">Business</label>
+                                                    {{ $data->ownertype == 'SubContractor Employee' ? 'checked' : '' }}
+                                                    value="SubContractor Employee" id="SubContractor Employee">
+                                                <label for="SubContractor Employee">SubContractor Employee</label>
                                             </div>
                                         </li>
                                     </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h3>Rate of pay duration</h3>
+                                    <ul class="Ownertype-list">
+                                        <li>
+                                            <div class="ccjradio">
+                                                <input type="radio" checked name="duration_of_rate" id="Hourly"
+                                                    onchange="checkDuration(this)" onchange="" value="Hourly"
+                                                    {{ $data->duration_of_rate == 'Hourly' ? 'checked' : '' }}>
+                                                <label for="Hourly">Hourly</label>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="ccjradio">
+                                                <input type="radio" name="duration_of_rate"
+                                                    {{ $data->duration_of_rate == 'Monthly' ? 'checked' : '' }}
+                                                    value="Monthly" onchange="checkDuration(this)" id="Monthly">
+                                                <label for="Monthly">Monthly</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>Rate of pay (per <span id="duration">
+                                            {{ $data->duration_of_rate == 'Monthly' ? 'month' : 'hour' }}</span> )</h3>
+                                    <div class="dollar-sign">
+                                        <input type="text" class="form-control" name="rate_of_pay"
+                                            value="{{ $data->rate_of_pay ? $data->rate_of_pay : old('rate_of_pay') }}"
+                                            placeholder="Rate of pay">
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -273,3 +339,18 @@
         </div>
     </div>
 @endsection
+@push('js')
+    <script>
+        function checkDuration(ele) {
+
+            if (ele.checked) {
+                if (ele.value == 'Hourly') {
+                    $("#duration").text('hour');
+                } else {
+                    $("#duration").text('month');
+                }
+
+            }
+        }
+    </script>
+@endpush

@@ -303,6 +303,11 @@ class HomeController extends Controller
             $user->phonenumber = $request->mobile_phone;
             $user->home_phone = $request->home_phone;
             $user->work_phone = $request->work_phone;
+            $user->emergency_phone = $request->emergency_phone;
+            $user->rate_of_pay = $request->rate_of_pay;
+            $user->duration_of_rate = $request->duration_of_rate;
+
+
             $user->designation_id = $request->role;
             $user->marital_status = $request->marital_status;
             $user->DOB = $request->dob;
@@ -870,5 +875,135 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             return $e->getMessage();
         }
+    }
+
+    public function timecard(Request $request, $id)
+    {
+
+        $member_id = $id;
+
+        $member = User::find($member_id);
+        $startPeriod = date('Y-m-01');
+        $endPeriod = date('Y-m-t');
+        if ($request->has("month")) {
+            $startPeriod = date("Y-$request->month-01");
+            $endPeriod = date("Y-$request->month-t");
+        }
+
+
+
+        $timesheet = ServiceTimesheet::select([
+            'id',
+            'service_id',
+            'assign_member_id',
+            'date',
+            'on_the_way_time',
+            'start_time',
+            'end_time',
+            'status',
+            'created_at',
+            'updated_at',
+            DB::raw('WEEK(date) as week_number'),
+            DB::raw('DATE_FORMAT(date, "%Y-%m-%d") as formatted_date'),
+            DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time)) / 3600) as total_hours_worked_on_day'),
+            DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time))) as total_hours_worked_on_day_format'),
+        ])
+            ->where('assign_member_id', $member_id)
+
+            ->whereBetween('date', [$startPeriod, $endPeriod])
+            ->groupBy('id', 'service_id', 'assign_member_id', 'date', 'on_the_way_time', 'start_time', 'end_time', 'status', 'created_at', 'updated_at', DB::raw('WEEK(date)'))
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $result = [];
+        $currentWeek = null;
+        $totalHoursInWeek = 0;
+        $totalHoursInWeekFormat = 0;
+        $totalHours = 0;
+
+
+        $daysInWeek = [];
+        foreach ($timesheet as $record) {
+            if ($currentWeek !== $record->week_number) {
+                // Start a new week
+                if ($currentWeek !== null) {
+                    // Add total hours for the previous week
+                    $result[] = [
+                        'week_number' => $currentWeek,
+                        'total_hours_in_week' => $totalHoursInWeek,
+                        'total_hours_in_week_format' => $this->formatime($totalHoursInWeekFormat),
+                        'avg_hours_in_week' => $this->formatime(intval($totalHoursInWeekFormat / count($daysInWeek))),
+                        'days' => $daysInWeek,
+                        'total_days_worked' => count($daysInWeek),
+
+                    ];
+                    $totalHours += $totalHoursInWeekFormat;
+                }
+
+                // Initialize for the new week
+                $currentWeek = $record->week_number;
+                $totalHoursInWeek = 0;
+                $daysInWeek = [];
+            }
+
+            // Record the details for the current day
+            $daysInWeek[] = [
+                'date' => $record->formatted_date,
+                'start_time' => $record->start_time,
+                'end_time' => $record->end_time,
+                'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
+                'total_hours_worked_on_day_format' => $this->formatime($record->total_hours_worked_on_day_format),
+
+            ];
+
+            // Update the total hours for the week
+            $totalHoursInWeek += $record->total_hours_worked_on_day;
+            $totalHoursInWeekFormat += $record->total_hours_worked_on_day_format;
+        }
+
+        // Add the last week
+        if ($currentWeek !== null) {
+            $result[] = [
+                'week_number' => $currentWeek,
+                'total_hours_in_week' => $totalHoursInWeek,
+                'total_hours_in_week_format' => $this->formatime($totalHoursInWeekFormat),
+                'avg_hours_in_week' => $this->formatime(intval($totalHoursInWeekFormat / count($daysInWeek))),
+                'days' => $daysInWeek,
+                'total_days_worked' => count($daysInWeek)
+
+            ];
+            $totalHours += $totalHoursInWeekFormat;
+        }
+
+        $data = [
+            'data' => $member,
+            'timesheet' => $result, 'total_hours' => $this->formatime($totalHoursInWeekFormat),
+
+
+        ];
+        // dd($data['timesheet']);
+        return view("admin.teams.timecard", $data);
+    }
+    function formatime($totalSeconds)
+    {
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        $formattedTime = '';
+
+        if ($hours > 0) {
+            $formattedTime .= $hours . ' hours ';
+        }
+
+        if ($minutes > 0) {
+            $formattedTime .= $minutes . ' minutes ';
+        }
+
+        if ($seconds > 0) {
+            $formattedTime .= $seconds . ' seconds';
+        }
+
+        return trim($formattedTime);
     }
 }

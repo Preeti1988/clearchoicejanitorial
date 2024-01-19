@@ -37,7 +37,7 @@ class User extends Authenticatable
         'contractor',
         'street',
         'gender',
-
+        'emergency_phone',
         'unit',
         'country_id',
         'state_id',

@@ -44,6 +44,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/addclient', [App\Http\Controllers\HomeController::class, 'add_client'])->name('Addclient');
     Route::get('/member-request-detail/{id}', [App\Http\Controllers\HomeController::class, 'member_request_detail'])->name('MemberRequestDetail');
     Route::get('/delete-master-item/{type}/{id}', [App\Http\Controllers\HomeController::class, 'delete_master_items'])->name('DeleteItems');
+    Route::get('/timecard/{id}', [App\Http\Controllers\HomeController::class, 'timecard'])->name('timecard');
 
     Route::get('/approve-member/{id}', [App\Http\Controllers\HomeController::class, 'approve_member'])->name('ApproveMember');
     Route::get('/reject-member/{id}', [App\Http\Controllers\HomeController::class, 'reject_member'])->name('RejectMember');

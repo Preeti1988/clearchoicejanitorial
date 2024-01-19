@@ -57,7 +57,7 @@
                                     <h3>Mobile phone*</h3>
                                     <input type="text" class="form-control" name="mobile_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ old('mobile_number') }}" placeholder="Mobile phone" required>
+                                        value="{{ old('mobile_number') }}" placeholder="Mobile phone">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -65,7 +65,7 @@
                                     <h3>Home phone *</h3>
                                     <input type="text" class="form-control" name="home_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ old('home_number') }}" placeholder="Home phone" required>
+                                        value="{{ old('home_number') }}" placeholder="Home phone">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -73,7 +73,7 @@
                                     <h3>Work phone*</h3>
                                     <input type="text" class="form-control" name="client_work_number"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ old('client_work_number') }}" placeholder="Work phone" required>
+                                        value="{{ old('client_work_number') }}" placeholder="Work phone">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -223,14 +223,14 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Client Notes*</h3>
-                                    <input type="text" class="form-control" name="client_notes" required
+                                    <input type="text" class="form-control" name="client_notes"
                                         value="{{ old('client_notes') }}" placeholder="Notes">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Client Tags*</h3>
-                                    <input type="text" class="form-control" name="client_tags" required
+                                    <input type="text" class="form-control" name="client_tags"
                                         value="{{ old('client_tags') }}" placeholder="Tags">
                                 </div>
                             </div>
@@ -315,15 +315,15 @@
             $('#newteammember').validate({
                 rules: {
                     phonenumber: {
-                        required: true,
+
                         phoneValid: true
                     },
                     home_phone: {
-                        required: true,
+
                         phoneValid: true
                     },
                     work_phone: {
-                        required: true,
+
                         phoneValid: true
                     },
                     password: {

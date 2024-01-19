@@ -339,7 +339,7 @@ class UserController extends Controller
             $temp['clientname'] = isset($client->name) ? $client->name : '';
             $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
             $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(987)4563210';
-            $temp['address'] = isset($client->address) ? $client->address : '';
+            $temp['address'] = isset($client->street) ? $client->street : '';
             $temp['lat'] = '28.23654';
             $temp['long'] = '78.9654123';
             $response[] = $temp;
@@ -393,7 +393,7 @@ class UserController extends Controller
             $temp['clientname'] = isset($client->name) ? $client->name : '';
             $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
             $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(987)4563210';
-            $temp['address'] = isset($client->address) ? $client->address : '';
+            $temp['address'] = isset($client->street) ? $client->street : '';
             $temp['lat'] = '28.23654';
             $temp['long'] = '78.9654123';
             $response[] = $temp;
@@ -539,7 +539,7 @@ class UserController extends Controller
         $temp['clientname'] = isset($client->name) ? $client->name : '';
         $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
         $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(999)999999';
-        $temp['address'] = isset($client->address) ? $client->address : '';
+        $temp['address'] = isset($client->street) ? $client->street : '';
         $temp['lat'] = '28.23654';
         $temp['long'] = '78.9654123';
         $inscope = InScope::orderBy('id', 'DESC')->get();
@@ -882,7 +882,7 @@ class UserController extends Controller
         $data = [
             'name' => $member->fullname,
             'job_title' => $service->name,
-            'job_location' => $service->client ? $service->client->address : '',
+            'job_location' => $service->client ? $service->client->street : '',
             'store_name' => $service->client ? $service->client->name : '',
             'store_number' => $service->client ? $service->client->home_number : '',
             'timesheet' => $result, 'total_hours' => $this->formatTime($totalHoursInWeekFormat),
