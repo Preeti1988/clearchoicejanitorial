@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SettingController;
 use App\Models\Service;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -75,6 +76,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get("service-scheduler", [ServiceController::class, 'serviceScheduler'])->name('services.scheduler');
     Route::get("assign-member/{id}", [ServiceController::class, 'assignMember'])->name('services.assign');
     Route::post("assign-member", [ServiceController::class, 'assignMemberPost'])->name('services.assign.post');
+
+    Route::get("privacy", [SettingController::class, 'privacy'])->name('privacy');
+    Route::post("privacy", [SettingController::class, 'privacySave'])->name('privacy.save');
+
+    Route::get("terms", [SettingController::class, 'terms'])->name('terms');
+    Route::post("terms", [SettingController::class, 'termsSave'])->name('terms.save');
 });
 // Listing Ajax request
 Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');

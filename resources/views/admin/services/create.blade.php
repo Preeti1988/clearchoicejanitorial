@@ -114,7 +114,9 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <h3>Business Unit</h3>
-                                    <input type="text" class="form-control" name= "" placeholder="Unit1" />
+                                    <input type="text" class="form-control" name= "" placeholder="Unit1"
+                                        value="{{ $service && $service->client ? $service->client->street : '' }}"
+                                        id="unit" />
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -853,8 +855,10 @@
         function fetchClient(id) {
             $.get("{{ route('fetchClient') }}" + "?id=" + id, function(data) {
 
-                console.log(data);
                 $("#name").val(data.client.name);
+                $("#address").val(data.client.street);
+                $("#unit").val(data.client.unit);
+
                 $("#email").val(data.client.email_address);
 
                 $("#mobile_number").val(data.client.mobile_number);
@@ -985,6 +989,7 @@
             renderItem(val);
 
         }
+
         $(document).ready(function() {
             $.validator.addMethod("phoneValid", function(value) {
                 return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);

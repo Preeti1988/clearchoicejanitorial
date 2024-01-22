@@ -133,9 +133,9 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <h3>Street*</h3>
-                                    <input type="text" class="form-control" name="street" required
-                                        value="{{ old('street') }}"placeholder="Street">
+                                    <h3>Address*</h3>
+                                    <input type="text" class="form-control" name="street" required id="pac-input"
+                                        value="{{ old('street') }}"placeholder="Address">
                                 </div>
                             </div>
 
@@ -144,49 +144,6 @@
                                     <h3>Unit</h3>
                                     <input type="text" class="form-control" name="unit"
                                         value="{{ old('unit') }}"placeholder="Unit">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Country*</h3>
-                                    <select class="form-control"name="country_id" onchange="getState(this.value)"
-                                        required>
-                                        <option value="0">--Select--</option>
-                                        @foreach ($country as $crty)
-                                            <option value="{{ $crty->id }}">{{ $crty->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>State*</h3>
-                                    <div id="state_container">
-                                        <select class="form-control" name="state_id" onchange="getCity(this.value)"
-                                            required>
-                                            <option value="0">--Select--</option>
-                                            @foreach ($state as $stat)
-                                                <option value="{{ $stat->id }}">{{ $stat->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>City*</h3>
-                                    <div id="city_container">
-                                        <select class="form-control" name="city">
-                                            <option value="0">--Select--</option>
-                                            @foreach ($city as $cty)
-                                                <option value="{{ $cty->id }}">{{ $cty->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
                                 </div>
                             </div>
 
@@ -199,10 +156,11 @@
                                         required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <input type="hidden" name="address_notes" id="address_notes">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <h3>Address Notes</h3>
-                                    <textarea type="text" class="form-control" name="address_notes" placeholder="Address Notes"></textarea>
+                                    <textarea type="text" class="form-control"  name="address_notes" placeholder="Address Notes"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -210,7 +168,7 @@
                                     <h3>Address (additional addresses)</h3>
                                     <textarea type="text" class="form-control" name="address" value="{{ old('address') }}" placeholder="Address"></textarea>
                                 </div>
-                            </div>
+                            </div> --}}
 
 
                         </div>
@@ -276,6 +234,60 @@
 @endsection
 @push('js')
     <script>
+        // This example requires the Places library. Include the libraries=places
+        // parameter when you first load the API. For example:
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+        function initMap() {
+
+            const input = document.getElementById("pac-input");
+
+            const options = {
+                fields: ["formatted_address", "geometry", "name"],
+                strictBounds: false,
+            };
+
+
+
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+            // Bind the map's bounds (viewport) property to the autocomplete object,
+            // so that the autocomplete requests use the current map bounds for the
+            // bounds option in the request.
+
+            const infowindow = new google.maps.InfoWindow();
+            const infowindowContent = document.getElementById("infowindow-content");
+
+            infowindow.setContent(infowindowContent);
+
+
+            autocomplete.addListener("place_changed", () => {
+                infowindow.close();
+
+
+                const place = autocomplete.getPlace();
+
+
+                if (!place.geometry || !place.geometry.location) {
+                    // User entered the name of a Place that was not suggested and
+                    // pressed the Enter key, or the Place Details request failed.
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+                var add = document.getElementById("address_notes");
+                add.value = place.geometry.location.lat() + "," + place.geometry.location.lng()
+            });
+
+            // Sets a listener on a radio button to change the filter type on Places
+            // Autocomplete.
+
+
+
+
+        }
+
+        window.initMap = initMap;
+
+
         function getState(id) {
             $.get("{{ route('getState') }}" + '?id=' + id, function(data) {
                 htm = "";
@@ -358,5 +370,8 @@
                 }
             })
         });
+    </script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDXuJl8qV7nsf-ynH3slL2iopSJm6y0mA&libraries=places&sensor=false&callback=initMap">
     </script>
 @endpush

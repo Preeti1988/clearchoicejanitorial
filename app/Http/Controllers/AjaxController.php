@@ -78,4 +78,6 @@ class AjaxController extends Controller
             return $request->filename;
         }
     }
+
+   
 }
