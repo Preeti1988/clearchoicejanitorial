@@ -107,7 +107,7 @@ class HomeController extends Controller
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required|string|max:255|min:1',
                 'last_name' => 'required|string|max:255|min:1',
-                'email_address' => "required|email|unique:clients",
+                'email_address' => "required|email|unique:clients|unique:user,email",
                 'mobile_number' => 'required',
             ]);
 
@@ -320,6 +320,14 @@ class HomeController extends Controller
             $user->state_id = $request->state_id;
             $user->city = $request->city;
             $user->zipcode = $request->zipcode;
+
+
+            // Newly added parameter
+            $user->bank = $request->bank;
+            $user->ssn = $request->ssn;
+            $user->account = $request->account;
+            $user->routing_number = $request->routing_number;
+
             $user->save();
 
             if (!empty($request->password)) {
@@ -857,8 +865,8 @@ class HomeController extends Controller
 
             $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
             $data = Client::where('id', $id)->first();
-            $state = State::orderBy('id', 'DESC')->where("country_id", $data->country_id)->get();
-            $city = City::orderBy('id', 'DESC')->where("state_id", $data->state_id)->get();
+            $state = State::where("country_id", $data->country_id)->orderBy('id', 'DESC')->get();
+            $city = City::where("state_id", $data->state_id)->orderBy('id', 'DESC')->get();
             return view('admin.clients.edit', compact('designation', 'country', 'state', 'city', 'MaritalStatus', 'data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

@@ -265,8 +265,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Service Name *</h3>
-                                    <input type="text" class="form-control" name="name"
-                                        value="{{ $service ? $service->name : '' }}" required />
+                                    {{-- <input type="text" class="form-control" name="name"
+                                        value="{{ $service ? $service->name : '' }}" required /> --}}
 
                                     <select class="form-control" name="name">
                                         <option>
@@ -479,10 +479,21 @@
                                     <textarea type="text" required class="form-control" name="description">{{ $service ? $service->description : '' }}</textarea>
                                 </div>
                             </div>
+                            <div class="col-md-12 py-2">
+                                <div class="form-group mb-0">
+                                    <h3>Service Address *</h3>
+                                    <input type="text" class="form-control" id="pac-input"
+                                        placeholder="Service Address" />
+
+                                </div>
+                            </div>
                             <div class="col-md-12">
                                 <div class="form-group mb-0">
                                     <h3>Service Image *</h3>
                                     <div class="card mt-2 common-shadow">
+                                        <div id="img_container">
+
+                                        </div>
                                         <div class="dropzone" id="myDropzone"></div>
                                     </div>
                                     <input type="hidden" id="image" name="image"
@@ -908,272 +919,6 @@
 
 
         }
-
-        function AddOutScopeItem(val) {
-            if (val) {
-                var value = JSON.parse(val);
-
-                var exists = false;
-                for (var i = 0; i < OSitems.length; i++) {
-                    if (OSitems[i].id === value.id) {
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists) {
-                    OSitems.push(value);
-
-                    renderItem('outscope');
-                }
-
-            }
-
-        }
-
-        function renderItem(val) {
-
-            var htm = '';
-
-            var tempItems = items;
-            if (val == 'service') {
-                tempItems = items;
-
-            } else if (val == 'inscope') {
-                tempItems = ISitems;
-
-            } else {
-                tempItems = OSitems;
-
-            }
-            if (tempItems.length == 0) {
-                htm += '<li>No Items Added</li>';
-            }
-
-            tempItems.map(item => {
-                htm += ` <li><div class="ServiceAddedcheckbox">
-                                                <input type="checkbox" id="${item.name}" />
-                                                <label for="${item.name}">
-                                                    
-                                                    <span class="ServiceAddedcheckbox-content">
-                                                        <span class="ServiceAddedcheckbox-text">${item.name}</span>
-                                                        <span class="ServiceAddedcheckbox-action"  style="z-index:12"  onclick="removeItem(${item.id},'${val}')"><a ><img
-                                                                    src="{{ custom_asset('public/assets/admin-images/trash.svg') }}" /></a>
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            </div>
-                                        </li>`;
-            })
-            if (val == 'service') {
-                $(".ServiceAdded-list").html(htm);
-
-            } else if (val == 'inscope') {
-                $(".InScopeAdded-list").html(htm);
-
-            } else {
-                $(".OutScopeAdded-list").html(htm);
-
-            }
-        }
-
-        function removeItem(id, val) {
-            console.log(id);
-            if (val == 'service') {
-                items = items.filter(item => item.id != id);
-            } else if (val == 'inscope') {
-                ISitems = ISitems.filter(item => item.id != id);
-            } else {
-                OSitems = OSitems.filter(item => item.id != id);
-            }
-
-            renderItem(val);
-
-        }
-
-        $(document).ready(function() {
-            $.validator.addMethod("phoneValid", function(value) {
-                return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
-            }, 'Invalid phone Number.');
-            $.validator.addMethod("integerValue", function(value) {
-                return value != 0;
-            }, 'Invalid phone Number.');
-            $('#create-service').validate({
-                rules: {
-
-                    mobile_number: {
-                        required: true,
-                        phoneValid: true
-                    },
-
-                    assigned_client_id: {
-                        required: true,
-                        integerValue: true
-                    }
-
-
-                },
-                errorElement: "span",
-                errorPlacement: function(error, element) {
-                    element.addClass("invalid-feedback");
-                    element.closest(".field").append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $('.please-wait').click();
-                    $(element).addClass("invalid-feedback");
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass("invalid-feedback");
-                },
-                submitHandler: function(form, event) {
-                    $(".screen").show()
-                    event.preventDefault();
-                    let formData = new FormData(form);
-
-
-                    // if ($("#image").val() == "") {
-
-                    //     Swal.fire("Error", "Please select atleast one image", 'error');
-                    //     return false;
-                    // }
-
-                    if (items.length == 0) {
-
-                        Swal.fire("Error", "Please select atleast one service item", 'error');
-                        return false;
-                    }
-                    if (ISitems.length == 0) {
-
-                        Swal.fire("Error", "Please select atleast one inscope item", 'error');
-
-                        return false;
-                    }
-                    if (OSitems.length == 0) {
-
-                        Swal.fire("Error", "Please select atleast one outscope item", 'error');
-
-                        return false;
-                    }
-                    formData.append('service_items', JSON.stringify(items));
-                    formData.append('inscopes', JSON.stringify(ISitems));
-                    formData.append('outscopes', JSON.stringify(OSitems));
-                    $.ajax({
-                        type: 'post',
-                        url: form.action,
-                        data: formData,
-                        dataType: 'json',
-                        contentType: false,
-                        processData: false,
-                        success: function(response) {
-                            if (response.status == 200) {
-
-                                Swal.fire({
-                                    title: 'Success',
-                                    text: response.message,
-                                    icon: 'success',
-                                }).then((result) => {
-
-                                    var url = $('#redirect_url').val();
-                                    if (url !== undefined || url != null) {
-                                        window.location = url;
-                                    } else {
-                                        location.reload(true);
-                                    }
-                                })
-                                return false;
-                            }
-                            if (response.status == 201) {
-                                Swal.fire(
-                                    'Error',
-                                    response.message,
-                                    'error'
-                                );
-                                $(".screen").hide()
-                                return false;
-                            }
-
-                        },
-                        error: function(data) {
-                            if (data.status == 422) {
-                                var form = $("#product_form");
-                                let li_htm = '';
-                                $.each(data.responseJSON.errors, function(k, v) {
-                                    const $input = form.find(
-                                        `input[name=${k}],select[name=${k}],textarea[name=${k}]`
-                                    );
-                                    if ($input.next('small').length) {
-                                        $input.next('small').html(v);
-                                        if (k == 'services' || k == 'membership') {
-                                            $('#myselect').next('small').html(v);
-                                        }
-                                    } else {
-                                        $input.after(
-                                            `<small class='text-danger'>${v}</small>`
-                                        );
-                                        if (k == 'services' || k == 'membership') {
-                                            $('#myselect').after(
-                                                `<small class='text-danger'>${v[0]}</small>`
-                                            );
-                                        }
-                                    }
-                                    li_htm += `<li>${v}</li>`;
-                                });
-                                $(".screen").hide()
-                                return false;
-                            } else {
-                                Swal.fire(
-                                    'Error',
-                                    data.statusText,
-                                    'error'
-                                );
-                            }
-                            $(".screen").hide()
-                            return false;
-
-                        }
-                    });
-                }
-            })
-        });
-
-        function calculateTimeDifference() {
-            // Get the values of start and end time input fields
-            // var startTime = document.getElementById("startTime").value;
-            // var endTime = document.getElementById("endTime").value;
-            // if (startTime != "" && endTime != "") {
-            //     var startDate = new Date("1970-01-01T" + startTime + "Z");
-            //     var endDate = new Date("1970-01-01T" + endTime + "Z");
-
-            //     // Calculate the time difference in milliseconds
-            //     var timeDifference = endDate - startDate;
-
-            //     // Convert the time difference to hours
-            //     var hoursDifference = timeDifference / (1000 * 60 * 60);
-
-            //     // Display the result
-            //     document.getElementById("result").value = hoursDifference.toFixed(2);
-            // }
-            // Convert the time strings to Date objects 
-            function split(time) {
-                var t = time.split(":");
-                return parseInt((t[0] * 60), 10) + parseInt(t[1], 10); //convert to minutes and add minutes
-
-            }
-
-            //value start
-            var start = split($("input#startTime").val()); //format HH:MM
-
-            //value end
-            var end = split($("input#endTime").val()); //format HH:MM
-
-            totalHours = NaN;
-            if (start < end) {
-                totalHours = Math.floor((end - start) / 60);
-            }
-
-            $("#result").val(totalHours);
-        }
-    </script>
-    <script type="text/javascript">
         var uploaded = false;
         Dropzone.options.myDropzone = {
             maxFilesize: 1,
@@ -1251,5 +996,305 @@
             }
 
         };
+
+        function initMap() {
+
+            const input = document.getElementById("pac-input");
+            const options = {
+                fields: ["formatted_address", "geometry", "name", "photos"],
+                strictBounds: false,
+            };
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+            autocomplete.addListener("place_changed", () => {
+
+                const place = autocomplete.getPlace();
+
+                if (place.photos[0]) {
+                    console.log(place.photos[0].getUrl());
+                    var url = ""
+                    // $("#img_container").html(`<img src="${place.photos[0].getUrl()}" style="height:300px" />`);
+                    // $("#img_container").html(
+                    //     `<img src="${place.photos[0].getUrl()}" style="height:300px" />`);
+
+                    // $("#image").val(place.photos[0].getUrl());
+                    // $("#myDropzone").hide();
+                }
+
+            });
+
+            // Sets a listener on a radio button to change the filter type on Places
+            // Autocomplete.var place = autocomplete.getPlace();
+
+
+            // Get additional details using Places Details API
+
+
+        }
+
+        window.initMap = initMap;
+
+        function AddOutScopeItem(val) {
+            if (val) {
+                var value = JSON.parse(val);
+
+                var exists = false;
+                for (var i = 0; i < OSitems.length; i++) {
+                    if (OSitems[i].id === value.id) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    OSitems.push(value);
+                    renderItem('outscope');
+                }
+            }
+        }
+
+        function renderItem(val) {
+            var htm = '';
+            var
+                tempItems = items;
+            if (val == 'service') {
+                tempItems = items;
+            } else if (val == 'inscope') {
+                tempItems = ISitems;
+            } else {
+                tempItems = OSitems;
+            }
+            if (tempItems.length == 0) {
+                htm += '<li>No Items Added</li>';
+            }
+            tempItems.map(item => {
+                htm += ` <li>
+            <div class="ServiceAddedcheckbox">
+                <input type="checkbox" id="${item.name}" />
+                <label for="${item.name}">
+
+                    <span class="ServiceAddedcheckbox-content">
+                        <span class="ServiceAddedcheckbox-text">${item.name}</span>
+                        <span class="ServiceAddedcheckbox-action" style="z-index:12"
+                            onclick="removeItem(${item.id},'${val}')"><a><img
+                                    src="{{ custom_asset('public/assets/admin-images/trash.svg') }}" /></a>
+                        </span>
+                    </span>
+                </label>
+            </div>
+        </li>`;
+            })
+            if (val == 'service') {
+                $(".ServiceAdded-list").html(htm);
+
+            } else if (val == 'inscope') {
+                $(".InScopeAdded-list").html(htm);
+
+            } else {
+                $(".OutScopeAdded-list").html(htm);
+
+            }
+        }
+
+        function removeItem(id, val) {
+            console.log(id);
+            if (val == 'service') {
+                items = items.filter(item => item.id != id);
+            } else if (val == 'inscope') {
+                ISitems = ISitems.filter(item => item.id != id);
+            } else {
+                OSitems = OSitems.filter(item => item.id != id);
+            }
+
+            renderItem(val);
+
+        }
+
+        $(document).ready(function() {
+            $.validator.addMethod("phoneValid", function(value) {
+                return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value);
+            }, 'Invalid phone Number.');
+            $.validator.addMethod("integerValue", function(value) {
+                return value != 0;
+            }, 'Invalid phone Number.');
+            $('#create-service').validate({
+                rules: {
+
+                    mobile_number: {
+                        required: true,
+                        phoneValid: true
+                    },
+
+                    assigned_client_id: {
+                        required: true,
+                        integerValue: true
+                    }
+
+
+                },
+                errorElement: "span",
+                errorPlacement: function(error, element) {
+                    element.addClass("invalid-feedback");
+                    element.closest(".field").append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $('.please-wait').click();
+                    $(element).addClass("invalid-feedback");
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass("invalid-feedback");
+                },
+                submitHandler: function(form, event) {
+                    $(".screen").show()
+                    event.preventDefault();
+                    let formData = new FormData(form);
+
+
+                    // if ($("#image").val() == "") {
+
+                    // Swal.fire("Error", "Please select atleast one image", 'error');
+                    // return false;
+                    // }
+
+                    if (items.length == 0) {
+
+                        Swal.fire("Error", "Please select atleast one service item", 'error');
+                        return false;
+                    }
+                    if (ISitems.length == 0) {
+
+                        Swal.fire("Error", "Please select atleast one inscope item", 'error');
+
+                        return false;
+                    }
+                    if (OSitems.length == 0) {
+
+                        Swal.fire("Error", "Please select atleast one outscope item", 'error');
+
+                        return false;
+                    }
+                    formData.append('service_items', JSON.stringify(items));
+                    formData.append('inscopes', JSON.stringify(ISitems));
+                    formData.append('outscopes', JSON.stringify(OSitems));
+                    $.ajax({
+                        type: 'post',
+                        url: form.action,
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.status == 200) {
+
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: response.message,
+                                    icon: 'success',
+                                }).then((result) => {
+
+                                    var url = $('#redirect_url').val();
+                                    if (url !== undefined || url != null) {
+                                        window.location = url;
+                                    } else {
+                                        location.reload(true);
+                                    }
+                                })
+                                return false;
+                            }
+                            if (response.status == 201) {
+                                Swal.fire(
+                                    'Error',
+                                    response.message,
+                                    'error'
+                                );
+                                $(".screen").hide()
+                                return false;
+                            }
+
+                        },
+                        error: function(data) {
+                            if (data.status == 422) {
+                                var form = $("#product_form");
+                                let li_htm = '';
+                                $.each(data.responseJSON.errors, function(k, v) {
+                                    const $input = form.find(
+                                        `input[name=${k}],select[name=${k}],textarea[name=${k}]`
+                                    );
+                                    if ($input.next('small').length) {
+                                        $input.next('small').html(v);
+                                        if (k == 'services' || k ==
+                                            'membership') {
+                                            $('#myselect').next('small').html(
+                                                v);
+                                        }
+                                    } else {
+                                        $input.after(
+                                            `<small class='text-danger'>${v}</small>`
+                                        );
+                                        if (k == 'services' || k ==
+                                            'membership') {
+                                            $('#myselect').after(
+                                                `<small class='text-danger'>${v[0]}</small>`
+                                            );
+                                        }
+                                    }
+                                    li_htm += `<li>${v}</li>`;
+                                });
+                                $(".screen").hide()
+                                return false;
+                            } else {
+                                Swal.fire(
+                                    'Error',
+                                    data.statusText,
+                                    'error'
+                                );
+                            }
+                            $(".screen").hide()
+                            return false;
+
+                        }
+                    });
+                }
+            })
+        });
+
+        function calculateTimeDifference() {
+            // Get the values of start and end time input fields
+            // var startTime = document.getElementById("startTime").value;
+            // var endTime = document.getElementById("endTime").value;
+            // if (startTime != "" && endTime != "") {
+            // var startDate = new Date("1970-01-01T" + startTime + "Z");
+            // var endDate = new Date("1970-01-01T" + endTime + "Z");
+
+            // // Calculate the time difference in milliseconds
+            // var timeDifference = endDate - startDate;
+
+            // // Convert the time difference to hours
+            // var hoursDifference = timeDifference / (1000 * 60 * 60);
+
+            // // Display the result
+            // document.getElementById("result").value = hoursDifference.toFixed(2);
+            // }
+            // Convert the time strings to Date objects
+            function split(time) {
+                var t = time.split(":");
+                return parseInt((t[0] * 60), 10) + parseInt(t[1], 10); //convert to minutes and add minutes
+
+            }
+
+            //value start
+            var start = split($("input#startTime").val()); //format HH:MM
+
+            //value end
+            var end = split($("input#endTime").val()); //format HH:MM
+
+            totalHours = NaN;
+            if (start < end) {
+                totalHours = Math.floor((end - start) / 60);
+            }
+            $("#result").val(totalHours);
+        }
+    </script>
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDXuJl8qV7nsf-ynH3slL2iopSJm6y0mA&libraries=places&sensor=false&callback=initMap">
     </script>
 @endsection

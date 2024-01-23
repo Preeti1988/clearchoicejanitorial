@@ -127,8 +127,14 @@
                         <div class="row">
 
 
-
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h3>Unit</h3>
+                                    <input type="text" class="form-control" name="unit"
+                                        value="{{ $data->unit ?? '' }}" placeholder="Unit">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
                                 <div class="form-group">
                                     <h3>Address*</h3>
                                     <input type="text" class="form-control" name="street" required id="pac-input"
@@ -136,25 +142,75 @@
                                 </div>
                             </div>
 
+
+
+
+
+
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Unit</h3>
-                                    <input type="text" class="form-control" name="unit"
-                                        value="{{ $data->unit ?? '' }}" placeholder="Unit">
+                                    <h3>Country *</h3>
+
+                                    <select class="form-control"name="country_id" id="country_id"
+                                        onchange="getState(this.value)" required>
+                                        @foreach ($country as $ctry)
+                                            <option value="{{ $ctry->id }}"
+                                                @if ($data->country_id == $ctry->id) selected @endif>
+                                                {{ $ctry->name }}</option>
+                                        @endforeach
+                                    </select>
+
+
+                                    {{-- <input type="text" class="form-control" name="street" id="pac-input" required
+                                        value="{{ $data->street ?? '' }}" placeholder="contractor"> --}}
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>State *</h3>
+                                    <div id="state_container">
+                                        <select class="form-control" onchange="getCity(this.value)" name="state_id"
+                                            id="state_id">
+                                            @foreach ($state as $value)
+                                                <option value="{{ $value->id }}"
+                                                    @if ($data->state_id == $value->id) selected @endif>
+                                                    {{ $value->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <h3>City *</h3>
+                                    <div id="city_container">
+                                        <select class="form-control" id="city_id" name="city" required>
+                                            @foreach ($city as $cty)
+                                                <option value="{{ $cty->id }}"
+                                                    @if ($data->city == $cty->id) selected @endif>
+                                                    {{ $cty->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
                                 </div>
                             </div>
 
 
 
-
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="form-group">
-                                    <h3>Zipcode*</h3>
-                                    <input type="text" class="form-control" name="zipcode" required
-                                        value="{{ $data->zipcode ?? '' }}" placeholder="Zipcode">
+                                    <h3>Zipcode *</h3>
+                                    <input type="text" class="form-control" name="zipcode" id="zipcode"
+                                        value="{{ $data->zipcode ?? '' }}" placeholder="Zipcode" required>
                                 </div>
-                            </div> <input type="hidden" name="address_notes" id="address_notes">
-                            {{-- <div class="col-md-6">
+                            </div>
+                        </div> <input type="hidden" name="address_notes" value="{{ $data->address_notes ?? '' }}"
+                            id="address_notes">
+                        {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <h3>Address (additional addresses)</h3>
                                     <textarea type="text" class="form-control" name="address" placeholder="Address">{{ $data->address ?? '' }}</textarea>
@@ -167,8 +223,8 @@
                                     <textarea type="text" class="form-control" name="address_notes" placeholder="Address Notes">{{ $data->address_notes ?? '' }}</textarea>
                                 </div>
                             </div> --}}
-                        </div>
                     </div>
+
                     <div class="create-service-form-box">
                         <h1>Client Info.</h1>
                         <div class="row">
@@ -265,23 +321,105 @@
                     return;
                 }
                 var add = document.getElementById("address_notes");
-                add.value = place.geometry.location.lat() + "," + place.geometry.location.lng()
+                add.value = place.geometry.location.lat() + "," + place.geometry.location.lng();
+                var latLng = new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng())
+                var geocoder = (new google.maps.Geocoder());
+                geocoder.geocode({
+                    latLng: latLng
+                }, function(results, status) {
+                    if (status = google.maps.GeocoderStatus.OK) {
+                        if (results[0]) {
+
+                            console.log(results[0].address_components);
+                            var pin = results[0].address_components[
+                                results[0].address_components.length - 1
+                            ].long_name;
+
+                            var country = results[0].address_components.length > 1 ? results[0]
+                                .address_components[
+                                    results[0].address_components.length - 2
+                                ].long_name : "";
+                            var state = results[0].address_components.length > 2 ? results[0]
+                                .address_components[
+                                    results[0].address_components.length - 3
+                                ].long_name : "";
+                            var city = results[0].address_components.length > 4 ? results[0]
+                                .address_components[
+                                    results[0].address_components.length - 5
+                                ].long_name : '';
+
+                            console.log(country, state, city, pin);
+                            var _token = "{{ csrf_token() }}";
+
+                            $("#zipcode").val(pin);
+                            $.post("{{ route('getCountry') }}", {
+                                country,
+                                state,
+                                city,
+                                _token
+                            }, function(data) {
+
+                                $("#country_id").val(data.country_id);
+                                var htm_state = "";
+                                htm_state +=
+                                    `<select class="form-control"  id="state_id" name="state_id" >`;
+                                if (data.states.length == 0) {
+                                    htm_state += `<option >No states found</option>`;
+                                }
+                                data.states.map(item => {
+                                    htm_state +=
+                                        ` <option value="${item.id}">${item.name}</option> `;
+                                })
+                                htm_state += `</select>`;
+
+                                $("#state_container").html(htm_state);
+
+                                $("#state_id").val(data.state_id);
+
+
+
+                                var htm = "";
+                                htm += `<select class="form-control"  id="city_id" name="city" >`;
+                                if (data.cities.length == 0) {
+                                    htm += `<option >No cities found</option>`;
+                                }
+                                data.cities.map(item => {
+                                    htm +=
+                                        ` <option value="${item.id}">${item.name}</option> `;
+                                })
+                                htm += `</select>`;
+
+                                $("#city_container").html(htm);
+                                $("#city_id").val(data.city_id);
+
+                            });
+                        }
+                    }
+
+
+                });
+
+
+
+
             });
 
             // Sets a listener on a radio button to change the filter type on Places
-            // Autocomplete.
+            // Autocomplete.var place = autocomplete.getPlace();
 
 
+            // Get additional details using Places Details API
 
 
         }
 
         window.initMap = initMap;
 
+
         function getState(id) {
             $.get("{{ route('getState') }}" + '?id=' + id, function(data) {
                 htm = "";
-                htm += `<select class="form-control" name="state_id" onchange="getCity(this.value)">`;
+                htm += `<select class="form-control" name="state_id" id="state_id" onchange="getCity(this.value)">`;
                 if (data.length == 0) {
                     htm += `<option >No records</option>`;
                 }
@@ -290,14 +428,13 @@
                 })
                 htm += `</select>`;
                 $("#state_container").html(htm);
-                console.log(htm);
             })
         }
 
         function getCity(id) {
             $.get("{{ route('getCity') }}" + '?id=' + id, function(data) {
                 htm = "";
-                htm += `<select class="form-control" name="city" >`;
+                htm += `<select class="form-control"  id="city_id name="city" >`;
                 if (data.length == 0) {
                     htm += `<option >No records</option>`;
                 }

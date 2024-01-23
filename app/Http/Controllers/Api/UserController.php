@@ -79,7 +79,7 @@ class UserController extends Controller
                 }
                 return response()->json(["status" => true, "message" => "Logged in successfully.", "data" => $success]);
             } else {
-                return response()->json(['error' => 'Unauthorised'], 401);
+                return response()->json(["status" => false, "message" => "Wrong Password."], 200);
             }
         } catch (\Exception $e) {
             return errorMsg("Exception -> " . $e->getMessage());
@@ -95,7 +95,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'fullname' => 'required',
-            'email' => 'required|email|unique:user',
+            'email' => 'required|email|unique:user|unique:clients,email_address',
             'phonenumber' => 'required|unique:user',
             'designation_id' => 'required',
             'DOB' => 'required',

@@ -51,7 +51,7 @@ $(function () {
 
 $(function () {
     const day = new Date().getDate() - 1;
-    console.log(day);
+
     $("#Ongoingcalender").owlCarousel({
         // loop: true,
         margin: 5,
