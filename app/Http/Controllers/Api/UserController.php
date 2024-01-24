@@ -266,7 +266,7 @@ class UserController extends Controller
             $date_array = date('Y-m-d:D', mktime(0, 0, 0, $m, ($de - $i), $y));
             $response[] = $date_array;
         }
-        return response()->json(["status" => true, "message" => "Date Listing.", "data" => $response]);
+        return response()->json(["status" => true, "message" => "Date Listing.", "data" =>array_reverse($response)  ]);
     }
 
     /* Upload file for firebase image */
@@ -286,17 +286,18 @@ class UserController extends Controller
     public function home(Request $request)
     {
         $user = Auth::user();
-        if (isset($request->date)) {
+       
+        $servise_list_ids=ServiceMember::where('member_id', $user->userid)->groupBy('service_id')->pluck("service_id")->toArray();
 
-            $servise_list = ServiceMember::where('member_id', $user->userid)->whereDate('created_at', '=', Carbon::parse($request->date))->get();
-        } else {
-
-            $servise_list = ServiceMember::where('member_id', $user->userid)->orderBy('id', 'DESC')->get();
-        }
-
+        $services=Service::whereIn("id",$servise_list_ids);
+        if ($request->filled("date")) {
+            $services = $services->whereDate('created_date', '=', Carbon::parse($request->date));
+        } 
+        $services =$services->get();
         $response = array();
-        foreach ($servise_list as $key => $value) {
-            $service = Service::where('id', $value->service_id)->first();
+        
+        foreach ($services as $key => $service) {
+           
             $temp['service_name'] = isset($service->name) ? $service->name : '';
             $temp['service_id'] = isset($service->id) ? $service->id : '';
             $temp['service_id'] = isset($service->id) ? $service->id : '';
@@ -304,11 +305,12 @@ class UserController extends Controller
 
             $temp['serviceScheduleEndDate'] = isset($service->scheduled_end_date) ? $service->scheduled_end_date : '';
 
-            $currentDate = Carbon::now()->toDateString();
-            $combinedDateTime = Carbon::parse("$currentDate $service->service_start_time");
+           $start_date=date("y-m-d",strtotime($service->created_date));
+            $combinedDateTime = Carbon::parse(" $start_date $service->service_start_time");
             $temp['start']  = $combinedDateTime->format('Y-m-d H:i:s');
-            $currentDate = Carbon::now()->toDateString();
-            $combinedDateTime = Carbon::parse("$currentDate $service->service_end_time");
+            // $currentDate = Carbon::now()->toDateString();
+            $end_date=date("y-m-d",strtotime($service->scheduled_end_date));
+            $combinedDateTime = Carbon::parse("$end_date $service->service_end_time");
             $temp['end']  = $combinedDateTime->format('Y-m-d H:i:s');
 
             $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->whereDate('date', date('Y-m-d'))->first();
@@ -689,7 +691,7 @@ class UserController extends Controller
 
         $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
         $success['token'] = $token;
-        $success['userid'] = $user->userid;
+        $success['userId'] = $user->userid;
         $success['emp_id'] = $user->userid;
         $success['fullname'] = $user->fullname;
         $success['emailid'] = $user->email;

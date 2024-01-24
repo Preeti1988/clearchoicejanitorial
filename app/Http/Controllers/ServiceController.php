@@ -110,6 +110,11 @@ class ServiceController extends Controller
         $service->inscopes = json_encode(json_decode($request->inscopes, true));
         $service->outscopes =  json_encode(json_decode($request->outscopes, true));
         $service->service_items =  json_encode(json_decode($request->service_items, true));
+
+
+        $service->service_address = $request->service_address;
+        $service->service_latlng = $request->service_latlng;
+
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $image = uniqid() . "." . $file->getClientOriginalExtension();
@@ -199,7 +204,10 @@ class ServiceController extends Controller
         $service->inscopes = json_encode(json_decode($request->inscopes, true));
         $service->outscopes =  json_encode(json_decode($request->outscopes, true));
         $service->service_items =  json_encode(json_decode($request->service_items, true));
-
+        
+        $service->service_address = $request->service_address;
+        $service->service_latlng = $request->service_latlng;
+        
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $image = uniqid() . "." . $file->getClientOriginalExtension();

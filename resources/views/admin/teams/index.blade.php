@@ -31,7 +31,7 @@
         <div class="team-details-section">
             <div class="team-section">
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <div class="tasks-content-info tab-content">
                             <div class="" id="OngoingServices">
                                 <div class="ongoing-services-item">
@@ -184,7 +184,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 d-none">
                         <div class="team-panel-sidebar">
                             <h2>Good Projects Check-in & Check-out</h2>
                             <div class="service-log-media">

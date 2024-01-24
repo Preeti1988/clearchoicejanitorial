@@ -130,6 +130,18 @@
                                         value="{{ old('contractor') }}" placeholder="Contractor">
                                 </div>
                             </div> --}}
+
+
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h3>Address*</h3>
+                                    <input type="text" class="form-control" name="street" required id="pac-input"
+                                        value="{{ old('street') }}"placeholder="Address">
+                                    <div id="map" style="height: 500px"></div>
+
+                                </div>
+                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <h3>Unit</h3>
@@ -138,65 +150,11 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <h3>Address*</h3>
-                                    <input type="text" class="form-control" name="street" required id="pac-input"
-                                        value="{{ old('street') }}"placeholder="Address">
-                                </div>
-                            </div>
 
 
 
 
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>Country *</h3>
 
-                                    <select class="form-control"name="country_id" id="country_id"
-                                        onchange="getState(this.value)" required>
-                                        @foreach ($country as $ctry)
-                                            <option value="{{ $ctry->id }}">
-                                                {{ $ctry->name }}</option>
-                                        @endforeach
-                                    </select>
-
-
-                                    {{-- <input type="text" class="form-control" name="street" id="pac-input" required
-                                        value="{{ $data->street ?? '' }}" placeholder="contractor"> --}}
-
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>State *</h3>
-                                    <div id="state_container">
-                                        <select class="form-control" onchange="getCity(this.value)" name="state_id"
-                                            id="state_id">
-                                            @foreach ($state as $value)
-                                                <option value="{{ $value->id }}">
-                                                    {{ $value->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <h3>City *</h3>
-                                    <div id="city_container">
-                                        <select class="form-control" id="city_id" name="city" required>
-                                            @foreach ($city as $cty)
-                                                <option value="{{ $cty->id }}">
-                                                    {{ $cty->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                </div>
-                            </div>
 
 
 
@@ -298,8 +256,71 @@
                 strictBounds: false,
             };
 
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: {
+                    lat: -33.8688,
+                    lng: 151.2195
+                },
+                zoom: 13,
+                mapTypeId: "roadmap",
+            });
+            const searchBox = new google.maps.places.SearchBox(input);
 
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener("bounds_changed", () => {
+                searchBox.setBounds(map.getBounds());
+            });
 
+            let markers = [];
+            searchBox.addListener("places_changed", () => {
+                const places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                // Clear out the old markers.
+                markers.forEach((marker) => {
+                    marker.setMap(null);
+                });
+                markers = [];
+
+                // For each place, get the icon, name and location.
+                const bounds = new google.maps.LatLngBounds();
+
+                places.forEach((place) => {
+                    if (!place.geometry || !place.geometry.location) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    var add = document.getElementById("address_notes");
+                    add.value = place.geometry.location.lat() + "," + place.geometry
+                        .location.lng();
+                    if (place.address_components.length && place.address_components[place.address_components
+                            .length - 1]) {
+                        $("#zipcode").val(place.address_components[place.address_components
+                            .length - 1].long_name)
+
+                    }
+                    // Create a marker for each place.
+                    markers.push(
+                        new google.maps.Marker({
+                            map,
+
+                            title: place.name,
+                            position: place.geometry.location,
+                        }),
+                    );
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
             const autocomplete = new google.maps.places.Autocomplete(input, options);
 
             // Bind the map's bounds (viewport) property to the autocomplete object,
@@ -312,86 +333,86 @@
             infowindow.setContent(infowindowContent);
 
 
-            autocomplete.addListener("place_changed", () => {
-                infowindow.close();
+            // autocomplete.addListener("place_changed", () => {
+            //     infowindow.close();
 
 
-                const place = autocomplete.getPlace();
+            //     const place = autocomplete.getPlace();
+
+            //     console.log(place);
+            //     if (!place.geometry || !place.geometry.location) {
+            //         // User entered the name of a Place that was not suggested and
+            //         // pressed the Enter key, or the Place Details request failed.
+            //         window.alert("No details available for input: '" + place.name + "'");
+            //         return;
+            //     }
+            //     var add = document.getElementById("address_notes");
+            //     add.value = place.geometry.location.lat() + "," + place.geometry.location.lng();
+            //     console.log(place.geometry.location.lat() + "," + place.geometry.location.lng());
+            //     var latLng = new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng())
+            //     var geocoder = (new google.maps.Geocoder());
+            //     geocoder.geocode({
+            //         latLng: latLng
+            //     }, function(results, status) {
+            //         if (status = google.maps.GeocoderStatus.OK) {
+            //             if (results[0]) {
+
+            //                 console.log(results[0].address_components);
+            //                 var pin = results[0].address_components[
+            //                     results[0].address_components.length - 1
+            //                 ].long_name;
+
+            //                 var country = results[0].address_components.length > 1 ? results[0]
+            //                     .address_components[
+            //                         results[0].address_components.length - 2
+            //                     ].long_name : "";
+            //                 var state = results[0].address_components.length > 2 ? results[0]
+            //                     .address_components[
+            //                         results[0].address_components.length - 3
+            //                     ].long_name : "";
+            //                 var city = results[0].address_components.length > 4 ? results[0]
+            //                     .address_components[
+            //                         results[0].address_components.length - 5
+            //                     ].long_name : '';
+
+            //                 console.log(country, state, city, pin);
+            //                 var _token = "{{ csrf_token() }}";
+
+            //                 $("#zipcode").val(pin);
+            //                 // $.post("{{ route('getCountry') }}", {
+            //                 //     country,
+            //                 //     state,
+            //                 //     city,
+            //                 //     _token
+            //                 // }, function(data) {
+            //                 //     $("#state_id").val(data.state_id);
+            //                 //     $("#country_id").val(data.country_id);
+
+            //                 //     var htm = "";
+            //                 //     htm += `<select class="form-control"  id="city_id" name="city" >`;
+            //                 //     if (data.cities.length == 0) {
+            //                 //         htm += `<option >No cities found</option>`;
+            //                 //     }
+            //                 //     data.cities.map(item => {
+            //                 //         htm +=
+            //                 //             ` <option value="${item.id}">${item.name}</option> `;
+            //                 //     })
+            //                 //     htm += `</select>`;
+
+            //                 //     $("#city_container").html(htm);
+            //                 //     $("#city_id").val(data.city_id);
+
+            //                 // });
+            //             }
+            //         }
 
 
-                if (!place.geometry || !place.geometry.location) {
-                    // User entered the name of a Place that was not suggested and
-                    // pressed the Enter key, or the Place Details request failed.
-                    window.alert("No details available for input: '" + place.name + "'");
-                    return;
-                }
-                var add = document.getElementById("address_notes");
-                add.value = place.geometry.location.lat() + "," + place.geometry.location.lng();
-                console.log(place.geometry.location.lat() + "," + place.geometry.location.lng());
-                var latLng = new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng())
-                var geocoder = (new google.maps.Geocoder());
-                geocoder.geocode({
-                    latLng: latLng
-                }, function(results, status) {
-                    if (status = google.maps.GeocoderStatus.OK) {
-                        if (results[0]) {
-
-                            console.log(results[0].address_components);
-                            var pin = results[0].address_components[
-                                results[0].address_components.length - 1
-                            ].long_name;
-
-                            var country = results[0].address_components.length > 1 ? results[0]
-                                .address_components[
-                                    results[0].address_components.length - 2
-                                ].long_name : "";
-                            var state = results[0].address_components.length > 2 ? results[0]
-                                .address_components[
-                                    results[0].address_components.length - 3
-                                ].long_name : "";
-                            var city = results[0].address_components.length > 4 ? results[0]
-                                .address_components[
-                                    results[0].address_components.length - 5
-                                ].long_name : '';
-
-                            console.log(country, state, city, pin);
-                            var _token = "{{ csrf_token() }}";
-
-                            $("#zipcode").val(pin);
-                            $.post("{{ route('getCountry') }}", {
-                                country,
-                                state,
-                                city,
-                                _token
-                            }, function(data) {
-                                $("#state_id").val(data.state_id);
-                                $("#country_id").val(data.country_id);
-
-                                var htm = "";
-                                htm += `<select class="form-control"  id="city_id" name="city" >`;
-                                if (data.cities.length == 0) {
-                                    htm += `<option >No cities found</option>`;
-                                }
-                                data.cities.map(item => {
-                                    htm +=
-                                        ` <option value="${item.id}">${item.name}</option> `;
-                                })
-                                htm += `</select>`;
-
-                                $("#city_container").html(htm);
-                                $("#city_id").val(data.city_id);
-
-                            });
-                        }
-                    }
-
-
-                });
+            //     });
 
 
 
 
-            });
+            // });
 
             // Sets a listener on a radio button to change the filter type on Places
             // Autocomplete.var place = autocomplete.getPlace();
@@ -401,6 +422,7 @@
 
 
         }
+
 
         window.initMap = initMap;
 

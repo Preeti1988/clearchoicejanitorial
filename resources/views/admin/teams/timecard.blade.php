@@ -152,6 +152,25 @@
                         </div>
                         <div class="col-sm-2">
                             <div class="form-group">
+                                <select name="year" id="" class="form-control rounded">
+                                    <option value="0">Select Year</option>
+                                    <?php
+                                    $years = range(2000, date('Y'));
+                                    
+                                    foreach ($years as $year) {
+                                        if (Request::has('year') && request('year') == $year) {
+                                            echo "<option value=\"$year\"  selected>$year</option>";
+                                        } else {
+                                            echo "<option value=\"$year\"  >$year</option>";
+                                        }
+                                    }
+                                    ?>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
                                 <select name="month" id="" class="form-control rounded">
                                     <option value="0">Select Month</option>
                                     <?php
@@ -207,14 +226,15 @@
 
                 @forelse ($timesheet as $week)
                     <div class="week-details">
-                        <div class="week-number">Week Number: <?php echo $week['week_number']; ?></div>
-                        <div>Total Hours in Week: <?php echo $week['total_hours_in_week_format']; ?></div>
-                        <div>Avg Hours in Week: <?php echo $week['avg_hours_in_week']; ?></div>
-                        <div>Total Days Worked: <?php echo $week['total_days_worked']; ?></div>
+                        <div class="week-number"> {{ $week['start_of_week'] ?? 0 }} TO
+                            {{ $week['end_of_week'] ?? 0 }}</div>
+                        <div>Total Hours in Week: {{ $week['total_hours_in_week_format'] ?? 0 }}</div>
+                        <div>Avg Hours in Week: {{ $week['avg_hours_in_week'] ?? 0 }}</div>
+                        <div>Total Days Worked: {{ $week['total_days_worked'] ?? 0 }}</div>
                         <div class="row">
                             <?php foreach ($week['days'] as $day): ?>
-                            <div class="p-2  col-md-4">
-                                <div class="day-details px-4 py-2 shadow-sm">
+                            <div class="p-4  col-md-4">
+                                <div class="day-details px-4 py-2 shadow-lg">
                                     <h5>Date: <?php echo $day['date']; ?></h5>
                                     <div class="time-details">
                                         <div class="time-icon">🕒</div>
