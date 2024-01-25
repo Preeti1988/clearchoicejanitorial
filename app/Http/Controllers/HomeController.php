@@ -44,21 +44,27 @@ class HomeController extends Controller
     public function index()
     {
         $services = Service::query();
-       
+
         $services = $services->count();
         $members = User::where("admin", "!=", 1)->where("status", 1);
-        
+
         $members = $members->count();
 
         $ongoing = Service::has("members");
         if (request()->has('date')) {
             $ongoing = $ongoing->whereDate("created_date", Carbon::parse(request('date')));
         }
+        if (request()->has('search')) {
+            $ongoing = $ongoing->where("name", "LIKE", "%" . trim(request('search')) . "%");
+        }
         $ongoing = $ongoing->orderBy("id", "desc")->get();
 
         $unassigned = Service::doesntHave("members");
         if (request()->has('date')) {
             $unassigned = $unassigned->whereDate("created_date", Carbon::parse(request('date')));
+        }
+        if (request()->has('search')) {
+            $unassigned = $unassigned->where("name", "LIKE", "%" . trim(request('search')) . "%");
         }
         $msgs = User::where('status', 1)->orderBy('userid', 'DESC')->get();
 
@@ -892,16 +898,16 @@ class HomeController extends Controller
         if ($request->has("month")) {
             $startPeriod = date("Y-$request->month-01");
             $endPeriod = date("Y-$request->month-t");
-        }  
+        }
         if ($request->has("year")) {
             $startPeriod = date("$request->year-m-01");
             $endPeriod = date("$request->year-m-t");
         }
-        if ($request->has("year")&&$request->has("month")) {
+        if ($request->has("year") && $request->has("month")) {
             $startPeriod = date("$request->year-$request->month-01");
             $endPeriod = date("$request->year-$request->month-t");
         }
-      
+
 
         $timesheet = ServiceTimesheet::select([
             'id',
@@ -915,9 +921,9 @@ class HomeController extends Controller
             'created_at',
             'updated_at',
             DB::raw('WEEK(date) as week_number'),
+            DB::raw('MONTH(date) as month'),
             DB::raw('MIN(date - INTERVAL WEEKDAY(date) DAY) AS start_of_week'),
-            DB::raw('MAX(date + INTERVAL (6 - WEEKDAY(date)) DAY) AS end_of_week')
-  ,    
+            DB::raw('MAX(date + INTERVAL (6 - WEEKDAY(date)) DAY) AS end_of_week'),
             DB::raw('DATE_FORMAT(date, "%Y-%m-%d") as formatted_date'),
             DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time)) / 3600) as total_hours_worked_on_day'),
             DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time))) as total_hours_worked_on_day_format'),
@@ -929,7 +935,10 @@ class HomeController extends Controller
             ->orderBy('date', 'asc')
             ->get();
 
+
+
         $result = [];
+
         $currentWeek = null;
         $totalHoursInWeek = 0;
         $totalHoursInWeekFormat = 0;
@@ -944,8 +953,8 @@ class HomeController extends Controller
                     // Add total hours for the previous week
                     $result[] = [
                         'week_number' => $currentWeek,
-                        'start_of_week' => (new DateTime())->setISODate($request->has('year')?$request->year: date("Y"), $currentWeek, 1)->format('d-m-Y'),
-                        'end_of_week' =>(new DateTime())->setISODate($request->has('year')?$request->year: date("Y"), $currentWeek, 7)->format('d-m-Y'),
+                        'start_of_week' => (new DateTime())->setISODate($request->has('year') ? $request->year : date("Y"), $currentWeek, 1)->format('d-m-Y'),
+                        'end_of_week' => (new DateTime())->setISODate($request->has('year') ? $request->year : date("Y"), $currentWeek, 7)->format('d-m-Y'),
 
                         'total_hours_in_week' => $totalHoursInWeek,
                         'total_hours_in_week_format' => $this->formatime($totalHoursInWeekFormat),
@@ -982,8 +991,9 @@ class HomeController extends Controller
         if ($currentWeek !== null) {
             $result[] = [
                 'week_number' => $currentWeek,
-                'start_of_week' => $record->start_of_week,
-                'end_of_week' => $record->end_of_week,
+                'start_of_week' => (new DateTime())->setISODate($request->has('year') ? $request->year : date("Y"), $currentWeek, 1)->format('d-m-Y'),
+                'end_of_week' => (new DateTime())->setISODate($request->has('year') ? $request->year : date("Y"), $currentWeek, 7)->format('d-m-Y'),
+
                 'total_hours_in_week' => $totalHoursInWeek,
                 'total_hours_in_week_format' => $this->formatime($totalHoursInWeekFormat),
                 'avg_hours_in_week' => $this->formatime(intval($totalHoursInWeekFormat / count($daysInWeek))),
@@ -994,9 +1004,18 @@ class HomeController extends Controller
             $totalHours += $totalHoursInWeekFormat;
         }
 
+
+        $total_days = 0;
+
+        foreach ($result as $data) {
+            $total_days += $data['total_days_worked'];
+        }
         $data = [
             'data' => $member,
-            'timesheet' => $result, 'total_hours' => $this->formatime($totalHoursInWeekFormat),
+            'start_period' => $startPeriod,
+            'end_period' => $endPeriod,
+
+            'timesheet' => $result, 'total_hours' => $this->formatime($totalHoursInWeekFormat), 'total_days' => $total_days
 
 
         ];

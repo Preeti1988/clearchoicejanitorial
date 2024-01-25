@@ -252,7 +252,7 @@
             const input = document.getElementById("pac-input");
 
             const options = {
-                fields: ["formatted_address", "geometry", "name"],
+                fields: ["formatted_address", "geometry", "name", "photos"],
                 strictBounds: false,
             };
 
@@ -264,163 +264,245 @@
                 zoom: 13,
                 mapTypeId: "roadmap",
             });
-            const searchBox = new google.maps.places.SearchBox(input);
-
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-            // Bias the SearchBox results towards current map's viewport.
-            map.addListener("bounds_changed", () => {
-                searchBox.setBounds(map.getBounds());
-            });
 
             let markers = [];
-            searchBox.addListener("places_changed", () => {
-                const places = searchBox.getPlaces();
 
-                if (places.length == 0) {
-                    return;
-                }
+            // const searchBox = new google.maps.places.SearchBox(input, options);
+            // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+            // // Bias the SearchBox results towards current map's viewport.
+            // map.addListener("bounds_changed", () => {
+            //     searchBox.setBounds(map.getBounds());
+            // });
+            // searchBox.addListener("places_changed", () => {
+            //     const places = searchBox.getPlaces();
 
-                // Clear out the old markers.
+            //     if (places.length == 0) {
+            //         return;
+            //     }
+
+            //     // Clear out the old markers.
+            //     markers.forEach((marker) => {
+            //         marker.setMap(null);
+            //     });
+            //     markers = [];
+
+            //     // For each place, get the icon, name and location.
+            //     const bounds = new google.maps.LatLngBounds();
+
+            //     places.forEach((place) => {
+
+            //         console.log(place);
+            //         if (!place.geometry || !place.geometry.location) {
+            //             console.log("Returned place contains no geometry");
+            //             return;
+            //         }
+            //         var add = document.getElementById("service_latlng");
+            //         add.value = place.geometry.location.lat() + "," + place.geometry
+            //             .location.lng();
+
+            //         // Create a marker for each place.
+            //         markers.push(
+            //             new google.maps.Marker({
+            //                 map,
+
+            //                 title: place.name,
+            //                 position: place.geometry.location,
+            //             }),
+            //         );
+            //         if (place.geometry.viewport) {
+            //             // Only geocodes have viewport.
+            //             bounds.union(place.geometry.viewport);
+            //         } else {
+            //             bounds.extend(place.geometry.location);
+            //         }
+            //     });
+            //     map.fitBounds(bounds);
+            // });
+
+
+            @if ($data && $data->address_notes)
+                var latitude = {{ explode(',', $data->address_notes)[0] }};
+                var longitude = {{ explode(',', $data->address_notes)[1] }};
+                var geocoder = new google.maps.Geocoder();
+
+                // Create a LatLng object using the provided coordinates
+                var latlng = new google.maps.LatLng(latitude, longitude);
+
+                // Make a reverse geocoding request
+                geocoder.geocode({
+                    'latLng': latlng
+                }, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[0]) {
+                            // Extract the place ID from the first result
+                            var placeId = results[0].place_id;
+                            const bounds = new google.maps.LatLngBounds();
+                            // Make a request to the Places API to get place details
+                            var placesService = new google.maps.places.PlacesService(document.createElement('div'));
+                            placesService.getDetails({
+                                placeId: placeId
+                            }, function(place, status) {
+                                if (status == google.maps.places.PlacesServiceStatus.OK) {
+                                    // Display the result on the webpage
+                                    // document.getElementById('result').innerHTML = 'Place Name: ' + place.name;
+                                    console.log(
+                                        "place first"
+                                    ); // Log the entire place object for additional details
+                                    if (!place.geometry || !place.geometry.location) {
+                                        console.log("Returned place contains no geometry");
+                                        return;
+                                    }
+
+                                    const icon = {
+                                        url: place.icon,
+                                        size: new google.maps.Size(71, 71),
+                                        origin: new google.maps.Point(0, 0),
+                                        anchor: new google.maps.Point(17, 34),
+                                        scaledSize: new google.maps.Size(25, 25),
+                                    };
+
+                                    // Create a marker for each place.
+
+                                    if (place.geometry.viewport) {
+                                        // Only geocodes have viewport.
+                                        bounds.union(place.geometry.viewport);
+                                    } else {
+                                        bounds.extend(place.geometry.location);
+                                    }
+                                    map.fitBounds(bounds);
+                                } else {
+                                    console.log('Places API request failed with status: ' + status);
+                                }
+                            });
+                        } else {
+                            console.log('No results found');
+                        }
+                    } else {
+                        console.log('Geocoder failed due to: ' + status);
+                    }
+                });
+                var marker = new google.maps.Marker({
+                    position: {
+                        lat: latitude,
+                        lng: longitude
+                    },
+                    map: map,
+                    title: 'Marker Title' // Optional, add a title to the marker
+                });
+                markers.push(
+                    marker
+                );
+            @endif
+
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
+            const infowindow = new google.maps.InfoWindow();
+            const infowindowContent = document.getElementById("infowindow-content");
+
+            infowindow.setContent(infowindowContent);
+            autocomplete.addListener("place_changed", () => {
+                infowindow.close();
+
                 markers.forEach((marker) => {
                     marker.setMap(null);
                 });
                 markers = [];
 
-                // For each place, get the icon, name and location.
+
                 const bounds = new google.maps.LatLngBounds();
+                const place = autocomplete.getPlace();
+                console.log(place);
+                if (!place.geometry || !place.geometry.location) {
+                    console.log("Returned place contains no geometry");
+                    return;
+                }
+                // saving lat long
+                var add = document.getElementById("address_notes");
+                add.value = place.geometry.location.lat() + "," + place.geometry
+                    .location.lng();
 
-                places.forEach((place) => {
-                    if (!place.geometry || !place.geometry.location) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-                    var add = document.getElementById("address_notes");
-                    add.value = place.geometry.location.lat() + "," + place.geometry
-                        .location.lng();
-                    if (place.address_components.length && place.address_components[place.address_components
-                            .length - 1]) {
-                        $("#zipcode").val(place.address_components[place.address_components
-                            .length - 1].long_name)
+                // Create a marker for each place.
+                markers.push(
+                    new google.maps.Marker({
+                        map,
 
-                    }
-                    // Create a marker for each place.
-                    markers.push(
-                        new google.maps.Marker({
-                            map,
+                        title: place.name,
+                        position: place.geometry.location,
+                    }),
+                );
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+                map.fitBounds(bounds);
 
-                            title: place.name,
-                            position: place.geometry.location,
-                        }),
-                    );
-                    if (place.geometry.viewport) {
-                        // Only geocodes have viewport.
-                        bounds.union(place.geometry.viewport);
-                    } else {
-                        bounds.extend(place.geometry.location);
+                if (!place.geometry || !place.geometry.location) {
+                    // User entered the name of a Place that was not suggested and
+                    // pressed the Enter key, or the Place Details request failed.
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+                var add = document.getElementById("address_notes");
+                add.value = place.geometry.location.lat() + "," + place.geometry.location.lng();
+                console.log(place.geometry.location.lat() + "," + place.geometry.location.lng());
+                var latLng = new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng())
+                var geocoder = (new google.maps.Geocoder());
+                geocoder.geocode({
+                    latLng: latLng
+                }, function(results, status) {
+                    if (status = google.maps.GeocoderStatus.OK) {
+                        if (results[0]) {
+
+                            var pin = results[0].address_components[
+                                results[0].address_components.length - 1
+                            ].long_name;
+                            $("#zipcode").val(pin);
+
+
+                            // var country = results[0].address_components.length > 1 ? results[0]
+                            //     .address_components[
+                            //         results[0].address_components.length - 2
+                            //     ].long_name : "";
+                            // var state = results[0].address_components.length > 2 ? results[0]
+                            //     .address_components[
+                            //         results[0].address_components.length - 3
+                            //     ].long_name : "";
+                            // var city = results[0].address_components.length > 4 ? results[0]
+                            //     .address_components[
+                            //         results[0].address_components.length - 5
+                            //     ].long_name : '';
+
+                            // console.log(country, state, city, pin);
+                            // var _token = "{{ csrf_token() }}";
+                            // $.post("{{ route('getCountry') }}", {
+                            //     country,
+                            //     state,
+                            //     city,
+                            //     _token
+                            // }, function(data) {
+                            //     $("#state_id").val(data.state_id);
+                            //     $("#country_id").val(data.country_id);
+
+                            //     var htm = "";
+                            //     htm += `<select class="form-control"  id="city_id" name="city" >`;
+                            //     if (data.cities.length == 0) {
+                            //         htm += `<option >No cities found</option>`;
+                            //     }
+                            //     data.cities.map(item => {
+                            //         htm +=
+                            //             ` <option value="${item.id}">${item.name}</option> `;
+                            //     })
+                            //     htm += `</select>`;
+
+                            //     $("#city_container").html(htm);
+                            //     $("#city_id").val(data.city_id);
+
+                            // });
+                        }
                     }
                 });
-                map.fitBounds(bounds);
             });
-            const autocomplete = new google.maps.places.Autocomplete(input, options);
-
-            // Bind the map's bounds (viewport) property to the autocomplete object,
-            // so that the autocomplete requests use the current map bounds for the
-            // bounds option in the request.
-
-            const infowindow = new google.maps.InfoWindow();
-            const infowindowContent = document.getElementById("infowindow-content");
-
-            infowindow.setContent(infowindowContent);
-
-
-            // autocomplete.addListener("place_changed", () => {
-            //     infowindow.close();
-
-
-            //     const place = autocomplete.getPlace();
-
-            //     console.log(place);
-            //     if (!place.geometry || !place.geometry.location) {
-            //         // User entered the name of a Place that was not suggested and
-            //         // pressed the Enter key, or the Place Details request failed.
-            //         window.alert("No details available for input: '" + place.name + "'");
-            //         return;
-            //     }
-            //     var add = document.getElementById("address_notes");
-            //     add.value = place.geometry.location.lat() + "," + place.geometry.location.lng();
-            //     console.log(place.geometry.location.lat() + "," + place.geometry.location.lng());
-            //     var latLng = new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng())
-            //     var geocoder = (new google.maps.Geocoder());
-            //     geocoder.geocode({
-            //         latLng: latLng
-            //     }, function(results, status) {
-            //         if (status = google.maps.GeocoderStatus.OK) {
-            //             if (results[0]) {
-
-            //                 console.log(results[0].address_components);
-            //                 var pin = results[0].address_components[
-            //                     results[0].address_components.length - 1
-            //                 ].long_name;
-
-            //                 var country = results[0].address_components.length > 1 ? results[0]
-            //                     .address_components[
-            //                         results[0].address_components.length - 2
-            //                     ].long_name : "";
-            //                 var state = results[0].address_components.length > 2 ? results[0]
-            //                     .address_components[
-            //                         results[0].address_components.length - 3
-            //                     ].long_name : "";
-            //                 var city = results[0].address_components.length > 4 ? results[0]
-            //                     .address_components[
-            //                         results[0].address_components.length - 5
-            //                     ].long_name : '';
-
-            //                 console.log(country, state, city, pin);
-            //                 var _token = "{{ csrf_token() }}";
-
-            //                 $("#zipcode").val(pin);
-            //                 // $.post("{{ route('getCountry') }}", {
-            //                 //     country,
-            //                 //     state,
-            //                 //     city,
-            //                 //     _token
-            //                 // }, function(data) {
-            //                 //     $("#state_id").val(data.state_id);
-            //                 //     $("#country_id").val(data.country_id);
-
-            //                 //     var htm = "";
-            //                 //     htm += `<select class="form-control"  id="city_id" name="city" >`;
-            //                 //     if (data.cities.length == 0) {
-            //                 //         htm += `<option >No cities found</option>`;
-            //                 //     }
-            //                 //     data.cities.map(item => {
-            //                 //         htm +=
-            //                 //             ` <option value="${item.id}">${item.name}</option> `;
-            //                 //     })
-            //                 //     htm += `</select>`;
-
-            //                 //     $("#city_container").html(htm);
-            //                 //     $("#city_id").val(data.city_id);
-
-            //                 // });
-            //             }
-            //         }
-
-
-            //     });
-
-
-
-
-            // });
-
-            // Sets a listener on a radio button to change the filter type on Places
-            // Autocomplete.var place = autocomplete.getPlace();
-
-
-            // Get additional details using Places Details API
-
-
         }
 
 

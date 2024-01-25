@@ -23,7 +23,7 @@ class ServiceController extends Controller
     {
         $services = Service::has("members");
         if (request()->has('date')) {
-            $services = $services->whereDate("created_at", Carbon::parse(request('date')));
+            $services = $services->whereDate("created_date", Carbon::parse(request('date')));
         }
         if (request()->has('search')) {
             $services = $services->where("name", request('search'));
@@ -32,7 +32,7 @@ class ServiceController extends Controller
 
         $completed_services = Service::where("status", "completed");
         if (request()->has('date')) {
-            $completed_services = $completed_services->whereDate("created_at", Carbon::parse(request('date')));
+            $completed_services = $completed_services->whereDate("created_date", Carbon::parse(request('date')));
         }
         if (request()->has('search')) {
             $completed_services = $completed_services->where("name", request('search'));
@@ -141,7 +141,7 @@ class ServiceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    
+
     public function edit(string $id)
     {
         $clients = Client::all();
@@ -204,10 +204,10 @@ class ServiceController extends Controller
         $service->inscopes = json_encode(json_decode($request->inscopes, true));
         $service->outscopes =  json_encode(json_decode($request->outscopes, true));
         $service->service_items =  json_encode(json_decode($request->service_items, true));
-        
+
         $service->service_address = $request->service_address;
         $service->service_latlng = $request->service_latlng;
-        
+
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $image = uniqid() . "." . $file->getClientOriginalExtension();
@@ -275,7 +275,10 @@ class ServiceController extends Controller
     {
         $services = Service::doesntHave("members");
         if (request()->has('date')) {
-            $services = $services->whereDate("created_at", Carbon::parse(request('date')));
+            $services = $services->whereDate("created_date", Carbon::parse(request('date')));
+        }
+        if (request()->has('search')) {
+            $services = $services->where("name", "LIKE", "%" . trim(request('search')) . "%");
         }
         $services = $services->orderBy("id", "desc")->get();
         return view("admin.services.scheduler", compact('services'));

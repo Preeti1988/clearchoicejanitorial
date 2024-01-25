@@ -223,33 +223,41 @@
                         </div>
                     </div>
                 </form>
+                @if (request()->has('duration') && request('duration') == 'monthly')
+                    <div class="week-number"> {{ $start_period ?? 0 }} TO
+                        {{ $end_period ?? 0 }}</div>
+                    <div>Total Hours in Month: {{ $total_hours ?? 0 }}</div>
 
+                    <div>Total Days Worked: {{ $total_days ?? 0 }}</div>
+                @endif
                 @forelse ($timesheet as $week)
                     <div class="week-details">
-                        <div class="week-number"> {{ $week['start_of_week'] ?? 0 }} TO
-                            {{ $week['end_of_week'] ?? 0 }}</div>
-                        <div>Total Hours in Week: {{ $week['total_hours_in_week_format'] ?? 0 }}</div>
-                        <div>Avg Hours in Week: {{ $week['avg_hours_in_week'] ?? 0 }}</div>
-                        <div>Total Days Worked: {{ $week['total_days_worked'] ?? 0 }}</div>
+                        @if (!(request()->has('duration') && request('duration') == 'monthly'))
+                            <div class="week-number"> {{ $week['start_of_week'] ?? 0 }} TO
+                                {{ $week['end_of_week'] ?? 0 }}</div>
+                            <div>Total Hours in Week: {{ $week['total_hours_in_week_format'] ?? 0 }}</div>
+                            <div>Avg Hours in Week: {{ $week['avg_hours_in_week'] ?? 0 }}</div>
+                            <div>Total Days Worked: {{ $week['total_days_worked'] ?? 0 }}</div>
+                        @endif
+
                         <div class="row">
-                            <?php foreach ($week['days'] as $day): ?>
-                            <div class="p-4  col-md-4">
-                                <div class="day-details px-4 py-2 shadow-lg">
-                                    <h5>Date: <?php echo $day['date']; ?></h5>
-                                    <div class="time-details">
-                                        <div class="time-icon">🕒</div>
-                                        <div>Start Time: <?php echo $day['start_time']; ?></div>
-                                        &nbsp;
-                                        &nbsp;
+                            @foreach ($week['days'] as $day)
+                                <div class="p-4  col-md-4">
+                                    <div class="day-details px-4 py-2 shadow-lg">
+                                        <h5>Date: <?php echo $day['date']; ?></h5>
+                                        <div class="time-details">
+                                            <div class="time-icon">🕒</div>
+                                            <div>Start Time: <?php echo $day['start_time']; ?></div>
+                                            &nbsp;
+                                            &nbsp;
 
-                                        <div class="time-icon">🕒</div>
-                                        <div>End Time: <?php echo $day['end_time']; ?></div>
+                                            <div class="time-icon">🕒</div>
+                                            <div>End Time: <?php echo $day['end_time']; ?></div>
+                                        </div>
+                                        <div>Total Hours Worked on Day: <?php echo $day['total_hours_worked_on_day_format']; ?></div>
                                     </div>
-                                    <div>Total Hours Worked on Day: <?php echo $day['total_hours_worked_on_day_format']; ?></div>
                                 </div>
-                            </div>
-
-                            <?php endforeach; ?>
+                            @endforeach
                         </div>
 
 
