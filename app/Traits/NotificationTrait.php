@@ -29,7 +29,7 @@ trait NotificationTrait
     public function sendWebNotification($notification, $data)
     {
         $url = 'https://fcm.googleapis.com/fcm/send';
-        $FcmToken = User::where("id", $notification->user_id)->whereNotNull('device_key')->pluck('device_key')->all();
+        $FcmToken = User::where("userid", $notification->user_id)->whereNotNull('device_key')->pluck('device_key')->all();
 
         $serverKey = config("app.server_key");
 

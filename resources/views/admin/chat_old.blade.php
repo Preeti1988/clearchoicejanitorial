@@ -45,8 +45,7 @@
                         @elseif(!$datas->isEmpty())
                             @foreach ($datas as $val)
                                 <a href="{{ url('chat/' . encryptDecrypt('encrypt', $val->userid)) }}">
-                                    <div class="chat-userlist-item"
-                                        @if ($firstData && $val->userid == $firstData->userid) @style("background:#dbe7d7") @endif>
+                                    <div class="chat-userlist-item">
                                         <div class="chat-userlist-item-image">
                                             <img src="{{ custom_asset('public/assets/admin-images/user-default.png') }}">
                                             <span class="user-status"></span>
@@ -85,7 +84,7 @@
                             </div>
                         </div>
 
-                        {{-- <div class="chat-panel-user-form">
+                        <div class="chat-panel-user-form">
                             <div class="chat-panel-service-dropdown">
                                 <select class="form-control" id="select_id">
                                     <option>Select Service</option>
@@ -95,7 +94,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div> --}}
+                        </div>
 
                         <div class="chat-panel-user-action">
                             <a class="viewbtn"
@@ -266,7 +265,7 @@
 
             //return chatList;
         }
-        // getClientChat(group_id);
+        //getClientChat(group_id);
     </script>
     <script>
         $(document).ready(function() {
@@ -274,7 +273,7 @@
                 var value = this.value; /*Service Id*/
                 $('#ajax-chat-url-service-id').val(value);
                 var receiver_id = $("#ajax-chat-url").data('id');
-                var group_id = receiver_id + "-" + "1";
+                var group_id = receiver_id + "-" + value;
                 getClientChat(group_id);
                 UpdateChatCount(value, receiver_id);
             });
@@ -282,85 +281,83 @@
                 const userName = $("#ajax-chat-url-first").data('id');
                 const receiver_id = $("#ajax-chat-url").data('id');
                 var serviceID = $("#ajax-chat-url-service-id").val();
-                // if (serviceID != '') {
-                const group_id = receiver_id + "-" + 1;
-                let message = $('#message-input').val();
-                $(this).val('');
-                let time = moment().format('MMM DD, YYYY HH:mm A');
-                let image = '';
-                if ($('#upload-file')[0].files[0]) image = URL.createObjectURL($('#upload-file')[0]
-                    .files[0]);
-                else image = '';
-                if (message != '' || image != '') {
-                    // image = 'https://nileprojects.in/clearchoice-janitorial/public/upload/chat/' +
-                    //     image;
+                if (serviceID != '') {
+                    const group_id = receiver_id + "-" + serviceID;
+                    let message = $('#message-input').val();
+                    $(this).val('');
+                    let time = moment().format('MMM DD, YYYY HH:mm A');
+                    let image = '';
+                    if ($('#upload-file')[0].files[0]) image = URL.createObjectURL($('#upload-file')[0]
+                        .files[0]);
+                    else image = '';
+                    if (message != '' || image != '') {
+                        // image = 'https://nileprojects.in/clearchoice-janitorial/public/upload/chat/' +
+                        //     image;
 
-                    let formData = new FormData();
-                    formData.append('image', $('#upload-file')[0].files[0]);
-                    formData.append('_token', "{{ csrf_token() }}");
-                    if (image !== undefined && image !== '') {
+                        let formData = new FormData();
+                        formData.append('image', $('#upload-file')[0].files[0]);
+                        formData.append('_token', "{{ csrf_token() }}");
+                        if (image !== undefined && image !== '') {
 
-                        $.ajax({
-                            type: 'post',
-                            url: "{{ url('/') }}" + '/support-save-img',
-                            data: formData,
-                            contentType: false,
-                            cache: false,
-                            processData: false,
-                            success: function(res) {
-                                console.log(res);
-                                if (res.status == false) {
-                                    //alert(res.msg);
-                                    return false;
+                            $.ajax({
+                                type: 'post',
+                                url: "{{ url('/') }}" + '/support-save-img',
+                                data: formData,
+                                contentType: false,
+                                cache: false,
+                                processData: false,
+                                success: function(res) {
+                                    console.log(res);
+                                    if (res.status == false) {
+                                        //alert(res.msg);
+                                        return false;
+                                    }
+                                    if (res.status) {
+                                        sendNewMessage(group_id, message, receiver_id,
+                                            userName, res.url);
+                                        $('#message-input').val('');
+
+                                        $('#upload-file').val('');
+
+                                        $('.la-paperclip').css('color', '#6c757d');
+                                    }
                                 }
-                                if (res.status) {
-                                    sendNewMessage(group_id, message, receiver_id,
-                                        userName, res.url);
-                                    $('#message-input').val('');
+                            })
+                        } else {
 
-                                    $('#upload-file').val('');
-
-                                    $('.la-paperclip').css('color', '#6c757d');
-                                }
-                            }
-                        })
-                    } else {
-
-                        sendNewMessage(group_id, message, receiver_id, userName);
-                        $('#message-input').val('');
-                        showMessage(message, time, userName, image);
+                            sendNewMessage(group_id, message, receiver_id, userName);
+                            $('#message-input').val('');
+                            showMessage(message, time, userName, image);
+                        }
                     }
+                    $.ajax({
+                        url: '{{ url('submit-chat-count') }}',
+                        method: 'GET',
+                        data: {
+                            serviceID: serviceID,
+                            receiver_id: receiver_id
+                        },
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(data) {
+
+                        }
+                    });
+                } else {
+                    alert('Please select service');
+                    $('#message-input').val('');
                 }
-                $.ajax({
-                    url: '{{ url('submit-chat-count') }}',
-                    method: 'GET',
-                    data: {
-                        serviceID: serviceID,
-                        receiver_id: receiver_id
-                    },
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function(data) {
-
-                    }
-                });
-                // } else {
-                //     alert('Please select service');
-                //     $('#message-input').val('');
-                // }
             })
         });
-
-
         //Update count accoding to user-service based (manage accoding database)
         function UpdateChatCount(serviceID, receiver_id) {
             $.ajax({
                 url: '{{ url('update-chat-count') }}',
                 method: 'POST',
                 data: {
-
+                    serviceID: serviceID,
                     receiver_id: receiver_id
                 },
                 dataType: 'json',
@@ -458,11 +455,10 @@
     <script>
         setInterval(function() {
             var receiver_id = $("#ajax-chat-url").data('id');
-            // var serviceID = $("#ajax-chat-url-service-id").val();
-            var group_id = receiver_id + "-" + "1";
+            var serviceID = $("#ajax-chat-url-service-id").val();
+            var group_id = receiver_id + "-" + serviceID;
             getClientChat(group_id, true);
         }, 5000);
-        UpdateChatCount(1, $("#ajax-chat-url").data('id'));
     </script>
     <script>
         // Wait for the document to be ready

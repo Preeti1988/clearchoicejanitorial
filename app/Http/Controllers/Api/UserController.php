@@ -266,7 +266,7 @@ class UserController extends Controller
             $date_array = date('Y-m-d:D', mktime(0, 0, 0, $m, ($de - $i), $y));
             $response[] = $date_array;
         }
-        return response()->json(["status" => true, "message" => "Date Listing.", "data" =>array_reverse($response)  ]);
+        return response()->json(["status" => true, "message" => "Date Listing.", "data" => array_reverse($response)]);
     }
 
     /* Upload file for firebase image */
@@ -286,30 +286,32 @@ class UserController extends Controller
     public function home(Request $request)
     {
         $user = Auth::user();
-       
-        $servise_list_ids=ServiceMember::where('member_id', $user->userid)->groupBy('service_id')->pluck("service_id")->toArray();
 
-        $services=Service::whereIn("id",$servise_list_ids);
+        $servise_list_ids = ServiceMember::where('member_id', $user->userid)->groupBy('service_id')->pluck("service_id")->toArray();
+
+        $services = Service::whereIn("id", $servise_list_ids);
         if ($request->filled("date")) {
             $services = $services->whereDate('created_date', '=', Carbon::parse($request->date));
-        } 
-        $services =$services->get();
+        }
+        $services = $services->orderBy("created_date", "desc")->get();
         $response = array();
-        
+
         foreach ($services as $key => $service) {
-           
+
             $temp['service_name'] = isset($service->name) ? $service->name : '';
             $temp['service_id'] = isset($service->id) ? $service->id : '';
             $temp['service_id'] = isset($service->id) ? $service->id : '';
+            $temp['admin_name'] = User::where("admin", 1)->first() ? User::where("admin", 1)->first()->fullname : "Admin";
+
             $temp['image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : '';
 
             $temp['serviceScheduleEndDate'] = isset($service->scheduled_end_date) ? $service->scheduled_end_date : '';
 
-           $start_date=date("y-m-d",strtotime($service->created_date));
+            $start_date = date("y-m-d", strtotime($service->created_date));
             $combinedDateTime = Carbon::parse(" $start_date $service->service_start_time");
             $temp['start']  = $combinedDateTime->format('Y-m-d H:i:s');
             // $currentDate = Carbon::now()->toDateString();
-            $end_date=date("y-m-d",strtotime($service->scheduled_end_date));
+            $end_date = date("y-m-d", strtotime($service->scheduled_end_date));
             $combinedDateTime = Carbon::parse("$end_date $service->service_end_time");
             $temp['end']  = $combinedDateTime->format('Y-m-d H:i:s');
 
@@ -406,22 +408,26 @@ class UserController extends Controller
     public function submit_chat_count(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'service_id' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return errorMsg($validator->errors()->first());
-            }
+            // $validator = Validator::make($request->all(), [
+            //     'service_id' => 'required',
+            // ]);
+            // if ($validator->fails()) {
+            //     return errorMsg($validator->errors()->first());
+            // }
             $user = Auth::user();
-            $chat = ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->first();
+            $chat = ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)
+                // ->where('service_id', $request->service_id)
+                ->first();
             if (!empty($chat)) {
                 $count = $chat->read_status + 1;
-                ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)->where('service_id', $request->service_id)->update(['read_status' => $count]);
+                ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)
+                    // ->where('service_id', $request->service_id)
+                    ->update(['read_status' => $count]);
             } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
                 $ChatCount->receiver_id = 1;
-                $ChatCount->service_id = $request->service_id;
+                // $ChatCount->service_id = $request->service_id;
                 $ChatCount->read_status = 1;
                 $ChatCount->save();
             }
@@ -435,25 +441,29 @@ class UserController extends Controller
     {
         try {
 
-            $validator = Validator::make($request->all(), [
-                'service_id' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return errorMsg($validator->errors()->first());
-            }
+            // $validator = Validator::make($request->all(), [
+            //     'service_id' => 'required',
+            // ]);
+            // if ($validator->fails()) {
+            //     return errorMsg($validator->errors()->first());
+            // }
 
             $user = Auth::user();
 
-            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)->where('service_id', $request->service_id)->first();
+            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)
+                // ->where('service_id', $request->service_id)
+                ->first();
 
             if (!empty($chat)) {
                 $count = 0;
-                ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)->where('service_id', $request->service_id)->update(['read_status' => $count]);
+                ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)
+                    // ->where('service_id', $request->service_id)
+                    ->update(['read_status' => $count]);
             } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
                 $ChatCount->receiver_id = 1;
-                $ChatCount->service_id = $request->service_id;
+                // $ChatCount->service_id = $request->service_id;
                 $ChatCount->read_status = 0;
                 $ChatCount->save();
             }
@@ -535,7 +545,7 @@ class UserController extends Controller
         $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
         $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
         $temp['service_image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
-
+        $temp['admin_name'] = User::where("admin", 1)->first() ? User::where("admin", 1)->first()->fullname : "Admin";
         $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
         $client = Client::where('id', $service->assigned_client_id)->first();
         $temp['clientname'] = isset($client->name) ? $client->name : '';
@@ -556,7 +566,7 @@ class UserController extends Controller
         $members = [];
 
         foreach ($service->members as $item) {
-            if ($item->member) {
+            if ($item->member && $item->member->userid != $user->userid) {
                 $members[] = ["name" => $item->member->fullname, 'userid' => $item->member->userid, 'phone' => $item->member->phonenumber];
             }
         }

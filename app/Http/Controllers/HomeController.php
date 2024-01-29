@@ -46,9 +46,9 @@ class HomeController extends Controller
         $services = Service::query();
 
         $services = $services->count();
-        $members = User::where("admin", "!=", 1)->where("status", 1);
+        $members = User::where("admin", "!=", 1)->where("status", 1)->count();
 
-        $members = $members->count();
+
 
         $ongoing = Service::has("members");
         if (request()->has('date')) {
@@ -66,10 +66,15 @@ class HomeController extends Controller
         if (request()->has('search')) {
             $unassigned = $unassigned->where("name", "LIKE", "%" . trim(request('search')) . "%");
         }
-        $msgs = User::where('status', 1)->orderBy('userid', 'DESC')->get();
+        $msgs = User::where('status', 1)->orderBy(function ($query) {
+            // Replace 'getCountByUserId' with the actual name of your helper function
+            $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+        })->get();
 
         $unassigned = $unassigned->orderBy("id", "desc")->get();
         $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
+
+
         return view('admin.dashboard', compact('services', 'members', 'msgs', 'ongoing', 'request_members', 'unassigned'));
     }
 
@@ -531,7 +536,7 @@ class HomeController extends Controller
             } else {
                 $search = '';
                 $type = 1;
-                $datas = User::where('status', 1)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->paginate(10);
+                $datas = User::where('status', 1)->where('admin', '!=', 1)->orderBy('userid', 'DESC')->paginate(10);
 
 
                 return view('admin.teams.index', compact('datas', 'search', 'type'));
@@ -752,16 +757,16 @@ class HomeController extends Controller
             $serviceID = $request['serviceID']; /*service_id Id*/
             $receiver_id = $request['receiver_id']; /*receiver_id Id*/
             $user = Auth::user();
-            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->first();
+            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->first();
             if (!empty($chat)) {
                 $count = $chat->read_status + 1;
                 //dd($count);
-                ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->where('service_id', $serviceID)->update(['read_status' => $count]);
+                ChatCount::where('sender_id', 1)->where('receiver_id', $receiver_id)->update(['read_status' => $count]);
             } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = 1;
                 $ChatCount->receiver_id = $receiver_id;
-                $ChatCount->service_id = $serviceID;
+                // $ChatCount->service_id = $serviceID;
                 $ChatCount->read_status = 1;
                 $ChatCount->save();
             }
@@ -774,15 +779,16 @@ class HomeController extends Controller
     public function update_chat_count(Request $request)
     {
         try {
-            $serviceID = $request['serviceID']; /*service Id*/
+            // $serviceID = $request['serviceID']; /*service Id*/
             $receiver_id = $request['receiver_id']; /*receiver Id*/
 
-            $chat = ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->where('service_id', $serviceID)->first();
+            $chat = ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->first();
             if (!empty($chat)) {
                 $count = 0;
-                ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->where('service_id', $serviceID)->update(['read_status' => $count]);
+                ChatCount::where('sender_id', $receiver_id)->where('receiver_id', 1)->update(['read_status' => $count]);
+                return 'Updated';
             }
-            return 'Updated';
+            return 'not Updated';
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -808,15 +814,27 @@ class HomeController extends Controller
         try {
             if (isset($request->search)) {
                 $search = $request->search;
-                $datas = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy('userid', 'DESC')->get();
-                $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy('userid', 'DESC')->first();
+                $datas = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy(function ($query) {
+                    // Replace 'getCountByUserId' with the actual name of your helper function
+                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                })->get();
+                $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy(function ($query) {
+                    // Replace 'getCountByUserId' with the actual name of your helper function
+                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                })->first();
                 $servise_list = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get() : [];
                 $servise_first = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first() : null;
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
             } else {
                 $search = '';
-                $datas = User::where('status', 1)->orderBy('userid', 'DESC')->get();
-                $firstData = User::where('status', 1)->orderBy('userid', 'DESC')->first();
+                $datas = User::where('status', 1)->orderBy(function ($query) {
+                    // Replace 'getCountByUserId' with the actual name of your helper function
+                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                })->get();
+                $firstData = User::where('status', 1)->orderBy(function ($query) {
+                    // Replace 'getCountByUserId' with the actual name of your helper function
+                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                })->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
@@ -832,17 +850,29 @@ class HomeController extends Controller
             if (isset($request->search)) {
                 $id = encryptDecrypt('decrypt', $id);
                 $search = $request->search;
-                $datas = User::where('status', 1)->where('fullname', 'like', '%' . $search . '%')->orderBy('userid', 'DESC')->get();
+                $datas = User::where('status', 1)->where('fullname', 'like', '%' . $search . '%')->orderBy(function ($query) {
+                    // Replace 'getCountByUserId' with the actual name of your helper function
+                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                })->get();
                 $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->where('userid', $id)
-                    ->orderBy('userid', 'DESC')->first();
+                    ->orderBy(function ($query) {
+                        // Replace 'getCountByUserId' with the actual name of your helper function
+                        $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                    })->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_list', 'servise_first'));
             } else {
                 $id = encryptDecrypt('decrypt', $id);
                 $search = '';
-                $datas = User::where('status', 1)->orderBy('userid', 'DESC')->get();
-                $firstData = User::where('status', 1)->where('userid', $id)->orderBy('userid', 'DESC')->first();
+                $datas = User::where('status', 1)->orderBy(function ($query) {
+                    // Replace 'getCountByUserId' with the actual name of your helper function
+                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                })->get();
+                $firstData = User::where('status', 1)->where('userid', $id)->orderBy(function ($query) {
+                    // Replace 'getCountByUserId' with the actual name of your helper function
+                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+                })->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $id)->first();

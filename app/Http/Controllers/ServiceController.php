@@ -121,9 +121,9 @@ class ServiceController extends Controller
             $service->image = $image;
             $file->move(public_path('upload/services'), $image);
         }
-        if ($request->has('image')) {
-            $service->image = $request->image;
-        }
+        // if ($request->has('image')) {
+        //     $service->image = $request->image;
+        // }
         $service->save();
         return response()->json(['message' => 'Service Created Successfully', 'status' => 200]);
     }
@@ -214,9 +214,9 @@ class ServiceController extends Controller
             $service->image = $image;
             $file->move(public_path('upload/services'), $image);
         }
-        if ($request->has('image')) {
-            $service->image = $request->image;
-        }
+        // if ($request->has('image')) {
+        //     $service->image = $request->image;
+        // }
         $service->save();
         return response()->json(['message' => 'Service updated Successfully', 'status' => 200]);
     }

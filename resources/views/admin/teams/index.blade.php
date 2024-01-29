@@ -77,7 +77,8 @@
                                                     <div class="d-flex align-items-center action-btn-bg">
                                                         <div class="active-option">
                                                             <a href="{{ url('/teams-active') }}">
-                                                                <div class="form-check">
+                                                                <div class="form-check"
+                                                                    onclick="location.replace('{{ url('/teams-active') }}')">
                                                                     <input class="form-check-input" type="radio"
                                                                         name="flexRadioDefault"
                                                                         @if ($type == 1) checked @endif
@@ -90,7 +91,8 @@
                                                         </div>
                                                         <div class="inactive-option">
                                                             <a href="{{ url('/teams-inactive') }}">
-                                                                <div class="form-check ms-3">
+                                                                <div class="form-check ms-3"
+                                                                    onclick="location.replace('{{ url('/teams-inactive') }}')">
                                                                     <input class="form-check-input" type="radio"
                                                                         name="flexRadioDefault" id="flexRadioDefault2"
                                                                         @if ($type == 2) checked @endif>

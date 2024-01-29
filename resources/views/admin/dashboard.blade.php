@@ -36,7 +36,7 @@
                     <div class="overview-card">
                         <div class="overview-card-frant">
                             <div class="overview-card-text">
-                                <h3>{{ $services }}</h3>
+                                <h3>{{ $members }}</h3>
                                 <p>Team Members </p>
                             </div>
                             <div class="overview-card-media">

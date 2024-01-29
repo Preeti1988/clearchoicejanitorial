@@ -496,9 +496,13 @@
                                     <h3>Service Image *</h3>
                                     <div class="card mt-2 common-shadow">
                                         <div id="img_container">
-
+                                            @if ($service && $service->image)
+                                                <img style="height: 300px"
+                                                    src="{{ asset("public/upload/services/$service->image") }}"
+                                                    id="existing_image" alt="">
+                                            @endif
                                         </div>
-                                        <div class="dropzone" id="myDropzone"></div>
+                                        {{-- <div class="dropzone" id="myDropzone"></div> --}}
                                     </div>
                                     <input type="hidden" id="image" name="image"
                                         value="{{ $service ? $service->image : '' }}" class="form-control">
@@ -866,6 +870,7 @@
     <script>
         $(":input").inputmask();
 
+        var file = "";
 
         function fetchClient(id) {
             $.get("{{ route('fetchClient') }}" + "?id=" + id, function(data) {
@@ -923,83 +928,83 @@
 
 
         }
-        var uploaded = false;
-        Dropzone.options.myDropzone = {
-            maxFilesize: 1,
-            renameFile: function(file) {
-                var dt = new Date();
-                var time = dt.getTime();
-                return time + file.name;
-            },
-            maxFiles: 1,
-            acceptedFiles: ".jpeg,.jpg,.png",
-            timeout: 5000,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            url: "{{ route('image-upload') }}",
-            addRemoveLinks: true,
-            removedfile: function(file) {
-                var name = file.upload ? file.upload.filename : file.name;
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    type: 'POST',
-                    url: "{{ route('image-delete') }}",
-                    data: {
-                        filename: name
-                    },
-                    success: function(data) {
+        // var uploaded = false;
+        // Dropzone.options.myDropzone = {
+        //     maxFilesize: 1,
+        //     renameFile: function(file) {
+        //         var dt = new Date();
+        //         var time = dt.getTime();
+        //         return time + file.name;
+        //     },
+        //     maxFiles: 1,
+        //     acceptedFiles: ".jpeg,.jpg,.png",
+        //     timeout: 5000,
+        //     headers: {
+        //         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //     },
+        //     url: "{{ route('image-upload') }}",
+        //     addRemoveLinks: true,
+        //     removedfile: function(file) {
+        //         var name = file.upload ? file.upload.filename : file.name;
+        //         $.ajax({
+        //             headers: {
+        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        //             },
+        //             type: 'POST',
+        //             url: "{{ route('image-delete') }}",
+        //             data: {
+        //                 filename: name
+        //             },
+        //             success: function(data) {
 
 
-                        $("#image").val("");
-                    },
-                    error: function(e) {
-                        console.log(e);
-                    }
-                });
-                var fileRef;
-                return (fileRef = file.previewElement) != null ?
-                    fileRef.parentNode.removeChild(file.previewElement) : void 0;
-            },
-            success: function(file, response) {
-                $("#image").val(response);
+        //                 $("#image").val("");
+        //             },
+        //             error: function(e) {
+        //                 console.log(e);
+        //             }
+        //         });
+        //         var fileRef;
+        //         return (fileRef = file.previewElement) != null ?
+        //             fileRef.parentNode.removeChild(file.previewElement) : void 0;
+        //     },
+        //     success: function(file, response) {
+        //         $("#image").val(response);
 
-            },
-            error: function(file, response) {
-                return false;
-            },
-
-
-
-            init: function() {
-
-                @if ($service && $service->image)
-                    var imageName = "{{ $service->image }}";
-                    var imagePath = "{{ asset("public/upload/services/$service->image") }}";
-
-                    var myDropzone = this;
-
-                    // Add existing images to Dropzone
+        //     },
+        //     error: function(file, response) {
+        //         return false;
+        //     },
 
 
-                    var mockFile = {
-                        name: imageName,
-                        size: 200,
-                        id: 1
-                    };
 
-                    myDropzone.displayExistingFile(mockFile, imagePath);
-                @endif
-                this.on('addedfile', function(file) {
-                    if (this.files.length > 1) {
-                        this.removeFile(this.files[0]);
-                    }
-                });
-            }
+        //     init: function() {
 
-        };
+        //         @if ($service && $service->image)
+        //             var imageName = "{{ $service->image }}";
+        //             var imagePath = "{{ asset("public/upload/services/$service->image") }}";
+
+        //             var myDropzone = this;
+
+        //             // Add existing images to Dropzone
+
+
+        //             var mockFile = {
+        //                 name: imageName,
+        //                 size: 200,
+        //                 id: 1
+        //             };
+
+        //             myDropzone.displayExistingFile(mockFile, imagePath);
+        //         @endif
+        //         this.on('addedfile', function(file) {
+        //             if (this.files.length > 1) {
+        //                 this.removeFile(this.files[0]);
+        //             }
+        //         });
+        //     }
+
+        // };
 
         function initMap() {
 
@@ -1263,8 +1268,8 @@
             const mapContainer = document.getElementById('img_container');
 
             // Set the desired zoom level and map size
-            const zoomLevel = 30;
-            const mapSize = '400x600';
+            const zoomLevel = 20;
+            const mapSize = '600x400';
             const apiKey = "AIzaSyCDXuJl8qV7nsf-ynH3slL2iopSJm6y0mA";
             // Construct the static map URL
             const staticMapUrl =
@@ -1273,16 +1278,17 @@
             // Create an image element and set its source to the static map URL
             const mapImage = document.createElement('img');
             mapImage.src = staticMapUrl;
+            mapImage.style.height = "300px";
 
             // Append the image element to the map container
+            $("#existing_image").hide();
             mapContainer.appendChild(mapImage);
 
             // Convert the image to a blob
             const response = await fetch(staticMapUrl);
-            const blob = await response.blob();
+            file = await response.blob();
 
             // Create FormData and append the blob to it
-            const formData = new FormData();
 
 
             // Access the FormData in your submitForm function and send it to the server
@@ -1402,13 +1408,14 @@
                     $(".screen").show()
                     event.preventDefault();
                     let formData = new FormData(form);
+                    @if (!$service)
 
+                        if (file == "") {
 
-                    // if ($("#image").val() == "") {
-
-                    // Swal.fire("Error", "Please select atleast one image", 'error');
-                    // return false;
-                    // }
+                            Swal.fire("Error", "Please select atleast one image", 'error');
+                            return false;
+                        }
+                    @endif
 
                     if (items.length == 0) {
 
@@ -1430,6 +1437,8 @@
                     formData.append('service_items', JSON.stringify(items));
                     formData.append('inscopes', JSON.stringify(ISitems));
                     formData.append('outscopes', JSON.stringify(OSitems));
+                    formData.append('image', file, 'abc.png');
+
                     $.ajax({
                         type: 'post',
                         url: form.action,
