@@ -791,7 +791,7 @@ class UserController extends Controller
     public function sevice_timecard(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'service_id' => 'required',
+            // 'service_id' => 'required',
             'pay_period_start' => 'required',
             'pay_period_end' => 'required',
 
@@ -806,7 +806,7 @@ class UserController extends Controller
         $startPeriod = $request->pay_period_start;
         $endPeriod = $request->pay_period_end;
 
-        $service = Service::find($service_id);
+        $service = Service::find($service_id) ? Service::find($service_id) : "";
 
         $timesheet = ServiceTimesheet::select([
             'id',
@@ -825,7 +825,9 @@ class UserController extends Controller
             DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time))) as total_hours_worked_on_day_format'),
         ])
             ->where('assign_member_id', $member_id)
-            ->where('service_id', $service_id)
+            ->when($request->has('service_id'), function ($query) use ($service_id) {
+                return  $query->where('service_id', $service_id);
+            })
             ->whereBetween('date', [$startPeriod, $endPeriod])
             ->groupBy('id', 'service_id', 'assign_member_id', 'date', 'on_the_way_time', 'start_time', 'end_time', 'status', 'created_at', 'updated_at', DB::raw('WEEK(date)'))
             ->orderBy('date', 'asc')
@@ -893,12 +895,11 @@ class UserController extends Controller
 
         $data = [
             'name' => $member->fullname,
-            'job_title' => $service->name,
-            'job_location' => $service->client ? $service->client->street : '',
-            'store_name' => $service->client ? $service->client->name : '',
-            'store_number' => $service->client ? $service->client->home_number : '',
+            'job_title' => $service->name ?? "",
+            'job_location' =>  $service ? ($service->client ? $service->client->street : '') : "",
+            'store_name' => $service ? ($service->client ? $service->client->name : '') : "",
+            'store_number' => $service ? ($service->client ? $service->client->home_number : '') : '',
             'timesheet' => $result, 'total_hours' => $this->formatTime($totalHoursInWeekFormat),
-
         ];
 
         return response()->json(["status" => true, "message" => "timesheet.", "data" => $data]);
@@ -957,5 +958,35 @@ class UserController extends Controller
             $service->service_image = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
         }
         return response()->json(["status" => true, "message" => "incompleted services.", "data" => $services]);
+    }
+    function forget_password(Request $request)
+
+    {
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required|email|exists:user',
+
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        $rand = rand(1000, 9999);
+        return response()->json(["status" => true, "message" => "OTP sent successfully.", "data" => $rand]);
+    }
+    function reset_password(Request $request)
+
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:user',
+            'password' => 'required|min:6|confirmed',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        $user = User::where("email", $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+        return response()->json(["status" => true, "message" => "Password updated successfully.", "data" => $user]);
     }
 }

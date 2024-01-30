@@ -1437,8 +1437,9 @@
                     formData.append('service_items', JSON.stringify(items));
                     formData.append('inscopes', JSON.stringify(ISitems));
                     formData.append('outscopes', JSON.stringify(OSitems));
-                    formData.append('image', file, 'abc.png');
-
+                    if (file != "") {
+                        formData.append('image', file, 'abc.png');
+                    }
                     $.ajax({
                         type: 'post',
                         url: form.action,

@@ -46,7 +46,7 @@ class HomeController extends Controller
         $services = Service::query();
 
         $services = $services->count();
-        $members = User::where("admin", "!=", 1)->where("status", 1)->count();
+        $members = User::where('user_type', 2)->where("status", 1)->count();
 
 
 
@@ -210,11 +210,11 @@ class HomeController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'resume' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
+                'resume' => 'required|mimes:pdf,doc,docx|max:5120',
                 'first_name' => 'required|string|max:255|min:1',
                 'last_name' => 'required|string|max:255|min:1',
                 'email' => 'required|email|unique:user',
-                'phonenumber' => 'required|unique:user',
+                'mobile_phone' => 'required',
                 'password' => ['required', 'min:8'],
                 'c_password' => ['required', 'same:password', 'min:8'],
             ]);
@@ -222,44 +222,56 @@ class HomeController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            $resume = "";
-            if ($request->file('resume')) {
+            $user = new User();
+            $resume = '';
+            $resume_file_name = '';
+            if ($request->hasFile('resume')) {
 
                 $file = $request->file("resume");
                 $imageName = 'IMG_' . date('Ymd') . '_' . date('His') . '_' . rand(1000, 9999) . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('upload/resume'), $imageName);
                 $resume = public_path('upload/resume') . $imageName;
                 $resume_file_name = $imageName;
-            } else {
-                $resume = '';
-                $resume_file_name = '';
             }
-            $user = User::create([
-                'fullname' => $request->first_name . ' ' . $request->last_name,
-                'email' => strtolower($request->email),
-                'address' => $request->address,
-                'display_name' => $request->display_name,
-                'company_name' => $request->company_name,
-                'phonenumber' => $request->mobile_phone,
-                'home_phone' => $request->home_phone,
-                'work_phone' => $request->work_phone,
-                'designation_id' => $request->role,
-                'marital_status' => $request->marital_status,
-                'DOB' => $request->dob,
-                'ownertype' => $request->ownertype,
-                'address_notes' => $request->address_notes,
-                'contractor' => $request->contractor,
-                'street' => $request->street,
-                'unit' => $request->unit,
-                'country_id' => $request->country_id,
-                'state_id' => $request->state_id,
-                'city' => $request->city,
-                'zipcode' => $request->zipcode,
-                'resume' => $resume,
-                'resume_file_name' => $resume_file_name,
-                'password' => Hash::make($request->password),
-                'status' => 0,
-            ]);
+            $user->resume = $resume;
+            $user->resume = $resume_file_name;
+
+            $user->fullname = $request->first_name . ' ' . $request->last_name;
+            $user->email = $request->email;
+            $user->status = 1;
+            $user->address = $request->address;
+            $user->display_name = $request->display_name;
+            $user->company_name = $request->company_name;
+            $user->phonenumber = $request->mobile_phone;
+            $user->home_phone = $request->home_phone;
+            $user->work_phone = $request->work_phone;
+            $user->emergency_phone = $request->emergency_phone;
+            $user->rate_of_pay = $request->rate_of_pay;
+            $user->duration_of_rate = $request->duration_of_rate;
+
+
+            $user->designation_id = $request->role;
+            $user->marital_status = $request->marital_status;
+            $user->DOB = $request->dob;
+            $user->ownertype = $request->ownertype;
+            $user->address_notes = $request->address_notes;
+            $user->contractor = $request->contractor;
+            $user->street = $request->street;
+            $user->unit = $request->unit;
+            $user->country_id = $request->country_id;
+            $user->state_id = $request->state_id;
+            $user->city = $request->city;
+            $user->zipcode = $request->zipcode;
+
+
+            // Newly added parameter
+            $user->bank = $request->bank;
+            $user->ssn = $request->ssn;
+            $user->account = $request->account;
+            $user->routing_number = $request->routing_number;
+
+            $user->save();
+
             return redirect('teams-active')->with('success', 'Team member created successfully');
         } catch (\Exception $e) {
             // return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
@@ -526,7 +538,7 @@ class HomeController extends Controller
             if ($request->has("search")) {
                 $search = $request->search;
                 $type = 1;
-                $datas = User::where('status', 1)->where('userid', '!=', 1)->where(function ($query) use ($search) {
+                $datas = User::where('status', 1)->where('user_type', 2)->where(function ($query) use ($search) {
                     $query->orwhere('fullname', 'like', '%' . $search . '%')
                         ->orwhere('email', 'like', '%' . $search . '%')
                         ->orwhere('userid', 'like', '%' . $search . '%')
@@ -536,7 +548,7 @@ class HomeController extends Controller
             } else {
                 $search = '';
                 $type = 1;
-                $datas = User::where('status', 1)->where('admin', '!=', 1)->orderBy('userid', 'DESC')->paginate(10);
+                $datas = User::where('status', 1)->where('user_type', 2)->orderBy('userid', 'DESC')->paginate(10);
 
 
                 return view('admin.teams.index', compact('datas', 'search', 'type'));
@@ -552,7 +564,7 @@ class HomeController extends Controller
             if ($request->has("search")) {
                 $search = $request->search;
                 $type = 2;
-                $datas = User::where('status', 2)->where('userid', '!=', 1)->where(function ($query) use ($search) {
+                $datas = User::where('status', 2)->where('user_type', 2)->where(function ($query) use ($search) {
                     $query->orwhere('fullname', 'like', '%' . $search . '%')
                         ->orwhere('email', 'like', '%' . $search . '%')
                         ->orwhere('userid', 'like', '%' . $search . '%')
@@ -1073,5 +1085,18 @@ class HomeController extends Controller
         }
 
         return trim($formattedTime);
+    }
+
+    function AddTeamMember()
+    {
+        $designation = Designation::orderBy('id', 'DESC')->get();
+        $country = Country::orderBy('id', 'DESC')->get();
+        $state = State::orderBy('id', 'DESC')->get();
+
+        $MaritalStatus = MaritalStatus::orderBy('id', 'DESC')->get();
+
+        $city = City::orderBy('id', 'DESC')->take(1000)->get();
+        $data = null;
+        return view('admin.teams.edit', compact('designation', 'data', 'country', 'state', 'city',  'MaritalStatus'));
     }
 }

@@ -25,6 +25,9 @@ Route::post('state', [UserController::class, 'state']);
 Route::post('city', [UserController::class, 'city']);
 Route::get('designation', [UserController::class, 'designation']);
 Route::post('submit-review', [UserController::class, 'submit_review']);
+Route::post('forget-password', [UserController::class, 'forget_password']);
+Route::post('reset-password', [UserController::class, 'reset_password']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('profile', [UserController::class, 'userDetails']);
     Route::post('update-profile', [UserController::class, 'updateProfile']);

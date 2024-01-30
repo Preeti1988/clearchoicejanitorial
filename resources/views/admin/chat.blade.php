@@ -182,14 +182,14 @@
         } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyDf4ELcOikFnTqdG0xqLSRJb1G8_m4VT7k",
-            authDomain: "clearchoice-619de.firebaseapp.com",
-            databaseURL: "https://clearchoice-619de-default-rtdb.firebaseio.com",
-            projectId: "clearchoice-619de",
-            storageBucket: "clearchoice-619de.appspot.com",
-            messagingSenderId: "821858695540",
-            appId: "1:821858695540:web:cf95a17411383e4d22d421",
-            measurementId: "G-S14B9V3K3B"
+            apiKey: "AIzaSyAwbd-RLN-OJgAAfYcSXl3PWnaGTv_q_po",
+            authDomain: "clearchoice-3c177.firebaseapp.com",
+            databaseURL: "https://clearchoice-3c177-default-rtdb.firebaseio.com",
+            projectId: "clearchoice-3c177",
+            storageBucket: "clearchoice-3c177.appspot.com",
+            messagingSenderId: "39764022000",
+            appId: "1:39764022000:web:f928794158d13fb1be2835",
+            measurementId: "G-S5D611B9ZF"
         };
 
         var receiver_id = $("#ajax-chat-url").data('id');

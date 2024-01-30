@@ -53,6 +53,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/save-client', [App\Http\Controllers\HomeController::class, 'SaveClient'])->name('SaveClient');
     Route::get('/edit-teammember/{id}', [App\Http\Controllers\HomeController::class, 'EditTeamMember'])->name('EditTeamMember');
     Route::get('/edit-client/{id}', [App\Http\Controllers\HomeController::class, 'EditClient'])->name('EditClient');
+    Route::get('/add-teammember', [App\Http\Controllers\HomeController::class, 'AddTeamMember'])->name('AddTeamMember');
+
     Route::post('/save-teammember', [App\Http\Controllers\HomeController::class, 'SaveTeamMember'])->name('SaveTeamMember');
     Route::post('/update-teammember', [App\Http\Controllers\HomeController::class, 'UpdateTeamMember'])->name('UpdateTeamMember');
     Route::post('/update-client', [App\Http\Controllers\HomeController::class, 'UpdateClient'])->name('UpdateClient');
@@ -93,3 +95,4 @@ Route::post("get-country", [AjaxController::class, 'getCountry'])->name('getCoun
 
 Route::post('upload-image', [AjaxController::class, 'uploadImage'])->name('image-upload');
 Route::post('delete-image', [AjaxController::class, 'deleteImage'])->name('image-delete');
+Route::post('update-status', [AjaxController::class, 'updateStatus'])->name('updateStatus');

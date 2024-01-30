@@ -30,10 +30,11 @@
     <div class="body-main-content">
         <div class="create-service-section">
             <div class="create-service-heading">
-                <h3>Edit Team Members</h3>
+                <h3>{{ $data ? 'Edit' : 'Add' }} Team Members</h3>
             </div>
             <div class="create-service-form">
-                <form action="{{ route('UpdateTeamMember') }}" method="POST" enctype="multipart/form-data" id="team_edit">
+                <form action="{{ $data ? route('UpdateTeamMember') : route('SaveTeamMember') }}" method="POST"
+                    enctype="multipart/form-data" id="team_edit">
                     @csrf
                     <input type="hidden" name="userid" value="{{ $data->userid ?? '' }}">
                     <div class="create-service-form-box">
@@ -42,38 +43,38 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <?php $arr = [];
-                                    $arr = explode(' ', ucwords($data->fullname), 2); ?>
+                                    $arr = $data ? explode(' ', ucwords($data->fullname), 2) : ['', '']; ?>
                                     <h3>First Name *</h3>
                                     <input type="text" class="form-control" name="first_name" placeholder="First Name"
-                                        value="{{ $arr[0] ?? '' }}" required>
+                                        value="{{ $arr[0] ?? old('first_name') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Last Name </h3>
                                     <input type="text" class="form-control" name="last_name" placeholder="Last Name"
-                                        value="{{ $arr[1] ?? '' }}">
+                                        value="{{ $arr[1] ?? old('last_name') }}">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Email Address *</h3>
                                     <input type="email" class="form-control" name="email" placeholder="Email Address"
-                                        value="{{ $data->email ?? '' }}" required>
+                                        value="{{ $data->email ?? old('email') }}" required>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Display Name *</h3>
                                     <input type="text" class="form-control" name="display_name" required
-                                        value="{{ $data->display_name ?? '' }}" placeholder="Display Name">
+                                        value="{{ $data->display_name ?? old('display_name') }}" placeholder="Display Name">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Company Name</h3>
                                     <input type="text" class="form-control" name="company_name"
-                                        value="{{ $data->company_name ?? '' }}" placeholder="Company Name">
+                                        value="{{ $data->company_name ?? old('company_name') }}" placeholder="Company Name">
                                 </div>
                             </div>
 
@@ -82,7 +83,8 @@
                                     <h3>Mobile phone *</h3>
                                     <input type="text" class="form-control" name="mobile_phone"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ $data->phonenumber ?? '' }}" placeholder="Mobile phone" required>
+                                        value="{{ $data->phonenumber ?? old('mobile_phone') }}" placeholder="Mobile phone"
+                                        required>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -90,7 +92,7 @@
                                     <h3>Home phone</h3>
                                     <input type="text" class="form-control" name="home_phone"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ $data->home_phone ?? '' }}" placeholder="Home phone">
+                                        value="{{ $data->home_phone ?? old('home_phone') }}" placeholder="Home phone">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -98,7 +100,7 @@
                                     <h3>Work phone </h3>
                                     <input type="text" class="form-control" name="work_phone"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ $data->work_phone ?? '' }}" placeholder="Work phone">
+                                        value="{{ $data->work_phone ?? old('work_phone') }}" placeholder="Work phone">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -106,7 +108,7 @@
                                     <h3>Emergency Contact </h3>
                                     <input type="text" class="form-control" name="emergency_phone"
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
-                                        value="{{ $data->emergency_phone ? $data->emergency_phone : old('emergency_phone') }}"
+                                        value="{{ $data->emergency_phone ?? old('emergency_phone') }}"
                                         placeholder="Emergency Contact">
                                 </div>
                             </div>
@@ -116,7 +118,7 @@
                                     <select class="form-control" name="role" required>
                                         @foreach ($designation as $desi)
                                             <option
-                                                value="{{ $desi->id }}"@if ($data->designation_id == $desi->id) selected @endif>
+                                                value="{{ $desi->id }}"@if ($data && $data->designation_id == $desi->id) selected @endif>
                                                 {{ $desi->name }}</option>
                                         @endforeach
                                     </select>
@@ -128,7 +130,7 @@
                                     <select class="form-control" name="marital_status" required>
                                         @foreach ($MaritalStatus as $matstatus)
                                             <option value="{{ $matstatus->id }}"
-                                                @if ($data->marital_status == $matstatus->id) selected @endif>
+                                                @if ($data && $data->marital_status == $matstatus->id) selected @endif>
                                                 {{ $matstatus->name }}</option>
                                         @endforeach
                                     </select>
@@ -151,14 +153,14 @@
                                             <div class="ccjradio">
                                                 <input type="radio" checked name="ownertype" id="Employee"
                                                     value="Employee"
-                                                    {{ $data->ownertype == 'Employee' ? 'checked' : '' }}>
+                                                    {{ $data && $data->ownertype == 'Employee' ? 'checked' : '' }}>
                                                 <label for="Employee">Employee</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="ccjradio">
                                                 <input type="radio" name="ownertype"
-                                                    {{ $data->ownertype == 'SubContractor Employee' ? 'checked' : '' }}
+                                                    {{ $data && $data->ownertype == 'SubContractor Employee' ? 'checked' : '' }}
                                                     value="SubContractor Employee" id="SubContractor Employee">
                                                 <label for="SubContractor Employee">SubContractor Employee</label>
                                             </div>
@@ -174,14 +176,14 @@
                                             <div class="ccjradio">
                                                 <input type="radio" checked name="duration_of_rate" id="Hourly"
                                                     onchange="checkDuration(this)" onchange="" value="Hourly"
-                                                    {{ $data->duration_of_rate == 'Hourly' ? 'checked' : '' }}>
+                                                    {{ $data && $data->duration_of_rate == 'Hourly' ? 'checked' : '' }}>
                                                 <label for="Hourly">Hourly</label>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="ccjradio">
                                                 <input type="radio" name="duration_of_rate"
-                                                    {{ $data->duration_of_rate == 'Monthly' ? 'checked' : '' }}
+                                                    {{ $data && $data->duration_of_rate == 'Monthly' ? 'checked' : '' }}
                                                     value="Monthly" onchange="checkDuration(this)" id="Monthly">
                                                 <label for="Monthly">Monthly</label>
                                             </div>
@@ -192,10 +194,11 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Rate of pay (per <span id="duration">
-                                            {{ $data->duration_of_rate == 'Monthly' ? 'month' : 'hour' }}</span> )</h3>
+                                            {{ $data && $data->duration_of_rate == 'Monthly' ? 'month' : 'hour' }}</span> )
+                                    </h3>
                                     <div class="dollar-sign">
                                         <input type="text" class="form-control" name="rate_of_pay"
-                                            value="{{ $data->rate_of_pay ? $data->rate_of_pay : old('rate_of_pay') }}"
+                                            value="{{ $data && $data->rate_of_pay ? $data->rate_of_pay : old('rate_of_pay') }}"
                                             placeholder="Rate of pay">
                                     </div>
 
@@ -278,7 +281,7 @@
                                 <div class="form-group">
                                     <h3>Bank Name</h3>
                                     <input type="text" name="bank" class="form-control"
-                                        value="{{ $data->bank }}" placeholder="Bank Name">
+                                        value="{{ $data->bank ?? old('bank') }}" placeholder="Bank Name">
 
                                 </div>
                             </div>
@@ -286,7 +289,7 @@
                                 <div class="form-group">
                                     <h3>Account Number</h3>
                                     <input type="text" name="account" class="form-control"
-                                        value="{{ $data->account }}" placeholder="Account Number">
+                                        value="{{ $data->account ?? old('account') }}" placeholder="Account Number">
 
                                 </div>
                             </div>
@@ -294,7 +297,7 @@
                                 <div class="form-group">
                                     <h3>SSN</h3>
                                     <input type="text" name="ssn" class="form-control"
-                                        value="{{ $data->ssn }}" placeholder="SSN">
+                                        value="{{ $data->ssn ?? old('ssn') }}" placeholder="SSN">
 
                                 </div>
                             </div>
@@ -302,7 +305,8 @@
                                 <div class="form-group">
                                     <h3>Routing Number</h3>
                                     <input type="text" name="routing_number" class="form-control"
-                                        value="{{ $data->routing_number }}" placeholder="Routing Number">
+                                        value="{{ $data->routing_number ?? old('routing_number') }}"
+                                        placeholder="Routing Number">
 
                                 </div>
                             </div>
@@ -347,7 +351,7 @@
 
                     <div class="create-service-form-action">
                         <button class="cancelbtn">cancel</button>
-                        <button class="Savebtn" type="submit">Update</button>
+                        <button class="Savebtn" type="submit"> {{ $data ? 'Update' : 'Create' }}</button>
                     </div>
                 </form>
             </div>

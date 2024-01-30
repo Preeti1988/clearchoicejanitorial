@@ -46,7 +46,7 @@ if (!function_exists('CountryCode')) {
     function CountryCode($id)
     {
         $country = Country::where('id', $id)->first();
-        $phonecode = $country ? $country->phonecode : "+1";
+        $phonecode = $country ? $country->phonecode : "1";
         return $phonecode;
     }
 }

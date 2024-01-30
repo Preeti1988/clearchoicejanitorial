@@ -47,46 +47,46 @@ class AjaxController extends Controller
             $members = State::where("country_id", $key)->get();
             return $members;
         } else {
-            
+
             return [];
         }
     }
     public function getCountry()
     {
-        $country_id=0;
-        $state_id=0;
-        $city_id=0;
-        $cities=[];
-        $states=[];
+        $country_id = 0;
+        $state_id = 0;
+        $city_id = 0;
+        $cities = [];
+        $states = [];
 
-        if (request()->has('country')&&request()->has('state')&&request()->has('city')) {
+        if (request()->has('country') && request()->has('state') && request()->has('city')) {
 
             $key = trim(request("country"));
             $country = Country::where("name", $key)->first();
-            $country_id= $country? $country->id:0;
-            
-         if($country_id){
-            $key = trim(request("state"));
-            $state = State::where("name", $key)->where("country_id",$country_id)->first();
-            $state_id= $state? $state->id:0; 
-            
-            $states = State::where("country_id",$country_id)->get();
-         }
-           
-         if($state_id){
-            $key = trim(request("city"));
-            $city = City::where("name", $key)->where("state_id",$state_id)->first();
-            $city_id= $city? $city->id:0;
+            $country_id = $country ? $country->id : 0;
 
-            $cities = City::where("state_id",$state_id)->get();
-         }
+            if ($country_id) {
+                $key = trim(request("state"));
+                $state = State::where("name", $key)->where("country_id", $country_id)->first();
+                $state_id = $state ? $state->id : 0;
 
-          
+                $states = State::where("country_id", $country_id)->get();
+            }
 
-            
-            return ['country_id'=>$country_id,'state_id'=>$state_id,'city_id'=>$city_id,"cities"=>$cities,"states"=>$states];
+            if ($state_id) {
+                $key = trim(request("city"));
+                $city = City::where("name", $key)->where("state_id", $state_id)->first();
+                $city_id = $city ? $city->id : 0;
+
+                $cities = City::where("state_id", $state_id)->get();
+            }
+
+
+
+
+            return ['country_id' => $country_id, 'state_id' => $state_id, 'city_id' => $city_id, "cities" => $cities, "states" => $states];
         } else {
-            return ['country_id'=>$country_id,'state_id'=>$state_id,'city_id'=>$city_id,];
+            return ['country_id' => $country_id, 'state_id' => $state_id, 'city_id' => $city_id,];
         }
     }
     public function getCity()
@@ -120,5 +120,13 @@ class AjaxController extends Controller
         }
     }
 
-   
+    function updateStatus()
+    {
+        if (request()->has('userid')) {
+            $user = User::find(request("userid"));
+            $user->status = request('status');
+            $user->save();
+        }
+        return response()->json(['status' => 200, 'message' => 'Member Status updated Successfully.']);
+    }
 }
