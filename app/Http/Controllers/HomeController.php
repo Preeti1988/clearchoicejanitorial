@@ -15,6 +15,7 @@ use App\Models\Country;
 use App\Models\ChatCount;
 use App\Models\State;
 use App\Models\City;
+use App\Models\ServiceItemTimesheet;
 use Carbon\Carbon;
 use App\Models\ServiceMember;
 use App\Models\ServiceTimesheet;
@@ -1014,13 +1015,38 @@ class HomeController extends Controller
                 $daysInWeek = [];
             }
 
+            //    calculate hours in this records service items
+            $items = [];
+
+            $service_items_records =    ServiceItemTimesheet::where('assign_member_id', $record->assign_member_id)->where('service_id', $record->service_id)
+                ->whereDate('date', $record->date)->get();
+
+            foreach ($service_items_records as  $item) {
+                if ($item->start_time != "" && $item->end_time != "") {
+                    $startTime = Carbon::parse($item->start_time);
+                    $endTime = Carbon::parse($item->end_time);
+
+                    // Calculate the difference in seconds
+                    $totalSeconds = $this->formatTime($endTime->diffInSeconds($startTime));
+                    $items[] = [
+                        'name' => ServicesValue::find($item->service_item_id) ? ServicesValue::find($item->service_item_id)->name : "",
+                        'total_hours' => $totalSeconds
+                    ];
+                } else {
+                    $items[] = [
+                        'name' => ServicesValue::find($item->service_item_id) ? ServicesValue::find($item->service_item_id)->name : "",
+                        'total_hours' => "0 hours"
+                    ];
+                }
+            }
             // Record the details for the current day
             $daysInWeek[] = [
                 'date' => $record->formatted_date,
                 'start_time' => $record->start_time,
                 'end_time' => $record->end_time,
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
-                'total_hours_worked_on_day_format' => $this->formatime($record->total_hours_worked_on_day_format),
+                'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
+                'service_items' => $items
 
             ];
 

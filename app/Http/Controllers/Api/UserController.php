@@ -18,6 +18,7 @@ use App\Models\Designation;
 use App\Models\Review;
 use App\Models\ServiceTimesheet;
 use App\Models\ChatCount;
+use App\Models\ServiceItemTimesheet;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
@@ -559,7 +560,24 @@ class UserController extends Controller
         $services_values = ServicesValue::orderBy('id', 'DESC')->get();
         $temp['inscope'] = json_decode($service->inscopes);
         $temp['OutScope'] =  json_decode($service->outscopes);
-        $temp['ServicesItems'] =  json_decode($service->service_items);
+
+        $service_items = json_decode($service->service_items);
+
+        foreach ($service_items as  $item) {
+
+            $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->where('service_item_id', $item->id)
+                ->whereDate('date', date('Y-m-d'))->first();
+
+            if ($timesheet) {
+                $item->start_time = date("h:i A", strtotime($timesheet->start_time));
+                $item->end_time =  date("h:i A", strtotime($timesheet->end_time));
+            } else {
+                $item->start_time = "";
+                $item->end_time = "";
+            }
+        }
+
+        $temp['ServicesItems'] = $service_items;
 
         $temp['service'] = $service;
 
@@ -629,6 +647,54 @@ class UserController extends Controller
             $sheet->start_time = '';
             $sheet->end_time = '';
             $sheet->status = 2;
+            $sheet->save();
+        }
+
+        //ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->update(['status'=>$request->status,$key=>$value]);
+        return response()->json(["status" => true, "message" => "Status updated."]);
+    }
+    public function UpdateServiceItemsStatus(Request $request)
+    {
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'service_id' => 'required',
+            'service_item_id' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
+
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'message' => $validator->errors()->first()]);
+        }
+        // $status = $request->status; /*2:On the way, 3:Start timimg, 4: Finish*/
+        // if ($status == 2) {
+        //     $key = 'on_the_way';
+        //     $value = date('H:i:s');
+        //     $date = date('Y-m-d');
+        // } elseif ($status == 3) {
+        //     $key = 'start_time';
+        //     $value = date('H:i:s');
+        //     $date = date('Y-m-d');
+        // } elseif ($status == 4) {
+        //     $key = 'end_time';
+        //     $value = date('H:i:s');
+        //     $date = date('Y-m-d');
+        // }
+        $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->where('service_item_id', $request->service_item_id)
+            ->whereDate('date', date('Y-m-d'))->first();
+        if (!empty($timesheet)) {
+            ServiceItemTimesheet::where('assign_member_id', $user->userid)
+                ->where('service_id', $request->service_id)->where('service_item_id', $request->service_item_id)
+                ->whereDate('date', date('Y-m-d'))
+                ->update(['start_time' => $request->start_time, 'end_time' => $request->end_time,]);
+        } else {
+            $sheet = new ServiceItemTimesheet;
+            $sheet->assign_member_id = $user->userid;
+            $sheet->service_id = $request->service_id;
+            $sheet->service_item_id = $request->service_item_id;
+            $sheet->date = date('Y-m-d');
+            $sheet->start_time = $request->start_time;
+            $sheet->end_time = $request->end_time;
             $sheet->save();
         }
 
@@ -864,6 +930,39 @@ class UserController extends Controller
                 $daysInWeek = [];
             }
 
+            //    calculate hours in this records service items
+            $items = [];
+
+
+            $service = Service::find($record->service_id);
+            if ($service && $service->service_items != "") {
+                $service_items = json_decode($service->service_items);
+
+                foreach ($service_items as $service_item) {
+                    $service_item_id = $service_item->id;
+                    $item =    ServiceItemTimesheet::where('assign_member_id', $record->assign_member_id)
+                        ->where('service_item_id', $service_item_id)
+                        ->whereDate('date', $record->date)->first();
+
+                    if ($item && $item->start_time != "" && $item->end_time != "") {
+                        $startTime = Carbon::parse($item->start_time);
+                        $endTime = Carbon::parse($item->end_time);
+
+                        // Calculate the difference in seconds
+                        $totalSeconds = $this->formatTime($endTime->diffInSeconds($startTime));
+                        $items[] = [
+                            'name' => $service_item->name,
+                            'total_hours' => $totalSeconds
+                        ];
+                    } else {
+                        $items[] = [
+                            'name' => $service_item->name,
+                            'total_hours' => "0 hours"
+                        ];
+                    }
+                }
+            }
+
             // Record the details for the current day
             $daysInWeek[] = [
                 'date' => $record->formatted_date,
@@ -871,6 +970,7 @@ class UserController extends Controller
                 'end_time' => $record->end_time,
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
                 'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
+                'service_items' => $items
 
             ];
 

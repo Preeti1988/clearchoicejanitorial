@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('services', [UserController::class, 'services']);
     Route::post('service-details', [UserController::class, 'service_details']);
     Route::post('update-status', [UserController::class, 'UpdateStatus']);
+    Route::post('update-service-item-status', [UserController::class, 'UpdateServiceItemsStatus']);
 
     Route::get('DateOfWeek', [UserController::class, 'DateOfWeek']);
     Route::post("service-list", [UserController::class, 'sevice_list']);
