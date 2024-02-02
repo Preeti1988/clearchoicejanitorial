@@ -118,9 +118,21 @@
                                             <div class="client-info">
                                                 <div class="client-info-icon">
                                                     {{ $item->client ? substr($item->client->name, 0, 1) : 'N/A' }} </div>
-                                                <div class="client-info-text">
-                                                    {{ $item->client ? $item->client->name : 'N/A' }}
-                                                </div>
+
+                                                @if ($item->client)
+                                                    <div class="client-info-text">
+                                                        {{ $item->client ? $item->client->name : 'N/A' }}
+                                                        &nbsp;
+                                                        &nbsp;
+
+                                                        <b style="cursor: pointer;color:#7BC043" onclick="showInfo(this)"
+                                                            data-name="{{ $item->client->name }}"
+                                                            data-email_address="{{ $item->client->email_address }}"
+                                                            data-company="{{ $item->client->company }}"
+                                                            data-mobile_number="{{ $item->client->mobile_number }}"
+                                                            data-street="{{ $item->client->street }}">info</b>
+                                                    </div>
+                                                @endif
                                             </div>
 
                                         </div>
@@ -443,5 +455,51 @@
                 </div>
             </div>
         </div>
+    </div> <!-- Marital Status Modal -->
+    <div class="modal fade" id="addMarital" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center"><span id="marital_text">Client</span> Details</h5>
+                    <table class="table">
+                        <tr>
+                            <td align="right">Name:</td>
+                            <td align="left"> <b id="name"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Email:</td>
+                            <td align="left"> <b id="email_address"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Mobile Number:</td>
+                            <td align="left"> <b id="mobile_number"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Address:</td>
+                            <td align="left"> <b id="street"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Company:</td>
+                            <td align="left"> <b id="company"></b> </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+    <script>
+        function showInfo(ele) {
+            $("#addMarital").modal("show");
+            $("#name").text(ele.getAttribute("data-name"));
+            $("#email_address").text(ele.getAttribute("data-email_address"));
+            $("#mobile_number").text(ele.getAttribute("data-mobile_number"));
+            $("#street").text(ele.getAttribute("data-street"));
+            $("#company").text(ele.getAttribute("data-company"));
+
+        }
+    </script>
 @endsection

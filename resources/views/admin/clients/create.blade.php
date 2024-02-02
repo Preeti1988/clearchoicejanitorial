@@ -235,7 +235,7 @@
                     <div class="create-service-form-action">
                         <button class="cancelbtn" type="button"
                             onclick="location.replace('route('Clients')')">Cancel</button>
-                        <button class="Savebtn" type="submit">Save</button>
+                        <button class="Savebtn" type="submit">Save And Proceed</button>
                     </div>
                 </form>
             </div>

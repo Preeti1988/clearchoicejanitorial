@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+// use Spatie\LaravelPdf\Facades\Pdf;
 
 class HomeController extends Controller
 {
@@ -149,7 +150,7 @@ class HomeController extends Controller
                 'status' => 1,
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
-            return redirect('client')->with('message', 'client created successfully');
+            return redirect(route("services.create"))->with('message', 'client created successfully');
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
         }
@@ -1078,6 +1079,8 @@ class HomeController extends Controller
         foreach ($result as $data) {
             $total_days += $data['total_days_worked'];
         }
+
+
         $data = [
             'data' => $member,
             'start_period' => $startPeriod,
@@ -1088,6 +1091,7 @@ class HomeController extends Controller
 
         ];
         // dd($data['timesheet']);
+
         return view("admin.teams.timecard", $data);
     }
     function formatime($totalSeconds)
@@ -1124,5 +1128,24 @@ class HomeController extends Controller
         $city = City::orderBy('id', 'DESC')->take(1000)->get();
         $data = null;
         return view('admin.teams.edit', compact('designation', 'data', 'country', 'state', 'city',  'MaritalStatus'));
+    }
+
+    public function calender()
+    {
+
+        $arr = Service::has("members")->get();
+        $services = [];
+        foreach ($arr as $value) {
+            $services[] = [
+
+                'start' => Carbon::createFromFormat('Y-m-d H:i:s', date("Y-m-d", strtotime($value->created_date)) . " " . $value->service_start_time),
+                'title' => $value->name,
+                'url' => route("services.edit", $value),
+
+
+            ];
+        }
+
+        return view("admin.calender", compact('services'));
     }
 }

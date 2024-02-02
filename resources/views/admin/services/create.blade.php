@@ -830,7 +830,7 @@
                     <div class="create-service-form-action">
                         <button class="cancelbtn"
                             onclick="location.replace('{{ route('services.index') }}')">Cancel</button>
-                        <button class="Savebtn" type="submit"> {{ $service ? 'Update' : 'Save' }}</button>
+                        <button class="Savebtn" type="submit"> {{ $service ? 'Update' : 'Save ' }}</button>
                     </div>
                 </form>
             </div>
@@ -1282,8 +1282,8 @@
 
             // Append the image element to the map container
             $("#existing_image").hide();
-            mapContainer.appendChild(mapImage);
-
+            // mapContainer.appendChild(mapImage);
+            $("#img_container").html(`<img style="height:300px" src="${staticMapUrl}" />`);
             // Convert the image to a blob
             const response = await fetch(staticMapUrl);
             file = await response.blob();

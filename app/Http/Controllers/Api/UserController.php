@@ -19,12 +19,16 @@ use App\Models\Review;
 use App\Models\ServiceTimesheet;
 use App\Models\ChatCount;
 use App\Models\ServiceItemTimesheet;
+use App\Models\ServiceRating;
+use App\Models\TimesheetRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+
 
 class UserController extends Controller
 {
@@ -934,11 +938,12 @@ class UserController extends Controller
             $items = [];
 
 
-            $service = Service::find($record->service_id);
-            if ($service && $service->service_items != "") {
-                $service_items = json_decode($service->service_items);
+            $service_ = Service::find($record->service_id);
+            if ($service_ && $service_->service_items != "") {
+                $service_items = json_decode($service_->service_items);
 
                 foreach ($service_items as $service_item) {
+                    $si = [];
                     $service_item_id = $service_item->id;
                     $item =    ServiceItemTimesheet::where('assign_member_id', $record->assign_member_id)
                         ->where('service_item_id', $service_item_id)
@@ -950,16 +955,27 @@ class UserController extends Controller
 
                         // Calculate the difference in seconds
                         $totalSeconds = $this->formatTime($endTime->diffInSeconds($startTime));
-                        $items[] = [
+                        $si = [
                             'name' => $service_item->name,
                             'total_hours' => $totalSeconds
                         ];
                     } else {
-                        $items[] = [
+                        $si = [
                             'name' => $service_item->name,
-                            'total_hours' => "0 hours"
+                            'total_hours' => null
                         ];
                     }
+                    $sr = ServiceRating::where("service_id", $record->service_id)->where("service_item_id", $service_item->id)
+                        ->where("member_id", $member->userid)->first();
+                    if ($sr) {
+                        $si['rating'] = $sr->rating;
+                        $si['review'] = $sr->review;
+                    } else {
+                        $si['rating'] = 0;
+                        $si['review'] = "";
+                    }
+
+                    $items[] = $si;
                 }
             }
 
@@ -994,14 +1010,20 @@ class UserController extends Controller
         }
 
         $data = [
+            'start_period' => $startPeriod,
+            'end_period' => $endPeriod,
             'name' => $member->fullname,
             'job_title' => $service->name ?? "",
             'job_location' =>  $service ? ($service->client ? $service->client->street : '') : "",
             'store_name' => $service ? ($service->client ? $service->client->name : '') : "",
             'store_number' => $service ? ($service->client ? $service->client->home_number : '') : '',
             'timesheet' => $result, 'total_hours' => $this->formatTime($totalHoursInWeekFormat),
+
         ];
 
+        $timecard = uniqid();
+        Pdf::loadView("pdf.timecard", $data)->save("public/upload/pdfs/timcard$timecard.pdf");
+        $data["pdf"] = custom_asset("public/upload/pdfs/timcard$timecard.pdf");
         return response()->json(["status" => true, "message" => "timesheet.", "data" => $data]);
     }
     function formatTime($totalSeconds)
@@ -1088,5 +1110,73 @@ class UserController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
         return response()->json(["status" => true, "message" => "Password updated successfully.", "data" => $user]);
+    }
+
+    function service_rating(Request $request)
+
+    {
+        $validator = Validator::make($request->all(), [
+            'service_id' => 'required',
+            'service_item_id' => 'required',
+
+            'rating' => 'required',
+
+
+
+        ]);
+        $user = Auth::user();
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        $sr = ServiceRating::where("service_id", $request->service_id)->where("service_item_id", $request->service_item_id)
+            ->where("member_id", $user->userid)->first();
+        if ($sr) {
+            $sr->rating = $request->rating;
+            $sr->review = $request->review;
+            $sr->save();
+        } else {
+            $sr = new ServiceRating();
+            $sr->service_id = $request->service_id;
+            $sr->service_item_id = $request->service_item_id;
+            $sr->member_id = $request->member_id;
+            $sr->rating = $request->rating;
+            $sr->review = $request->review;
+            $sr->save();
+        }
+
+        return response()->json(["status" => true, "message" => "Feedback saved successfully.", "data" => $user]);
+    }
+
+    function timesheet_request(Request $request)
+    {
+
+
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'duration' => 'required',
+        ]);
+        $user = Auth::user();
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+        $sr = TimesheetRequest::where("start_date", $request->start_date)->where("end_date", $request->end_date)
+            ->where("member_id", $user->userid)->first();
+        if ($sr) {
+            return response()->json(["status" => false, "message" => "This timesheet is already Submitted.",]);
+        } else {
+            $sr = new TimesheetRequest();
+            $sr->start_date = $request->start_date;
+            $sr->end_date = $request->end_date;
+            $sr->duration = $request->duration;
+            $sr->member_id = $user->userid;
+            if ($request->has('service_id')) {
+                $sr->service_id = $request->service_id;
+            }
+            $sr->status = "Pending";
+            $sr->save();
+        }
+
+        return response()->json(["status" => true, "message" => "Timesheet is  Submitted successfully.", "data" => $user]);
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TimesheetRequestController;
 use App\Models\Service;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('Home');
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('Homes');
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'dashboard'])->name('Dashboard');
+    Route::get('/calender', [App\Http\Controllers\HomeController::class, 'calender'])->name('calender');
+
     Route::get('/client', [App\Http\Controllers\HomeController::class, 'clients'])->name('Clients');
     Route::get('/client-details/{id}', [App\Http\Controllers\HomeController::class, 'client_details'])->name('ClientDetails');
     Route::get('/create-schedular', [App\Http\Controllers\HomeController::class, 'create_schedular'])->name('CreateSchedular');
@@ -73,6 +76,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/support-save-img', [App\Http\Controllers\HomeController::class, 'help_support_save_img'])->name('SA.HelpSupport.Save.Img');
 
 
+
     // services all functionality
     Route::resource("services", ServiceController::class);
     Route::get("service-scheduler", [ServiceController::class, 'serviceScheduler'])->name('services.scheduler');
@@ -84,6 +88,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get("terms", [SettingController::class, 'terms'])->name('terms');
     Route::post("terms", [SettingController::class, 'termsSave'])->name('terms.save');
+
+    // Time sheet requests
+    Route::get("timesheet-requests", [TimesheetRequestController::class, 'requests'])->name('timesheet.requests');
+    Route::get("timesheet-requests/{id}", [TimesheetRequestController::class, 'detail'])->name('timesheet.detail');
+    Route::post("timesheet-update", [TimesheetRequestController::class, 'update'])->name('timesheet.update');
 });
 // Listing Ajax request
 Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');

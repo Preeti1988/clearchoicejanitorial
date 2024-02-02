@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('service-details', [UserController::class, 'service_details']);
     Route::post('update-status', [UserController::class, 'UpdateStatus']);
     Route::post('update-service-item-status', [UserController::class, 'UpdateServiceItemsStatus']);
+    Route::post('feedback', [UserController::class, 'service_rating']);
 
     Route::get('DateOfWeek', [UserController::class, 'DateOfWeek']);
     Route::post("service-list", [UserController::class, 'sevice_list']);
@@ -49,4 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("notifications", [NotificationController::class, 'index']);
 
     Route::post("notifications/read", [NotificationController::class, 'read']);
+
+
+    // timesheet approval requests
+    Route::post("timesheet-request", [UserController::class, 'timesheet_request']);
 });
