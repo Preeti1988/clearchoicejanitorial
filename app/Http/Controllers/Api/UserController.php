@@ -1156,6 +1156,7 @@ class UserController extends Controller
             'end_date' => 'required',
             'duration' => 'required',
         ]);
+        
         $user = Auth::user();
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);

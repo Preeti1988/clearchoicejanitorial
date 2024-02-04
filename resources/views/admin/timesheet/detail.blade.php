@@ -50,12 +50,10 @@
                     <div class="col-md-3">
                         <div class="text-end action-buttons">
                             <div>
-                                <a href="{{ url('approve-member/' . encryptDecrypt('encrypt', $request->member->userid)) }}"
-                                    class="approve-btn">Approve Request</a>
+                                <a href="#" class="approve-btn">Approve Request</a>
                             </div>
                             <div class="mt-2">
-                                <a href="{{ url('reject-member/' . encryptDecrypt('encrypt', $request->member->userid)) }}"
-                                    class="reject-btn">Reject Request</a>
+                                <a href="#" class="reject-btn">Reject Request</a>
                             </div>
                         </div>
                     </div>
