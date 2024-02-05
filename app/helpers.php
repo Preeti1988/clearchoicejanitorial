@@ -129,3 +129,27 @@ if (!function_exists('MaritalStatus')) {
         }
     }
 }
+if (!function_exists('formatTime')) {
+    function formatTime($totalSeconds)
+    {
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        $formattedTime = '';
+
+        if ($hours > 0) {
+            $formattedTime .= $hours . ' hours ';
+        }
+
+        if ($minutes > 0) {
+            $formattedTime .= $minutes . ' minutes ';
+        }
+
+        if ($seconds > 0) {
+            $formattedTime .= $seconds . ' seconds';
+        }
+
+        return trim($formattedTime);
+    }
+}

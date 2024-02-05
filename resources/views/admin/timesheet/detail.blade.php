@@ -9,7 +9,7 @@
 @section('content')
     <div class="body-main-content">
         <div class="d-flex mb-2">
-            <h6 class="p-0 total-count"><a href="#">
+            <h6 class="p-0 total-count"><a href="{{ route('timesheet.requests') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-arrow-left-circle-fill me-2 arrow-btn" viewBox="0 0 16 16">
                         <path
@@ -50,10 +50,14 @@
                     <div class="col-md-3">
                         <div class="text-end action-buttons">
                             <div>
-                                <a href="#" class="approve-btn">Approve Request</a>
+                                <a href="#" class="approve-btn"
+                                    onclick="UpdateTimesheet('{{ $request->id }}','Approved')">Approve
+                                    Request</a>
                             </div>
                             <div class="mt-2">
-                                <a href="#" class="reject-btn">Reject Request</a>
+                                <a href="#" class="reject-btn"
+                                    onclick="UpdateTimesheet('{{ $request->id }}','Rejected')">>Reject
+                                    Request</a>
                             </div>
                         </div>
                     </div>
@@ -62,8 +66,54 @@
             <div class="info-card member-info">
                 <h6 class="title-head">Timesheet Details</h6>
                 <hr>
+                <h4 class="week-number"> {{ $timesheet['start_period'] ?? 0 }} TO
+                    {{ $timesheet['end_period'] ?? 0 }}</h4>
+                <h4>Total Hours worked: {{ $timesheet['total_hours'] ?? 0 }}</h4>
 
+                @forelse ($timesheet['timesheet'] as $week)
+                    <div class="week-details">
+
+
+                        <div class="row">
+                            @foreach ($week['days'] as $day)
+                                <div class="p-4  col-md-4">
+                                    <div class="day-details px-4 py-2 shadow-lg">
+                                        <h5>Date: <?php echo $day['date']; ?></h5>
+                                        <div class="time-details">
+
+                                            <div>Start Time: <?php echo $day['start_time']; ?></div>
+                                            &nbsp;
+                                            &nbsp;
+
+                                            <div>End Time: <?php echo $day['end_time']; ?></div>
+                                        </div>
+                                        <div>Total Hours Worked on Day: <?php echo $day['total_hours_worked_on_day_format']; ?></div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+
+                    </div>
+                @empty
+                    <h4 class="p-2 text-center">No records exists</h4>
+                @endforelse
             </div>
         </div>
     </div>
+    <script>
+        function UpdateTimesheet(id, status) {
+            var _token = "{{ csrf_token() }}";
+            $.post("{{ route('timesheet.update') }}", {
+                id,
+                status,
+                _token
+            }, function(data, status) {
+                toastr.success(data.message);
+                setTimeout(() => {
+                    location.replace("{{ route('timesheet.requests') }}")
+                }, 2000);
+            });
+        }
+    </script>
 @endsection

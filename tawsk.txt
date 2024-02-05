@@ -1,39 +1,3 @@
 #TODO
 
-02-02-24
-save and proceed in create cleitn to create service
-company in create client
-image issue in create service
-popup modal in dashboard client
-on click of servic eon calender redirect to service details
-
-01-02-24
---connectiot--
-search box alighment should same in public area and building
-only status active relays should be shown in assign device
-make api for reset device key
-select relays blue background remove
-
---janitorial--
-full calender in seprate tab
-feedback save api and add feedback with timesheet api
-
-31-01-24
-service items checkckout api
-R&D task api in connectiot
-30-01-23
---janitorial--
-forget password api
-report service filter remove
-add team member section 
-
-29-01-24
---connectiot--
-sync button to sync all users of perticular location
-make logs page for devices and show all logs for a controller
-ad link in create controller
-
---janitorial--
-upload settelite image in service page
-remove service filter in api
 

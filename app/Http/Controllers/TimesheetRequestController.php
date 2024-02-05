@@ -26,8 +26,8 @@ class TimesheetRequestController extends Controller
     {
         $request = TimesheetRequest::find($id);
         if ($request) {
-            $timsheet = $this->timecard($request);
-            return view("admin.timesheet.detail", compact('request', 'timsheet'));
+            $timesheet = $this->timecard($request);
+            return view("admin.timesheet.detail", compact('request', 'timesheet'));
         } else {
             return redirect()->back()->with('error', 'Timesheet does not exists.');
         }
@@ -44,7 +44,7 @@ class TimesheetRequestController extends Controller
         $request = TimesheetRequest::find(request('id'));
         $request->status = request("status");
         $request->save();
-        return redirect()->back()->with('success', "Timesheet $request->status Successfully.");
+        return response()->json(['message' => "Timesheet $request->status Successfully."]);
     }
     public function timecard($item)
     {
@@ -106,8 +106,8 @@ class TimesheetRequestController extends Controller
                         'end_of_week' => (new DateTime())->setISODate(date("Y"), $currentWeek, 7)->format('d-m-Y'),
 
                         'total_hours_in_week' => $totalHoursInWeek,
-                        'total_hours_in_week_format' => $this->formatime($totalHoursInWeekFormat),
-                        'avg_hours_in_week' => $this->formatime(intval($totalHoursInWeekFormat / count($daysInWeek))),
+                        'total_hours_in_week_format' => formatTime($totalHoursInWeekFormat),
+                        'avg_hours_in_week' => formatTime(intval($totalHoursInWeekFormat / count($daysInWeek))),
                         'days' => $daysInWeek,
                         'total_days_worked' => count($daysInWeek),
 
@@ -131,7 +131,7 @@ class TimesheetRequestController extends Controller
                 'start_time' => $record->start_time,
                 'end_time' => $record->end_time,
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
-                'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
+                'total_hours_worked_on_day_format' => formatTime($record->total_hours_worked_on_day_format),
                 'service_items' => $items
 
             ];
@@ -149,8 +149,8 @@ class TimesheetRequestController extends Controller
                 'end_of_week' => (new DateTime())->setISODate(date("Y"), $currentWeek, 7)->format('d-m-Y'),
 
                 'total_hours_in_week' => $totalHoursInWeek,
-                'total_hours_in_week_format' => $this->formatime($totalHoursInWeekFormat),
-                'avg_hours_in_week' => $this->formatime(intval($totalHoursInWeekFormat / count($daysInWeek))),
+                'total_hours_in_week_format' => formatTime($totalHoursInWeekFormat),
+                'avg_hours_in_week' => formatTime(intval($totalHoursInWeekFormat / count($daysInWeek))),
                 'days' => $daysInWeek,
                 'total_days_worked' => count($daysInWeek)
 
@@ -171,7 +171,7 @@ class TimesheetRequestController extends Controller
             'start_period' => $startPeriod,
             'end_period' => $endPeriod,
 
-            'timesheet' => $result, 'total_hours' => $this->formatime($totalHoursInWeekFormat), 'total_days' => $total_days
+            'timesheet' => $result, 'total_hours' => formatTime($totalHoursInWeekFormat), 'total_days' => $total_days
 
 
         ];
@@ -179,27 +179,5 @@ class TimesheetRequestController extends Controller
 
 
         return $data;
-    }
-    public function formatime($totalSeconds)
-    {
-        $hours = floor($totalSeconds / 3600);
-        $minutes = floor(($totalSeconds % 3600) / 60);
-        $seconds = $totalSeconds % 60;
-
-        $formattedTime = '';
-
-        if ($hours > 0) {
-            $formattedTime .= $hours . ' hours ';
-        }
-
-        if ($minutes > 0) {
-            $formattedTime .= $minutes . ' minutes ';
-        }
-
-        if ($seconds > 0) {
-            $formattedTime .= $seconds . ' seconds';
-        }
-
-        return trim($formattedTime);
     }
 }

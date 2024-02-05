@@ -83,7 +83,7 @@
                                         data-inputmask="'mask': '(999) 999-9999'" placeholder="(999) 999-9999"
                                         value="{{ old('emergency_phone') }}" placeholder="Emergrncy Contact">
                                 </div>
-                            </div>
+                            </div>2
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <h3>Role *</h3>
