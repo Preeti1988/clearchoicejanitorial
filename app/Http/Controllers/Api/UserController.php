@@ -569,7 +569,7 @@ class UserController extends Controller
 
         foreach ($service_items as  $item) {
 
-            $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->where('service_item_id', $item->id)
+            $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $uest->service_id)->where('service_item_id', $item->id)
                 ->whereDate('date', date('Y-m-d'))->first();
 
             if ($timesheet) {
@@ -578,6 +578,18 @@ class UserController extends Controller
             } else {
                 $item->start_time = "";
                 $item->end_time = "";
+            }
+
+
+
+            $sr = ServiceRating::where("service_id", $service->id)->where("service_item_id", $item->id)
+                ->where("member_id", $user->userid)->first();
+            if ($sr) {
+                $item->rate = $sr->rating;
+                $item->comment = $sr->review;
+            } else {
+                $item->rate = 0;
+                $item->comment = "";
             }
         }
 
@@ -986,7 +998,8 @@ class UserController extends Controller
                 'end_time' => $record->end_time,
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
                 'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
-                'service_items' => $items
+                'service_items' => $items,
+                'service_name' => $service_->name ?? ""
 
             ];
 
@@ -1128,21 +1141,27 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $sr = ServiceRating::where("service_id", $request->service_id)->where("service_item_id", $request->service_item_id)
-            ->where("member_id", $user->userid)->first();
-        if ($sr) {
-            $sr->rating = $request->rating;
-            $sr->review = $request->review;
-            $sr->save();
-        } else {
-            $sr = new ServiceRating();
-            $sr->service_id = $request->service_id;
-            $sr->service_item_id = $request->service_item_id;
-            $sr->member_id = $request->member_id;
-            $sr->rating = $request->rating;
-            $sr->review = $request->review;
-            $sr->save();
+        foreach ($request->service_item_id as $key => $value) {
+            if (key_exists($key, $request->rating) && key_exists($key, $request->review) && key_exists($key, $request->service_id)) {
+                $sr = ServiceRating::where("service_id", $request->service_id[$key])->where("service_item_id", $request->service_item_id[$key])
+                    ->where("member_id", $user->userid)->first();
+
+                if ($sr) {
+                    $sr->rating = $request->rating[$key];
+                    $sr->review = $request->review[$key];
+                    $sr->save();
+                } else {
+                    $sr = new ServiceRating();
+                    $sr->service_id = $request->service_id[$key];
+                    $sr->service_item_id = $request->service_item_id[$key];
+                    $sr->member_id = $user->userid;
+                    $sr->rating = $request->rating[$key];
+                    $sr->review = $request->review[$key];
+                    $sr->save();
+                }
+            }
         }
+
 
         return response()->json(["status" => true, "message" => "Feedback saved successfully.", "data" => $user]);
     }
@@ -1154,9 +1173,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'start_date' => 'required',
             'end_date' => 'required',
-            'duration' => 'required',
+
         ]);
-        
+
         $user = Auth::user();
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
@@ -1169,7 +1188,7 @@ class UserController extends Controller
             $sr = new TimesheetRequest();
             $sr->start_date = $request->start_date;
             $sr->end_date = $request->end_date;
-            $sr->duration = $request->duration;
+
             $sr->member_id = $user->userid;
             if ($request->has('service_id')) {
                 $sr->service_id = $request->service_id;

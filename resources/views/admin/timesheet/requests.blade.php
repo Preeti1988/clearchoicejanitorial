@@ -14,6 +14,56 @@
                 <b>({{ $count }})</b>
             </h6>
         </div>
+        <div class="row align-items-center my-2">
+            <div class="col-md-7">
+                {{-- @if ($type == 1)
+                                <form action="{{ route('search.team-member-active') }}" method="POST">
+                                @else
+                                    <form action="{{ route('search.team-member-inactive') }}"
+                                        method="POST">
+                                        @csrf
+                            @endif --}}
+                <form action="">
+
+                    <div class="search-input">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search by Employee Name " name="search"
+                                value="{{ request('search') ?? '' }}" aria-label="Recipient's username"
+                                aria-describedby="button-addon2">
+                            <button class="btn btn-outline-secondary" type="submit" style="background: #7BC043"
+                                id="button-addon2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                                    class="bi bi-search" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                </svg>
+                            </button><a href="{{ route('timesheet.requests') }}" class="m-1 mx-3"><img
+                                    src="{{ custom_asset('public/assets/admin-images/reset-icon.png') }}"
+                                    style="height: 25px" alt=""></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-5">
+                <div class="d-flex">
+                    <a class="item" style="width:40%">
+                        <div class="Ongoing-calender-item" style="padding: 3px">
+                            <label for="">Start Date</label>
+                            <input type="date" name="date" id="start_date" class="form-control"
+                                value="{{ request()->has('start_date') ? request('start_date') : '' }}">
+                        </div>
+                    </a>
+                    <a class="item" style="width:40%">
+                        <div class="Ongoing-calender-item" style="padding: 3px">
+                            <label for="">End Date</label>
+                            <input type="date" name="date" id="end_date" class="form-control"
+                                value="{{ request()->has('end_date') ? request('end_date') : '' }}">
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+        </div>
         <div class="team-view-section">
             @if ($requests->isEmpty())
                 <tr>
@@ -75,4 +125,32 @@
             </div>
         </div>
     </div>
+    <script>
+        // Function to validate dates and redirect
+        function validateAndRedirect() {
+            var startDate = document.getElementById('start_date').value;
+            var endDate = document.getElementById('end_date').value;
+
+            // Check if both start and end dates are selected
+            if (startDate && endDate) {
+                // Convert dates to Date objects
+                var startDateObj = new Date(startDate);
+                var endDateObj = new Date(endDate);
+
+                // Check if start date is less than end date
+                if (startDateObj < endDateObj) {
+                    // Redirect with parameters
+                    var redirectUrl = window.location.origin + window.location.pathname + '?start_date=' + startDate +
+                        '&end_date=' + endDate;
+                    window.location.href = redirectUrl;
+                } else {
+                    toastr.error('End date must be after start date.');
+                }
+            }
+        }
+
+        // Event listener for end date change
+        document.getElementById('end_date').addEventListener('change', validateAndRedirect);
+    </script>
+
 @endsection

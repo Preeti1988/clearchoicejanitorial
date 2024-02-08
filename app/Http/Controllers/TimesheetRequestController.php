@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use App\Models\ServiceItemTimesheet;
 use App\Models\ServicesValue;
 use App\Models\ServiceTimesheet;
@@ -16,8 +17,18 @@ class TimesheetRequestController extends Controller
 {
     function requests()
     {
+        $emp_ids = [];
 
-        $requests = TimesheetRequest::where("status", "Pending")->paginate(10);
+
+        if (request()->has('search')) {
+            $keyword = trim(request('search'));
+            $emp_ids = User::where("fullname", "LIKE", "%$keyword%")->pluck("userid")->toArray();
+        }
+        $requests = TimesheetRequest::where("status", "Pending")->when(request()->has('search'), function ($query) use ($emp_ids) {
+            return $query->whereIn("member_id", $emp_ids);
+        })->when(request()->has('start_date') && request()->has('end_date'), function ($query) {
+            return $query->whereDate("start_date", ">=", Carbon::parse(request("start_date")))->whereDate("end_date", "<=", Carbon::parse(request("end_date")));
+        })->paginate(10);
         $count = TimesheetRequest::where("status", "Pending")->count();
 
         return view("admin.timesheet.requests", compact('requests', 'count'));

@@ -93,6 +93,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get("timesheet-requests", [TimesheetRequestController::class, 'requests'])->name('timesheet.requests');
     Route::get("timesheet-requests/{id}", [TimesheetRequestController::class, 'detail'])->name('timesheet.detail');
     Route::post("timesheet-update", [TimesheetRequestController::class, 'update'])->name('timesheet.update');
+
+    // service feedback
+    Route::get('service-feedback', [ServiceController::class, 'feedbacks'])->name('services.feedbacks');
 });
 // Listing Ajax request
 Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');

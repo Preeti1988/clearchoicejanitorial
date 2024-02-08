@@ -7,6 +7,7 @@ use App\Models\InScope;
 use App\Models\OutScope;
 use App\Models\Service;
 use App\Models\ServiceMember;
+use App\Models\ServiceRating;
 use App\Models\ServicesValue;
 use App\Traits\NotificationTrait;
 use Carbon\Carbon;
@@ -282,5 +283,32 @@ class ServiceController extends Controller
         }
         $services = $services->orderBy("id", "desc")->get();
         return view("admin.services.scheduler", compact('services'));
+    }
+
+    public function feedbacks()
+    {
+        $ratings = ServiceRating::select('service_id', 'member_id')
+            ->selectRaw('GROUP_CONCAT(service_item_id) AS grouped_service_items')
+            ->selectRaw('GROUP_CONCAT(rating) AS ratings')
+            ->selectRaw('GROUP_CONCAT(review) AS reviews')
+            ->groupBy('service_id', 'member_id')
+            ->paginate(10);
+
+        foreach ($ratings as $key => $value) {
+            $service_items = [];
+            foreach (explode(",", $value->grouped_service_items) as $i => $value_) {
+                $item = ServicesValue::find($value_);
+                if ($item) {
+                    $service_items[] = [
+                        'name' => $item->name,
+                        'rating' => explode(",", $value->ratings)[$i],
+                        'review' => explode(",", $value->reviews)[$i],
+                    ];
+                }
+            }
+            $value->items = $service_items;
+        }
+        // dd($ratings);
+        return view("admin.services.feedbacks", compact('ratings'));
     }
 }
