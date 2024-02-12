@@ -27,7 +27,7 @@ class ServiceController extends Controller
             $services = $services->whereDate("created_date", Carbon::parse(request('date')));
         }
         if (request()->has('search')) {
-            $services = $services->where("name", request('search'));
+            $services = $services->where("name", "LIKE", "%" . request('search') . "%");
         }
         $services = $services->where("status", "ongoing")->orderBy("id", "desc")->get();
 
@@ -36,7 +36,7 @@ class ServiceController extends Controller
             $completed_services = $completed_services->whereDate("created_date", Carbon::parse(request('date')));
         }
         if (request()->has('search')) {
-            $completed_services = $completed_services->where("name", request('search'));
+            $completed_services = $completed_services->where("name", "LIKE", "%" . request('search') . "%");
         }
         $completed_services = $completed_services->orderBy("id", "desc")->get();
         $completed =  Service::where("status", 'completed')->count();

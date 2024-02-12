@@ -999,7 +999,9 @@ class UserController extends Controller
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
                 'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
                 'service_items' => $items,
-                'service_name' => $service_->name ?? ""
+                'service_name' => $service_->name ?? "",
+                'service_id' => $service_->id ?? "",
+
 
             ];
 

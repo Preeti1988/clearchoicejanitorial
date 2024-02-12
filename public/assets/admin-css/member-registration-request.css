@@ -7,3 +7,13 @@
 .view-btn, .view-btn:hover{padding: 12px 22px; background-color: var(--green, #7BC043); text-align: center; color: var(--white, #FFF);  border-radius: 7px; box-shadow: 0px 8px 13px 0px rgba(35, 53, 111, 0.12); font-weight: 700;  font-size: 14px;}
 .total-count { color: var(--gray, #4F5168); text-align: center; font-size: 16px; font-style: normal; font-weight: 400; line-height: 20px; margin: 0;  padding: 0;  }
 .total-count b { font-size: 20px; }
+.search-input .input-group input{box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px; border-radius: 10px 0px 0px 10px;border: 0; padding: 8px;}
+.search-input .input-group input:focus{box-shadow: none; border: 1px solid #7BC043;}
+.search-input .input-group button{  box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px; border-radius: 0px 10px 10px 0px!important; border: 0;background: #7BC043;}
+.Ongoing-calender-item label{color: var(--gray, #505667);}
+.Ongoing-calender-item input:focus{box-shadow: none; border: 1px solid #7BC043;}
+.active>.page-link, .page-link.active { z-index: 3;color: var(--bs-pagination-active-color)!important;background-color: var(--green, #7BC043)!important; border-color: var(--green, #7BC043)!important;}
+.page-link{color: var(--gray, #4F5168)!important;}
+.page-link{width: 40px; height: 40px; border-radius: 50%; text-align: center; margin-left: 5px; margin-right: 5px;}
+.page-item:first-child .page-link, .page-item:last-child .page-link{border-top-right-radius: 50%!important; border-bottom-right-radius: 50%!important; border-top-left-radius: 50%!important; border-bottom-left-radius: 50%!important;}
+.page-link:hover{background-color: var(--green, #7BC043)!important; border-color: var(--green, #7BC043)!important;color: var(--bs-pagination-active-color)!important;}

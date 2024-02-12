@@ -21,3 +21,6 @@
 .modal  input{padding: 10px 15px;border: 1px solid #babbbe;border-radius: 10px;font-size: 13px;line-height: 20px;font-weight: 400;color: var(--gray, #4F5168);}
 .modal  input::placeholder{font-size: 13px;line-height: 20px;font-weight: 400;color: var(--gray, #4F5168)}
 .add-new-value-btn, .add-new-value-btn:hover{background-color: var(--green, #7BC043);box-shadow: 0px 8px 13px 0px rgba(35, 53, 111, 0.12);color: var(--white, #FFF);border-radius: 50px;font-weight: 700;font-size: 14px;padding: 8px 30px;width: 235px; text-align: center;margin: 0 auto;display: block;text-align: center;}
+.add-new-value-btn{border:0!important;}
+.modal input:focus{box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px!important; border: 1px solid var(--green, #7BC043)!important;}
+.modal-header{border-bottom: 0!important;}

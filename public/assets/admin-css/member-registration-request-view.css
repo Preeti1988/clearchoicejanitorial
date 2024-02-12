@@ -11,7 +11,26 @@
 .total-count b { font-size: 20px; }
 .member-info .title-head{font-size: 16px; margin: 0; padding: 0; line-height: normal; color: var(--blue); font-weight: 700;}
 .member-info img{width: 50px;height: auto;}
-.download-box{border: 1px solid var(--green, #7BC043);padding: 10px;border-radius: 7px;width: 255px;}
+.download-box{border: 1px solid var(--green, #7BC043);padding: 10px;border-radius: 7px;width: 100%;}
 .mb-size{color: var(--green, #7BC043)!important;}
 .download-btn, .download-btn:hover{ padding: 6px 14px;background-color: var(--green, #7BC043); text-align: center; color: var(--white, #FFF);  border-radius: 7px; box-shadow: 0px 8px 13px 0px rgba(35, 53, 111, 0.12); font-weight: 700;  font-size: 14px;display: table-cell;font-size: 26px;}
 .arrow-btn{width: 34px; height: 23px;}
+.member-reg-title h6{font-size: 18px; margin: 0; padding: 0; line-height: normal; color: var(--blue);font-weight: 700;}
+.week-number, .hours-worked{font-size: 13px;
+    margin: 0;
+    padding: 0;
+    line-height: normal;
+    color: var(--blue);
+    font-weight: 700;}
+.day-details{border-radius: 10px;border: 1px solid #7bc043;}
+.time-card-head{display: flex; align-items: center;}
+.date-info{color: var(--gray, #505667); font-size: 14px;font-style: normal;font-weight: 700; line-height: 20px;letter-spacing: 0.25px;margin: 0;padding: 0;}
+.card-time-detail-info{display: flex; align-items: center;}
+.time-sub-head{color: #8F93A0;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.4px;
+    margin: 0;}
+.info-card h3 {color: var(--gray, #505667);font-size: 12px;font-style: normal;line-height: 20px; letter-spacing: 0.25px;margin: 0;padding: 0;}

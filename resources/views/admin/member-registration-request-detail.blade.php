@@ -90,14 +90,16 @@
                     @if (isset($data->resume_file_name))
                         <div class="col-md-12">
                             <div class="download-box">
-                                <div class="d-flex align-items-center">
-                                    <div>
-                                        <img src="{{ custom_asset('public/assets/admin-images/pdf-file.svg') }}"
-                                            alt="image" class="img-fluid">
-                                    </div>
-                                    <div class="sizes ms-3">
-                                        <p>{{ ucfirst($data->resume_file_name) ?? '' }}</p>
-                                        {{-- <p class="mb-size">{{ ucfirst($data->resume_file_size) ?? '' }} MB</p> --}}
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex  align-items-center">
+                                        <div>
+                                            <img src="{{ custom_asset('public/assets/admin-images/pdf-file.svg') }}"
+                                                alt="image" class="img-fluid">
+                                        </div>
+                                        <div class="sizes ms-3">
+                                            <p>{{ ucfirst($data->resume_file_name) ?? '' }}</p>
+                                            {{-- <p class="mb-size">{{ ucfirst($data->resume_file_size) ?? '' }} MB</p> --}}
+                                        </div>
                                     </div>
                                     <a href="{{ env('APP_URL') . 'public/upload/resume/' . $data->resume_file_name }}"
                                         class="download-btn ms-5" target="_blank_">

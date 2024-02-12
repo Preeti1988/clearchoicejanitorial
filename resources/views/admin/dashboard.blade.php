@@ -59,7 +59,7 @@
                     <div class="services-tabs">
                         <ul class="nav nav-tabs">
                             <li><a class="active" href="#OngoingServices" data-bs-toggle="tab">Ongoing Services</a></li>
-                            <li><a href="#UnAssignedServices" data-bs-toggle="tab"><i class="las la-eye-slash"></i>
+                            <li><a href="#UnAssignedServices" data-bs-toggle="tab"><i class="las la-eye-slash me-2"></i>
                                     Un-Assigned Services</a>
                             </li>
                         </ul>

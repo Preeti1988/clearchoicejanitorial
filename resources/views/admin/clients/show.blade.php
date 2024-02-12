@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="client-contact-info-content">
                                         <h2>Client Default Address</h2>
-                                        <p>{{ $data->address ?? '' }}</p>
+                                        <p>{{ $data->street ?? '' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -70,11 +70,11 @@
                         <div class="services-tabs">
                             <ul class="nav nav-tabs">
                                 <li><a class="active" href="#OngoingServices" data-bs-toggle="tab">Ongoing</a></li>
-                                <li><a href="#UnAssignedServices" data-bs-toggle="tab"> New Request</a></li>
+                                <li><a href="#UnAssignedServices" data-bs-toggle="tab"> Unassigned</a></li>
                                 <li><a href="#CompletedServices" data-bs-toggle="tab">Completed</a></li>
                             </ul>
                         </div>
-                        <div class="Ongoing-calender-list">
+                        {{-- <div class="Ongoing-calender-list">
                             <div id="Ongoingcalender" class="owl-carousel owl-theme">
 
                                 @php
@@ -103,6 +103,52 @@
                                         </div>
                                     </a>
                                 @endforeach
+                            </div>
+                        </div> --}}
+                        <div class="row align-items-center my-2">
+                            <div class="col-md-7">
+                                {{-- @if ($type == 1)
+                                    <form action="{{ route('search.team-member-active') }}" method="POST">
+                                    @else
+                                        <form action="{{ route('search.team-member-inactive') }}"
+                                            method="POST">
+                                            @csrf
+                                @endif --}}
+                                <form action="">
+
+                                    <div class="search-input">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Search by Service Name."
+                                                name="search" value="{{ $search ?? '' }}"
+                                                aria-label="Recipient's username" aria-describedby="button-addon2">
+                                            <button class="btn btn-outline-secondary" type="submit"
+                                                style="background: #7BC043" id="button-addon2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="white" class="bi bi-search" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                                                </svg>
+                                            </button><a
+                                                href="{{ url('client-details/' . encryptDecrypt('encrypt', $data->id)) }}"
+                                                class="m-1 mx-3"><img
+                                                    src="{{ custom_asset('public/assets/admin-images/reset-icon.png') }}"
+                                                    style="height: 25px" alt=""></a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="">
+                                    <a class="item" style="width:40%">
+                                        <div class="Ongoing-calender-item" style="padding: 3px">
+
+                                            <input type="date" name="date" id="date" class="form-control" style= "border: 0"
+                                                value="{{ request()->has('date') ? request('date') : '' }}"
+                                                onchange="location.replace('{{ url('client-details/' . encryptDecrypt('encrypt', $data->id)) }}'+'?date='+this.value)">
+                                        </div>
+                                    </a>
+
+                                </div>
                             </div>
                         </div>
                         <div class="tasks-content-info tab-content">
@@ -511,7 +557,8 @@
                         <div class="team-panel-sidebar">
 
                             <div class="count-bg-1 mt-2">
-                                <p class="p-0 m-0 text-center">{{ count($ongoing) + count($unassigned) }} Total Projects
+                                <p class="p-0 m-0 text-center">
+                                    {{ count($ongoing) + count($unassigned) + count($completed) }} Total Projects
                                 </p>
                             </div>
                             <div class="row">

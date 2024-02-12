@@ -698,21 +698,30 @@ class HomeController extends Controller
         try {
             $id = encryptDecrypt('decrypt', $id);
             $data = Client::where('id', $id)->first();
-            $ongoing = Service::has("members")->where("assigned_member_id", $id)->where("status", "ongoing");
+            $ongoing = Service::has("members")->where("assigned_client_id", $id)->where("status", "ongoing");
             if (request()->has('date')) {
-                $ongoing = $ongoing->whereDate("created_at", Carbon::parse(request('date')));
+                $ongoing = $ongoing->whereDate("created_date", Carbon::parse(request('date')));
+            }
+            if (request()->has('search')) {
+                $ongoing = $ongoing->where("name", "LIKE", "%" . request('search') . "%");
             }
             $ongoing = $ongoing->orderBy("id", "desc")->get();
 
-            $completed = Service::where("assigned_member_id", $id)->where("status", "completed");
+            $completed = Service::where("assigned_client_id", $id)->where("status", "completed");
             if (request()->has('date')) {
-                $completed = $completed->whereDate("created_at", Carbon::parse(request('date')));
+                $completed = $completed->whereDate("created_date", Carbon::parse(request('date')));
+            }
+            if (request()->has('search')) {
+                $completed = $completed->where("name", "LIKE", "%" . request('search') . "%");
             }
             $completed = $completed->orderBy("id", "desc")->get();
 
-            $unassigned = Service::doesntHave("members")->where("assigned_member_id", $id);
+            $unassigned = Service::doesntHave("members")->where("assigned_client_id", $id);
             if (request()->has('date')) {
-                $unassigned = $unassigned->whereDate("created_at", Carbon::parse(request('date')));
+                $unassigned = $unassigned->whereDate("created_date", Carbon::parse(request('date')));
+            }
+            if (request()->has('search')) {
+                $unassigned = $unassigned->where("name", "LIKE", "%" . request('search') . "%");
             }
             $unassigned = $unassigned->orderBy("id", "desc")->get();
 

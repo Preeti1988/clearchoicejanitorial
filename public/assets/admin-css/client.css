@@ -10,7 +10,7 @@ a.viewbtn {width: 30px; height: 30px; background: #7bc043; display: inline-block
 .side-profile-text h2 {font-size: 16px; font-weight: 600; margin: 0 0 5px 0; padding: 0; color: #263238; }
 a.blocked-btn {background: #fff; color: #ff0a32; padding: 1px 12px; border-radius: 4px; display: inline-block; font-size: 12px; font-weight: 500; border: 1px solid #ff0a32; }
 
-.client-contact-info {position: relative; width: 100%; border-radius: 0; padding:  0; display: flex;  margin-bottom: 0rem; }
+.client-contact-info {position: relative; width: 100%; border-radius: 0; padding:  0; display: flex; align-items: center;  margin-bottom: 0rem; }
 .client-contact-info-icon {width: 40px; height: 40px; margin-right: 10px; line-height: 40px; }
 .client-contact-info-icon img {height: 32px; }
 .client-contact-info-content h2 {    font-size: 12px; font-weight: 700; margin: 0 0 5px 0; padding: 0; color: #4f5168; }
@@ -64,7 +64,7 @@ a.sendbroadcast-btn {color: var(--white); border-radius: 50px; background: var(-
 
 
 
-.Ongoing-calender-item{padding: 10px;    border-radius: 15px; border: 1px solid #7BC043; background: var(--white, #FFF); box-shadow: 0px 8px 13px 0px rgba(35, 53, 111, 0.12);}
+.Ongoing-calender-item{padding: 10px;    border-radius: 15px;  background: var(--white, #FFF); box-shadow: 0px 8px 13px 0px rgba(35, 53, 111, 0.12);}
 .Ongoing-calender-item h3{color: var(--gray, #4F5168); text-align: center; font-size: 13px; font-style: normal; font-weight: 400; line-height: 20px; margin:0; padding:0 }
 .Ongoing-calender-item h2{color: var(--green, #7BC043); text-align: center; font-size: 18px; font-style: normal; font-weight: 700; line-height: 20px;margin:0; padding:0 }
 .Ongoing-calender-list{margin-bottom: 1rem}
@@ -135,3 +135,19 @@ a.sendbroadcast-btn {color: var(--white); border-radius: 50px; background: var(-
     color: var(--blue);
     font-weight: 700;
 }
+.search-filter form{width: 100%;}
+.search-input .input-group input{box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px; border-radius: 10px 0px 0px 10px;border: 0; padding: 8px;}
+.search-input .input-group input:focus{box-shadow: none; border: 1px solid #7BC043;}
+.search-input .input-group button{  box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px; border-radius: 0px 10px 10px 0px!important; border: 0;background: #7BC043;}
+.active>.page-link, .page-link.active { z-index: 3;color: var(--bs-pagination-active-color)!important;background-color: var(--green, #7BC043)!important; border-color: var(--green, #7BC043)!important;}
+.page-link{color: var(--gray, #4F5168)!important;}
+.page-link{width: 40px; height: 40px; border-radius: 50%; text-align: center; margin-left: 5px; margin-right: 5px;}
+.page-item:first-child .page-link, .page-item:last-child .page-link{border-top-right-radius: 50%!important; border-bottom-right-radius: 50%!important; border-top-left-radius: 50%!important; border-bottom-left-radius: 50%!important;}
+.page-link:hover{background-color: var(--green, #7BC043)!important; border-color: var(--green, #7BC043)!important;color: var(--bs-pagination-active-color)!important;}
+.form-control{border: 0!important;}
+.Ongoing-calender-item{border: 0!important;}
+.Ongoing-calender-item input{border: 0!important;}
+.Ongoing-calender-item:focus{border: 1px solid #7BC043!important; box-shadow: none!important;}
+.Ongoing-calender-item input:focus{box-shadow: none!important;}
+.Ongoing-calender-item input:focus .Ongoing-calender-item{border: 1px solid #7BC043!important;}
+

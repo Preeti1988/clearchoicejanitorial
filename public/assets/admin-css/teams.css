@@ -93,3 +93,11 @@ a.blocked-btn {background: #fff; color: #ff0a32; padding: 1px 12px; border-radiu
 .form-switch .form-check-input{height: 1.3rem;width: 3.3rem;}
 .team-info-box .form-check-input:checked { background-color: var(--green, #7BC043); border-color: var(--green, #7BC043);box-shadow: none; }
 .form-switch .form-check-input{box-shadow: none;border: 1px solid var(--green, #7BC043);}
+.form-switch .form-check-input{width: 40px!important;}
+.form-switch .form-check-input:checked{width: 40px!important;}
+.active>.page-link, .page-link.active { z-index: 3;color: var(--bs-pagination-active-color)!important;background-color: var(--green, #7BC043)!important; border-color: var(--green, #7BC043)!important;}
+.page-link{color: var(--gray, #4F5168)!important;}
+.page-link{width: 40px; height: 40px; border-radius: 50%; text-align: center; margin-left: 5px; margin-right: 5px;}
+.page-item:first-child .page-link, .page-item:last-child .page-link{border-top-right-radius: 50%!important; border-bottom-right-radius: 50%!important; border-top-left-radius: 50%!important; border-bottom-left-radius: 50%!important;}
+.page-link:hover{background-color: var(--green, #7BC043)!important; border-color: var(--green, #7BC043)!important;color: var(--bs-pagination-active-color)!important;}
+.search-input .input-group input:focus{border: 1px solid var(--green, #7BC043);}

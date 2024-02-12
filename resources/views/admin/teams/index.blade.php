@@ -7,7 +7,7 @@
 @endpush
 @section('content')
     <div class="body-main-content">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-center mb-2">
             <h6 class="p-0 total-count">Total Onboard Team Members <b>({{ $datas->total() }})</b></h6>
             <div class="col-md-6 pt-2">
                 <a href="{{ route('AddTeamMember') }}" class="add-member-btn me-3">Add Team Member

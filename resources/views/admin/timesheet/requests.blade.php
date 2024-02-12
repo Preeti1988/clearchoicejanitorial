@@ -14,8 +14,9 @@
                 <b>({{ $count }})</b>
             </h6>
         </div>
-        <div class="row align-items-center my-2">
+        <div class="row align-items-center mb-3 my-2">
             <div class="col-md-7">
+                <br>
                 {{-- @if ($type == 1)
                                 <form action="{{ route('search.team-member-active') }}" method="POST">
                                 @else
