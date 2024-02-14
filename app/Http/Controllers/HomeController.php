@@ -68,10 +68,13 @@ class HomeController extends Controller
         if (request()->has('search')) {
             $unassigned = $unassigned->where("name", "LIKE", "%" . trim(request('search')) . "%");
         }
-        $msgs = User::where('status', 1)->orderBy(function ($query) {
-            // Replace 'getCountByUserId' with the actual name of your helper function
-            $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-        })->get();
+        // $msgs = User::where('status', 1)->orderByDesc(function ($query) {
+        //     // Replace 'getCountByUserId' with the actual name of your helper function
+        //     $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
+        // })->get();
+        $msgs = User::all()->sortByDesc(function ($user) {
+            return $user->getMessageCount();
+        });
 
         $unassigned = $unassigned->orderBy("id", "desc")->get();
         $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
@@ -837,27 +840,19 @@ class HomeController extends Controller
         try {
             if (isset($request->search)) {
                 $search = $request->search;
-                $datas = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy(function ($query) {
-                    // Replace 'getCountByUserId' with the actual name of your helper function
-                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                })->get();
-                $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->orderBy(function ($query) {
-                    // Replace 'getCountByUserId' with the actual name of your helper function
-                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                })->first();
+                $datas = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->get()->sortByDesc(function ($user) {
+                    return $user->getMessageCount();
+                });;
+                $firstData = $datas->first();
                 $servise_list = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get() : [];
                 $servise_first = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first() : null;
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
             } else {
                 $search = '';
-                $datas = User::where('status', 1)->orderBy(function ($query) {
-                    // Replace 'getCountByUserId' with the actual name of your helper function
-                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                })->get();
-                $firstData = User::where('status', 1)->orderBy(function ($query) {
-                    // Replace 'getCountByUserId' with the actual name of your helper function
-                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                })->first();
+                $datas = User::where('status', 1)->get()->sortByDesc(function ($user) {
+                    return $user->getMessageCount();
+                });
+                $firstData = $datas->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
@@ -873,29 +868,20 @@ class HomeController extends Controller
             if (isset($request->search)) {
                 $id = encryptDecrypt('decrypt', $id);
                 $search = $request->search;
-                $datas = User::where('status', 1)->where('fullname', 'like', '%' . $search . '%')->orderBy(function ($query) {
-                    // Replace 'getCountByUserId' with the actual name of your helper function
-                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                })->get();
-                $firstData = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->where('userid', $id)
-                    ->orderBy(function ($query) {
-                        // Replace 'getCountByUserId' with the actual name of your helper function
-                        $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                    })->first();
+                $datas = User::where('status', 1)->where('fullname', 'like', '%' . $search . '%')->get()->sortByDesc(function ($user) {
+                    return $user->getMessageCount();
+                });
+                $firstData = $datas->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_list', 'servise_first'));
-            } else {
+            } else {    
                 $id = encryptDecrypt('decrypt', $id);
                 $search = '';
-                $datas = User::where('status', 1)->orderBy(function ($query) {
-                    // Replace 'getCountByUserId' with the actual name of your helper function
-                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                })->get();
-                $firstData = User::where('status', 1)->where('userid', $id)->orderBy(function ($query) {
-                    // Replace 'getCountByUserId' with the actual name of your helper function
-                    $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
-                })->first();
+                $datas = User::where('status', 1)->get()->sortByDesc(function ($user) {
+                    return $user->getMessageCount();
+                });
+                $firstData = $datas->first();
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $id)->first();

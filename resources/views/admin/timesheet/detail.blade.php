@@ -56,7 +56,7 @@
                             </div>
                             <div class="mt-2">
                                 <a href="#" class="reject-btn"
-                                    onclick="UpdateTimesheet('{{ $request->id }}','Rejected')">>Reject
+                                    onclick="UpdateTimesheet('{{ $request->id }}','Rejected')">Reject
                                     Request</a>
                             </div>
                         </div>

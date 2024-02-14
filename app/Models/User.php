@@ -72,4 +72,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ServiceMember::class, 'member_id');
     }
+
+    public function  getMessageCount()
+    {
+        return  CountMSG($this->userid);
+    }
 }

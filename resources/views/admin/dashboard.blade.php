@@ -172,7 +172,11 @@
                                                             data-email_address="{{ $item->client->email_address }}"
                                                             data-company="{{ $item->client->company }}"
                                                             data-mobile_number="{{ $item->client->mobile_number }}"
-                                                            data-street="{{ $item->client->street }}">info</b>
+                                                            data-street="{{ $item->client->street }}"
+                                                            data-ownertype="{{ $item->client->ownertype }}"
+                                                            data-client_notes="{{ $item->client->client_notes }}"
+                                                            data-role="{{ $item->client->role }}"
+                                                            data-client_tags="{{ $item->client->client_tags }}">info</b>
                                                     </div>
                                                 @endif
 
@@ -462,6 +466,13 @@
                                                     <h2>{{ $val->fullname }}</h2>
                                                     <div class="msg-text-info">{{ $val->email }}</div>
                                                 </div>
+                                                @if (CountMSG($val->userid) > 0)
+                                                    <div class="unread-message"
+                                                        style="background: #7BC043;border-radius:8px">
+                                                        <span class="badge">{{ CountMSG($val->userid) }}</span>
+                                                    </div>
+                                                @endif
+
                                             </div>
                                         @endforeach
                                     @endif
@@ -476,7 +487,6 @@
             </div>
         </div>
     </div>
-    <!-- Marital Status Modal -->
     <div class="modal fade" id="addMarital" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -507,6 +517,22 @@
                             <td align="right">Company:</td>
                             <td align="left"> <b id="company"></b> </td>
                         </tr>
+                        <tr>
+                            <td align="right">Role:</td>
+                            <td align="left"> <b id="role"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Owner Type:</td>
+                            <td align="left"> <b id="ownertype"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Client Notes:</td>
+                            <td align="left"> <b id="client_notes"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Client Tags:</td>
+                            <td align="left"> <b id="client_tags"></b> </td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -520,6 +546,10 @@
             $("#mobile_number").text(ele.getAttribute("data-mobile_number"));
             $("#street").text(ele.getAttribute("data-street"));
             $("#company").text(ele.getAttribute("data-company"));
+            $("#role").text(ele.getAttribute("data-role"));
+            $("#ownertype").text(ele.getAttribute("data-ownertype"));
+            $("#client_notes").text(ele.getAttribute("data-client_notes"));
+            $("#client_tags").text(ele.getAttribute("data-client_tags"));
 
         }
     </script>

@@ -39,42 +39,45 @@
                     </span></td>
 
             </tr>
-            <tr>
-                <td
-                    style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                    Service:
-                </td>
-                <td colspan="8"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
-                        {{ $job_title }}
-                    </span></td>
-            </tr>
-            <tr>
-                <td
-                    style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                    Service Location:
-                </td>
-                <td colspan="8"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
-                        {{ $job_location }}
-                    </span></td>
-            </tr>
-            <tr>
-                <td
-                    style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                    Property Name:
-                </td>
-                <td colspan="8"><span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
-                        {{ $store_name }}
-                    </span></td>
-            </tr>
-            <tr>
-                <td
-                    style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                    Property Number:
-                </td>
-                <td colspan="8"><span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
-                        {{ $store_number }}
-                    </span></td>
-            </tr>
+            @if ($service != '')
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
+                        Service:
+                    </td>
+                    <td colspan="8"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
+                            {{ $job_title }}
+                        </span></td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
+                        Service Location:
+                    </td>
+                    <td colspan="8"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
+                            {{ $job_location }}
+                        </span></td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
+                        Property Name:
+                    </td>
+                    <td colspan="8"><span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
+                            {{ $store_name }}
+                        </span></td>
+                </tr>
+                <tr>
+                    <td
+                        style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
+                        Property Number:
+                    </td>
+                    <td colspan="8"><span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
+                            {{ $store_number }}
+                        </span></td>
+                </tr>
+            @endif
+
             <tr>
                 <td style="padding: 15px;" colspan="8"></td>
             </tr>
@@ -148,18 +151,25 @@
                         style="width: 1%;font-family: Arial, Helvetica, sans-serif;color:#ffffff;font-size:14px;text-align: center; padding:10px; background: black;font-weight: 600;">
                         DAILY HOURS WORKED: WEEK {{ $item['week_number'] }}
                     </td>
-                    <td colspan=""
-                        style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#ffffff;font-size:14px;text-align: center; padding:10px; background: black;font-weight: 600;">
-                        SCRUBBER
+
+                    <td
+                        colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
+                        Scrubber
                     </td>
                     <td
-                        colspan=""style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#ffffff;font-size:14px;text-align: center; padding:10px; background: black;font-weight: 600;">
-                        BURNISHER
+                        colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
+                        Burnisher
                     </td>
-                    <td
-                        colspan="2"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#ffffff;font-size:14px;text-align: center; padding:10px; background: black;font-weight: 600;">
-                        INCIDENT REPORT
-                    </td>
+                    @if ($service != '' && json_decode($service->service_items))
+                        @foreach (json_decode($service->service_items) as $si)
+                            <td colspan=""
+                                style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#ffffff;font-size:14px;text-align: center; padding:10px; background: black;font-weight: 600;">
+                                {{ $si->name }}
+                            </td>
+                        @endforeach
+                    @endif
+
+
                 </tr>
                 <tr>
                     <td colspan="1"
@@ -179,14 +189,23 @@
                         TOTAL
                     </td>
                     <td
-                        colspan=""style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: rgb(217, 217, 217);font-weight: 600;">
-                        Clock <br> Hours
+                        style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: rgb(217, 217, 217);font-weight: 600;">
+                        Clock<br> Hours
                     </td>
                     <td
                         style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: rgb(217, 217, 217);font-weight: 600;">
                         Clock<br> Hours
                     </td>
-                    <td colspan="2" style="background: rgb(217, 217, 217);"></td>
+                    @if ($service != '' && json_decode($service->service_items))
+                        @foreach (json_decode($service->service_items) as $si)
+                            <td
+                                style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: rgb(217, 217, 217);font-weight: 600;">
+                                Clock<br> Hours
+                            </td>
+                        @endforeach
+                    @endif
+
+
                 </tr>
                 @foreach ($item['days'] as $day)
                     <tr>
@@ -215,22 +234,34 @@
                             </span>
                         </td>
                         <td
-                            colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: rgb(217, 217, 217);">
+                            colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: #ffffff;">
                             <span
-                                style="border: 0;width: 80%;height: 100%; padding:10px;background-color: transparent;">
+                                style="border: 0;width: 80%;height: 100%; padding:10px;background-color: transparent;">{{ $day['scrubber']['total_hours'] }}
                             </span>
                         </td>
                         <td
-                            style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center;  background: rgb(217, 217, 217);">
+                            colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: #ffffff;">
                             <span
-                                style="border: 0;width: 80%;height: 100%; padding:10px;background-color: transparent;">
+                                style="border: 0;width: 80%;height: 100%; padding:10px;background-color: transparent;">{{ $day['burnisher']['total_hours'] }}
                             </span>
                         </td>
-                        <td colspan="2" style="background: rgb(217, 217, 217);">
-                            <span
-                                style="border: 0;width: 80%;height: 100%; padding:10px;background-color: transparent;">
-                            </span>
-                        </td>
+                        @if ($service != '' && json_decode($service->service_items))
+                            @foreach (json_decode($service->service_items) as $si)
+                                <td
+                                    colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: #ffffff;">
+                                    <span
+                                        style="border: 0;width: 80%;height: 100%; padding:10px;background-color: transparent;">
+                                        @if (is_array($day['service_items']))
+                                            @foreach ($day['service_items'] as $si_)
+                                                @if ($si->id == $si_['id'])
+                                                    {{ $si_['total_hours'] }}
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    </span>
+                                </td>
+                            @endforeach
+                        @endif
                     </tr>
                 @endforeach
             @endforeach
@@ -244,8 +275,8 @@
                     style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding: 10px; background: rgb(217, 217, 217);font-weight: 600;">
                     {{ $total_hours }}
                 </td>
-                <td
-                    colspan="4"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: black;">
+                <td colspan="@if ($service != '' && json_decode($service->service_items)) {{ count(json_decode($service->service_items)) + 2 }} @else 3 @endif"
+                    style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: black;">
 
                 </td>
             </tr>

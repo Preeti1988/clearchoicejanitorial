@@ -301,8 +301,8 @@ class ServiceController extends Controller
                 if ($item) {
                     $service_items[] = [
                         'name' => $item->name,
-                        'rating' => explode(",", $value->ratings)[$i],
-                        'review' => explode(",", $value->reviews)[$i],
+                        'rating' => $i < count(explode(",", $value->ratings))   ? explode(",", $value->ratings)[$i] : "",
+                        'review' => $i < count(explode(",", $value->reviews)) ? explode(",", $value->reviews)[$i] : "",
                     ];
                 }
             }

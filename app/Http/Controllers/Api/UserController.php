@@ -109,10 +109,10 @@ class UserController extends Controller
             'dependents' => 'required',/* No of dependents people*/
             // 'profile_image' => 'required',
             'address' => 'required',
-            'country_id' => 'required',
-            'state_id' => 'required',
-            'city' => 'required',
-            'zipcode' => 'required',
+            // 'country_id' => 'required',
+            // 'state_id' => 'required',
+            // 'city' => 'required',
+            // 'zipcode' => 'required',
             'password' => 'required',
             'c_password' => 'required|same:password',
         ]);
@@ -220,9 +220,18 @@ class UserController extends Controller
             }
         }
 
+        $timesheet = ServiceTimesheet::when(request()->filled("date"), function ($query) {
+            return  $query->whereDate("date", Carbon::parse(request('date')));
+        })->where("assign_member_id", auth()->user()->userid)->whereNotNull("end_time")->get();
+        $timesheets = [];
 
+        foreach ($timesheet as $item) {
+            $service = Service::find($item->service_id);
+            $service->address = $service->client ? $service->client->street : '';
+            $item->service = $service;
+        }
         $success['incomplete_service_count'] = Service::where("status", "completed")->whereIn("id", $incomplete_services)->count();
-        $success['service_log'] = Service::where("status",  "completed")->whereIn("id", $complete_services)->count();
+        $success['service_log'] = count($timesheet);
         $success['service_count'] = Service::where("status", "ongoing")->whereIn("id", $assigned_services)->count();
 
         $success['status'] = $user->status;
@@ -296,9 +305,9 @@ class UserController extends Controller
 
         $services = Service::whereIn("id", $servise_list_ids);
         if ($request->filled("date")) {
-            $services = $services->whereDate('created_date', '=', Carbon::parse($request->date));
+            $services = $services->whereDate('created_date', '<=', Carbon::parse($request->date))->whereDate('scheduled_end_date', '>=', Carbon::parse($request->date));
         }
-        $services = $services->orderBy("created_date", "desc")->get();
+        $services = $services->where("status", "!=", "completed")->orderBy("created_date", "desc")->get();
         $response = array();
 
         foreach ($services as $key => $service) {
@@ -314,11 +323,11 @@ class UserController extends Controller
 
             $start_date = date("y-m-d", strtotime($service->created_date));
             $combinedDateTime = Carbon::parse(" $start_date $service->service_start_time");
-            $temp['start']  = $combinedDateTime->format('Y-m-d H:i:s');
+            $temp['start']  = date("Y-m-d") . " " . $combinedDateTime->format('H:i:s');
             // $currentDate = Carbon::now()->toDateString();
             $end_date = date("y-m-d", strtotime($service->scheduled_end_date));
             $combinedDateTime = Carbon::parse("$end_date $service->service_end_time");
-            $temp['end']  = $combinedDateTime->format('Y-m-d H:i:s');
+            $temp['end']  =  date("Y-m-d") . " " . $combinedDateTime->format('H:i:s');
 
             $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->whereDate('date', date('Y-m-d'))->first();
             if (!empty($timesheet)) {
@@ -566,10 +575,10 @@ class UserController extends Controller
         $temp['OutScope'] =  json_decode($service->outscopes);
 
         $service_items = json_decode($service->service_items);
-
+        $rating_submitted = true;
         foreach ($service_items as  $item) {
 
-            $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $uest->service_id)->where('service_item_id', $item->id)
+            $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->where('service_item_id', $item->id)
                 ->whereDate('date', date('Y-m-d'))->first();
 
             if ($timesheet) {
@@ -590,11 +599,37 @@ class UserController extends Controller
             } else {
                 $item->rate = 0;
                 $item->comment = "";
+                $rating_submitted = false;
             }
         }
 
         $temp['ServicesItems'] = $service_items;
+        // scrubber and burnisher machines
+        $scrubber_timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->where('machine_type', "scrubber")
+            ->whereDate('date', date('Y-m-d'))->first();
+        $scrubber = [];
+        if ($scrubber_timesheet) {
+            $scrubber['start_time'] = date("h:i A", strtotime($scrubber_timesheet->start_time));
+            $scrubber['end_time'] =  date("h:i A", strtotime($scrubber_timesheet->end_time));
+        } else {
+            $scrubber['start_time'] = "";
+            $scrubber['end_time'] = "";
+        }
+        $burnisher_timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->where('machine_type', "burnisher")
+            ->whereDate('date', date('Y-m-d'))->first();
+        $burnisher = [];
+        if ($burnisher_timesheet) {
+            $burnisher['start_time'] = date("h:i A", strtotime($burnisher_timesheet->start_time));
+            $burnisher['end_time'] =  date("h:i A", strtotime($burnisher_timesheet->end_time));
+        } else {
+            $burnisher['start_time'] = "";
+            $burnisher['end_time'] = "";
+        }
+        $temp['scrubber'] = $scrubber;
+        $temp['burnisher'] = $burnisher;
 
+
+        $temp['rating_submitted'] = $rating_submitted;
         $temp['service'] = $service;
 
         $members = [];
@@ -607,12 +642,12 @@ class UserController extends Controller
 
         $temp['scheduled_list'] = [
             'from' => [
-                "date" => $service->created_date ? date("m-d-y", strtotime($service->created_date)) : null,
-                'time' => date("h:i", strtotime($service->service_start_time))
+                "date" => $service->created_date ? date("m-d-Y", strtotime($service->created_date)) : null,
+                'time' => date("h:i A", strtotime($service->service_start_time))
             ],
             'to' => [
-                "date" =>  $service->scheduled_end_date ? date("m-d-y", strtotime($service->scheduled_end_date)) : null,
-                'time' =>  date("h:i", strtotime($service->service_end_time))
+                "date" =>  $service->scheduled_end_date ? date("m-d-Y", strtotime($service->scheduled_end_date)) : null,
+                'time' =>  date("h:i A", strtotime($service->service_end_time))
             ],
             'list' => $members
         ];
@@ -638,7 +673,7 @@ class UserController extends Controller
         }
         $status = $request->status; /*2:On the way, 3:Start timimg, 4: Finish*/
         if ($status == 2) {
-            $key = 'on_the_way';
+            $key = 'on_the_way_time';
             $value = date('H:i:s');
             $date = date('Y-m-d');
         } elseif ($status == 3) {
@@ -650,21 +685,32 @@ class UserController extends Controller
             $value = date('H:i:s');
             $date = date('Y-m-d');
         }
-        $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)
-            ->whereDate('date', date('Y-m-d'))->first();
-        if (!empty($timesheet)) {
-            ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->whereDate('date', date('Y-m-d'))->update(['status' => $request->status, $key => $value]);
+
+        if ($request->has("date") && $request->has("time")) {
+            $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)
+                ->whereDate('date', Carbon::parse($request->date))->first();
+
+            if (!empty($timesheet)) {
+                ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->whereDate('date', Carbon::parse($request->date))->update(['status' => $request->status, $key => Carbon::parse($request->time)]);
+            }
         } else {
-            $sheet = new ServiceTimesheet;
-            $sheet->assign_member_id = $user->userid;
-            $sheet->service_id = $request->service_id;
-            $sheet->date = date('Y-m-d');
-            $sheet->on_the_way_time = date('H:i:s');
-            $sheet->start_time = '';
-            $sheet->end_time = '';
-            $sheet->status = 2;
-            $sheet->save();
+            $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)
+                ->whereDate('date', Carbon::parse(date('Y-m-d')))->first();
+            if (!empty($timesheet)) {
+                ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->whereDate('date', date('Y-m-d'))->update(['status' => $request->status, $key => $value]);
+            } else {
+                $sheet = new ServiceTimesheet;
+                $sheet->assign_member_id = $user->userid;
+                $sheet->service_id = $request->service_id;
+                $sheet->date = date('Y-m-d');
+                $sheet->on_the_way_time = date('H:i:s');
+                $sheet->start_time = null;
+                $sheet->end_time = null;
+                $sheet->status = 2;
+                $sheet->save();
+            }
         }
+
 
         //ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->update(['status'=>$request->status,$key=>$value]);
         return response()->json(["status" => true, "message" => "Status updated."]);
@@ -696,23 +742,47 @@ class UserController extends Controller
         //     $value = date('H:i:s');
         //     $date = date('Y-m-d');
         // }
-        $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->where('service_item_id', $request->service_item_id)
-            ->whereDate('date', date('Y-m-d'))->first();
-        if (!empty($timesheet)) {
-            ServiceItemTimesheet::where('assign_member_id', $user->userid)
-                ->where('service_id', $request->service_id)->where('service_item_id', $request->service_item_id)
-                ->whereDate('date', date('Y-m-d'))
-                ->update(['start_time' => $request->start_time, 'end_time' => $request->end_time,]);
+
+        if ($request->has('machine_type')) {
+            $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)
+                ->where('machine_type', $request->machine_type)
+                ->whereDate('date', date('Y-m-d'))->first();
+            if (!empty($timesheet)) {
+                ServiceItemTimesheet::where('assign_member_id', $user->userid)
+                    ->where('service_id', $request->service_id)
+                    ->where('machine_type', $request->machine_type)
+                    ->whereDate('date', date('Y-m-d'))
+                    ->update(['start_time' => $request->start_time, 'end_time' => $request->end_time,]);
+            } else {
+                $sheet = new ServiceItemTimesheet;
+                $sheet->assign_member_id = $user->userid;
+                $sheet->service_id = $request->service_id;
+                $sheet->machine_type = $request->machine_type;
+                $sheet->date = date('Y-m-d');
+                $sheet->start_time = $request->start_time;
+                $sheet->end_time = $request->end_time;
+                $sheet->save();
+            }
         } else {
-            $sheet = new ServiceItemTimesheet;
-            $sheet->assign_member_id = $user->userid;
-            $sheet->service_id = $request->service_id;
-            $sheet->service_item_id = $request->service_item_id;
-            $sheet->date = date('Y-m-d');
-            $sheet->start_time = $request->start_time;
-            $sheet->end_time = $request->end_time;
-            $sheet->save();
+            $timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->where('service_item_id', $request->service_item_id)
+                ->whereDate('date', date('Y-m-d'))->first();
+            if (!empty($timesheet)) {
+                ServiceItemTimesheet::where('assign_member_id', $user->userid)
+                    ->where('service_id', $request->service_id)->where('service_item_id', $request->service_item_id)
+                    ->whereDate('date', date('Y-m-d'))
+                    ->update(['start_time' => $request->start_time, 'end_time' => $request->end_time,]);
+            } else {
+                $sheet = new ServiceItemTimesheet;
+                $sheet->assign_member_id = $user->userid;
+                $sheet->service_id = $request->service_id;
+                $sheet->service_item_id = $request->service_item_id;
+                $sheet->date = date('Y-m-d');
+                $sheet->start_time = $request->start_time;
+                $sheet->end_time = $request->end_time;
+                $sheet->save();
+            }
         }
+
 
         //ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->update(['status'=>$request->status,$key=>$value]);
         return response()->json(["status" => true, "message" => "Status updated."]);
@@ -924,6 +994,8 @@ class UserController extends Controller
 
         $daysInWeek = [];
         foreach ($timesheet as $record) {
+
+
             if ($currentWeek !== $record->week_number) {
                 // Start a new week
                 if ($currentWeek !== null) {
@@ -968,11 +1040,13 @@ class UserController extends Controller
                         // Calculate the difference in seconds
                         $totalSeconds = $this->formatTime($endTime->diffInSeconds($startTime));
                         $si = [
+                            'id' => $service_item->id,
                             'name' => $service_item->name,
                             'total_hours' => $totalSeconds
                         ];
                     } else {
                         $si = [
+                            'id' => $service_item->id,
                             'name' => $service_item->name,
                             'total_hours' => null
                         ];
@@ -991,16 +1065,49 @@ class UserController extends Controller
                 }
             }
 
+            $scrubber = [];
+
+            $scrubber_timesheet = ServiceItemTimesheet::where('assign_member_id', $record->assign_member_id)->where('service_id', $record->service_id)->where('machine_type', "scrubber")
+                ->whereDate('date', $record->date)->first();
+
+            if ($scrubber_timesheet) {
+                $startTime = Carbon::parse($scrubber_timesheet->start_time);
+                $endTime = Carbon::parse($scrubber_timesheet->end_time);
+
+                // Calculate the difference in seconds
+                $totalSeconds = $this->formatTime($endTime->diffInSeconds($startTime));
+                $scrubber['total_hours'] =  $totalSeconds;
+            } else {
+                $scrubber['total_hours'] = null;
+            }
+            $burnisher_timesheet = ServiceItemTimesheet::where('assign_member_id', $record->assign_member_id)->where('service_id', $record->service_id)->where('machine_type', "burnisher")
+                ->whereDate('date', $record->date)->first();
+            $burnisher = [];
+            if ($burnisher_timesheet) {
+                $startTime = Carbon::parse($burnisher_timesheet->start_time);
+                $endTime = Carbon::parse($burnisher_timesheet->end_time);
+                // Calculate the difference in seconds
+                $totalSeconds = $this->formatTime($endTime->diffInSeconds($startTime));
+                $burnisher['total_hours'] =  $totalSeconds;
+            } else {
+                $burnisher['total_hours'] = null;
+            }
+
+
             // Record the details for the current day
             $daysInWeek[] = [
                 'date' => $record->formatted_date,
-                'start_time' => $record->start_time,
-                'end_time' => $record->end_time,
+                'start_time' => date("H:i A", strtotime($record->start_time)),
+                'end_time' => date("H:i A", strtotime($record->end_time)),
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
                 'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
                 'service_items' => $items,
+                'scrubber' => $scrubber,
+                'burnisher' => $burnisher,
+
                 'service_name' => $service_->name ?? "",
                 'service_id' => $service_->id ?? "",
+
 
 
             ];
@@ -1024,6 +1131,10 @@ class UserController extends Controller
             $totalHours += $totalHoursInWeekFormat;
         }
 
+
+
+
+        $timesheet_submitted = TimesheetRequest::whereDate("start_date", Carbon::parse($request->pay_period_start))->whereDate("end_date", Carbon::parse($request->pay_period_end))->where("member_id", $member->userid)->first();
         $data = [
             'start_period' => $startPeriod,
             'end_period' => $endPeriod,
@@ -1033,12 +1144,18 @@ class UserController extends Controller
             'store_name' => $service ? ($service->client ? $service->client->name : '') : "",
             'store_number' => $service ? ($service->client ? $service->client->home_number : '') : '',
             'timesheet' => $result, 'total_hours' => $this->formatTime($totalHoursInWeekFormat),
+            "timesheet_submitted" => $timesheet_submitted ? true : false,
+            "timesheet_status" => $timesheet_submitted ? $timesheet_submitted->status : "Pending",
+            'service' => $service,
+            'pdf' => ''
 
         ];
-
+        // if ($request->service_id) {
         $timecard = uniqid();
         Pdf::loadView("pdf.timecard", $data)->save("public/upload/pdfs/timcard$timecard.pdf");
         $data["pdf"] = custom_asset("public/upload/pdfs/timcard$timecard.pdf");
+        // }
+
         return response()->json(["status" => true, "message" => "timesheet.", "data" => $data]);
     }
     function formatTime($totalSeconds)
@@ -1066,14 +1183,34 @@ class UserController extends Controller
     }
     public function serviceLogs()
     {
-        $timesheet = ServiceTimesheet::when(request()->has("date"), function ($query) {
+        $user = Auth::user();
+        $timesheet = ServiceTimesheet::when(request()->filled("date"), function ($query) {
             return  $query->whereDate("date", Carbon::parse(request('date')));
-        })->where("assign_member_id", auth()->user()->userid)->get();
+        })->where("assign_member_id", auth()->user()->userid)->whereNotNull("end_time")->get();
+        $timesheets = [];
+
         foreach ($timesheet as $item) {
             $service = Service::find($item->service_id);
             $service->address = $service->client ? $service->client->street : '';
             $item->service = $service;
+            $item->service->created_date = date("Y-m-d", strtotime($item->service->created_date));
         }
+        // $assigned_services = ServiceMember::where("member_id", $user->userid)->groupBy("service_id")->pluck("service_id")->toArray();
+        // $completed_services = ServiceTimesheet::where("assign_member_id", $user->userid)->groupBy("service_id")->pluck("service_id")->toArray();
+        // $incomplete_services = [];
+        // $complete_services = [];
+
+        // foreach ($assigned_services as $id) {
+        //     if (!in_array($id, $completed_services)) {
+        //         $incomplete_services[] = $id;
+        //     } else {
+        //         $complete_services[] = $id;
+        //     }
+        // }
+
+        $success = Service::where("status",  "completed")->whereIn("id", $timesheets)->get();
+
+
         return response()->json(["status" => true, "message" => "service logs.", "data" => $timesheet]);
     }
     public function incompleteServices()

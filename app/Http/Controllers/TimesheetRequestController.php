@@ -24,14 +24,21 @@ class TimesheetRequestController extends Controller
             $keyword = trim(request('search'));
             $emp_ids = User::where("fullname", "LIKE", "%$keyword%")->pluck("userid")->toArray();
         }
-        $requests = TimesheetRequest::where("status", "Pending")->when(request()->has('search'), function ($query) use ($emp_ids) {
+        $requests = TimesheetRequest::when(request()->has('search'), function ($query) use ($emp_ids) {
             return $query->whereIn("member_id", $emp_ids);
         })->when(request()->has('start_date') && request()->has('end_date'), function ($query) {
             return $query->whereDate("start_date", ">=", Carbon::parse(request("start_date")))->whereDate("end_date", "<=", Carbon::parse(request("end_date")));
-        })->paginate(10);
-        $count = TimesheetRequest::where("status", "Pending")->count();
+        });
+        if (request()->has('filter')) {
+            $requests = $requests->where("status", "Pending");
+        } else {
+            $requests = $requests->where("status", "!=", "Pending");
+        }
+        $requests = $requests->paginate(10);
 
-        return view("admin.timesheet.requests", compact('requests', 'count'));
+        $count = TimesheetRequest::where("status", "!=", "Pending")->count();
+
+        return view("admin.timesheet.requests", compact('requests',  'count'));
     }
     function detail($id)
     {

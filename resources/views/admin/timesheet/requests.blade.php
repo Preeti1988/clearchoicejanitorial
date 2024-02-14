@@ -15,7 +15,7 @@
             </h6>
         </div>
         <div class="row align-items-center mb-3 my-2">
-            <div class="col-md-7">
+            <div class="col-md-5">
                 <br>
                 {{-- @if ($type == 1)
                                 <form action="{{ route('search.team-member-active') }}" method="POST">
@@ -64,6 +64,10 @@
 
                 </div>
             </div>
+            <div class="col-md-2 d-flex">
+
+                <a href="{{ route('timesheet.requests') . '?filter=Pending' }}" class="view-btn">Pending Requests</a>
+            </div>
         </div>
         <div class="team-view-section">
             @if ($requests->isEmpty())
@@ -98,11 +102,13 @@
                                     <p class="mt-2">{{ $val->start_date }} TO {{ $val->end_date }} </p>
                                 </div>
                                 <div class="col-md-3 account-status">
-                                    <h6>Account Status</h6>
+                                    <h6>Request Status</h6>
                                     <p class="mt-2"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                                             fill="currentColor" class="bi bi-circle-fill me-2" viewBox="0 0 16 16">
                                             <circle cx="6" cy="6" r="6" />
-                                        </svg>Pending For Approval</p>
+                                        </svg>{{ $val->status }}</p>
+
+
                                 </div>
                                 <div class="col-md-2">
                                     <div class="text-end">

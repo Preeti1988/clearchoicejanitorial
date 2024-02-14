@@ -130,7 +130,11 @@
                                                             data-email_address="{{ $item->client->email_address }}"
                                                             data-company="{{ $item->client->company }}"
                                                             data-mobile_number="{{ $item->client->mobile_number }}"
-                                                            data-street="{{ $item->client->street }}">info</b>
+                                                            data-street="{{ $item->client->street }}"
+                                                            data-ownertype="{{ $item->client->ownertype }}"
+                                                            data-client_notes="{{ $item->client->client_notes }}"
+                                                            data-role="{{ $item->client->role }}"
+                                                            data-client_tags="{{ $item->client->client_tags }}">info</b>
                                                     </div>
                                                 @endif
                                             </div>
@@ -445,7 +449,7 @@
                     <div class="completedservice-overview">
                         <div class="completedservice-overview-content">
                             <h2>Total Earning Amount</h2>
-                            <h1>${{ $earning }}</h1>
+                            <h1>${{ number_format($earning, 2, '.', '') }}</h1>
                             {{-- <p><i class="las la-check-circle"></i> Completed</p> --}}
                         </div>
                         <div class="completedservice-overview-images">
@@ -486,6 +490,22 @@
                             <td align="right">Company:</td>
                             <td align="left"> <b id="company"></b> </td>
                         </tr>
+                        <tr>
+                            <td align="right">Role:</td>
+                            <td align="left"> <b id="role"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Owner Type:</td>
+                            <td align="left"> <b id="ownertype"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Client Notes:</td>
+                            <td align="left"> <b id="client_notes"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Client Tags:</td>
+                            <td align="left"> <b id="client_tags"></b> </td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -499,6 +519,10 @@
             $("#mobile_number").text(ele.getAttribute("data-mobile_number"));
             $("#street").text(ele.getAttribute("data-street"));
             $("#company").text(ele.getAttribute("data-company"));
+            $("#role").text(ele.getAttribute("data-role"));
+            $("#ownertype").text(ele.getAttribute("data-ownertype"));
+            $("#client_notes").text(ele.getAttribute("data-client_notes"));
+            $("#client_tags").text(ele.getAttribute("data-client_tags"));
 
         }
     </script>
