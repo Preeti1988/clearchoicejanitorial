@@ -307,6 +307,21 @@ class UserController extends Controller
         if ($request->filled("date")) {
             $services = $services->whereDate('created_date', '<=', Carbon::parse($request->date))->whereDate('scheduled_end_date', '>=', Carbon::parse($request->date));
         }
+
+        // if ($request->filled("finish")) {
+        //     $sids = [];
+        //     if ($request->finish == true) {
+        //         $sids = ServiceTimesheet::where('assign_member_id', $user->userid)->when($request->filled("date"), function ($query) use ($request) {
+        //             return $query->whereDate('date',  Carbon::parse($request->date));
+        //         })->where("status", 4)->groupBy('service_id')->pluck("service_id")->toArray();
+        //     } else {
+        //         $sids = ServiceTimesheet::where('assign_member_id', $user->userid)->when($request->filled("date"), function ($query) use ($request) {
+        //             return $query->whereDate('date',  Carbon::parse($request->date));
+        //         })->where("status", '!=', 4)->groupBy('service_id')->pluck("service_id")->toArray();
+        //     }
+
+        //     $services = $services->whereIn('id', $sids);
+        // }
         $services = $services->where("status", "!=", "completed")->orderBy("created_date", "desc")->get();
         $response = array();
 
@@ -436,11 +451,13 @@ class UserController extends Controller
                 $count = $chat->read_status + 1;
                 ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)
                     // ->where('service_id', $request->service_id)
-                    ->update(['read_status' => $count]);
+                    ->update(['read_status' => $count, 'sent_at' => now()]);
             } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
                 $ChatCount->receiver_id = 1;
+                $ChatCount->sent_at = now();
+
                 // $ChatCount->service_id = $request->service_id;
                 $ChatCount->read_status = 1;
                 $ChatCount->save();
@@ -607,6 +624,8 @@ class UserController extends Controller
         // scrubber and burnisher machines
         $scrubber_timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->where('machine_type', "scrubber")
             ->whereDate('date', date('Y-m-d'))->first();
+
+
         $scrubber = [];
         if ($scrubber_timesheet) {
             $scrubber['start_time'] = date("h:i A", strtotime($scrubber_timesheet->start_time));
@@ -617,6 +636,8 @@ class UserController extends Controller
         }
         $burnisher_timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->where('machine_type', "burnisher")
             ->whereDate('date', date('Y-m-d'))->first();
+
+
         $burnisher = [];
         if ($burnisher_timesheet) {
             $burnisher['start_time'] = date("h:i A", strtotime($burnisher_timesheet->start_time));
@@ -625,9 +646,30 @@ class UserController extends Controller
             $burnisher['start_time'] = "";
             $burnisher['end_time'] = "";
         }
-        $temp['scrubber'] = $scrubber;
-        $temp['burnisher'] = $burnisher;
 
+        $incident_report_timesheet = ServiceItemTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->where('machine_type', "incident_report")
+            ->whereDate('date', Carbon::parse(date('Y-m-d')))->first();
+
+        $incident_report = [];
+        if ($incident_report_timesheet) {
+            $incident_report['details'] = $incident_report_timesheet->details;
+        } else {
+            $incident_report['details'] = "";
+        }
+
+        $temp['machine_type'][] = [
+            'name' => 'Scrubber',
+            'start_time' =>  $scrubber['start_time'],
+            'end_time' =>  $scrubber['end_time'],
+
+        ];
+        $temp['machine_type'][] = [
+            'name' => 'Burnisher',
+            'start_time' =>  $burnisher['start_time'],
+            'end_time' =>  $burnisher['end_time'],
+        ];
+
+        $temp['incident_report'] = $incident_report;
 
         $temp['rating_submitted'] = $rating_submitted;
         $temp['service'] = $service;
@@ -748,19 +790,32 @@ class UserController extends Controller
                 ->where('machine_type', $request->machine_type)
                 ->whereDate('date', date('Y-m-d'))->first();
             if (!empty($timesheet)) {
-                ServiceItemTimesheet::where('assign_member_id', $user->userid)
-                    ->where('service_id', $request->service_id)
-                    ->where('machine_type', $request->machine_type)
-                    ->whereDate('date', date('Y-m-d'))
-                    ->update(['start_time' => $request->start_time, 'end_time' => $request->end_time,]);
+                if ($request->machine_type == 'incident_report') {
+                    ServiceItemTimesheet::where('assign_member_id', $user->userid)
+                        ->where('service_id', $request->service_id)
+                        ->where('machine_type', $request->machine_type)
+                        ->whereDate('date', date('Y-m-d'))
+                        ->update(['details' => $request->details]);
+                } else {
+                    ServiceItemTimesheet::where('assign_member_id', $user->userid)
+                        ->where('service_id', $request->service_id)
+                        ->where('machine_type', $request->machine_type)
+                        ->whereDate('date', date('Y-m-d'))
+                        ->update(['start_time' => $request->start_time, 'end_time' => $request->end_time,]);
+                }
             } else {
                 $sheet = new ServiceItemTimesheet;
                 $sheet->assign_member_id = $user->userid;
                 $sheet->service_id = $request->service_id;
                 $sheet->machine_type = $request->machine_type;
                 $sheet->date = date('Y-m-d');
-                $sheet->start_time = $request->start_time;
-                $sheet->end_time = $request->end_time;
+                if ($request->machine_type == 'incident_report') {
+
+                    $sheet->details = $request->details;
+                } else {
+                    $sheet->start_time = $request->start_time;
+                    $sheet->end_time = $request->end_time;
+                }
                 $sheet->save();
             }
         } else {
@@ -993,6 +1048,7 @@ class UserController extends Controller
 
 
         $daysInWeek = [];
+        $service_item_header = [];
         foreach ($timesheet as $record) {
 
 
@@ -1062,6 +1118,7 @@ class UserController extends Controller
                     }
 
                     $items[] = $si;
+                    $service_item_header["item_" . $si['id']] = $si['name'];
                 }
             }
 
@@ -1080,6 +1137,7 @@ class UserController extends Controller
             } else {
                 $scrubber['total_hours'] = null;
             }
+
             $burnisher_timesheet = ServiceItemTimesheet::where('assign_member_id', $record->assign_member_id)->where('service_id', $record->service_id)->where('machine_type', "burnisher")
                 ->whereDate('date', $record->date)->first();
             $burnisher = [];
@@ -1093,18 +1151,39 @@ class UserController extends Controller
                 $burnisher['total_hours'] = null;
             }
 
+            $incident_report_timesheet = ServiceItemTimesheet::where('assign_member_id', $record->assign_member_id)->where('service_id', $record->service_id)->where('machine_type', "incident_report")
+                ->whereDate('date', $record->date)->first();
+            $incident_report = [];
+            if ($incident_report_timesheet) {
 
+                // Calculate the difference in seconds
+
+                $incident_report['details'] =  $incident_report_timesheet->details;
+            } else {
+                $incident_report['details'] = null;
+            }
+            $machine_type = [
+                [
+                    'name' => 'Scrubber',
+                    'total_hours' => $scrubber['total_hours']
+                ],
+                [
+                    'name' => 'Burnisher',
+                    'total_hours' => $burnisher['total_hours']
+                ]
+            ];
             // Record the details for the current day
             $daysInWeek[] = [
                 'date' => $record->formatted_date,
-                'start_time' => date("H:i A", strtotime($record->start_time)),
-                'end_time' => date("H:i A", strtotime($record->end_time)),
+                'start_time' => date("h:i A", strtotime($record->start_time)),
+                'end_time' => date("h:i A", strtotime($record->end_time)),
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
                 'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
                 'service_items' => $items,
                 'scrubber' => $scrubber,
                 'burnisher' => $burnisher,
-
+                'machine_type' => $machine_type,
+                'incident_report' => $incident_report,
                 'service_name' => $service_->name ?? "",
                 'service_id' => $service_->id ?? "",
 
@@ -1147,7 +1226,10 @@ class UserController extends Controller
             "timesheet_submitted" => $timesheet_submitted ? true : false,
             "timesheet_status" => $timesheet_submitted ? $timesheet_submitted->status : "Pending",
             'service' => $service,
-            'pdf' => ''
+            'pdf' => '',
+            'service_exist' => $request->has('service_id'),
+            'service_item_header' => $service_item_header
+
 
         ];
         // if ($request->service_id) {
@@ -1193,6 +1275,9 @@ class UserController extends Controller
             $service = Service::find($item->service_id);
             $service->address = $service->client ? $service->client->street : '';
             $item->service = $service;
+            $item->start_time = date("h:i A", strtotime($item->start_time));
+            $item->end_time = date("h:i A", strtotime($item->end_time));
+
             $item->service->created_date = date("Y-m-d", strtotime($item->service->created_date));
         }
         // $assigned_services = ServiceMember::where("member_id", $user->userid)->groupBy("service_id")->pluck("service_id")->toArray();

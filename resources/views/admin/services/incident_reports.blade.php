@@ -9,7 +9,7 @@
             <div class="heading-section">
                 <div class="d-flex align-items-center">
                     <div class="mr-auto">
-                        <h4 class="heading-title">Service Ratings </h4>
+                        <h4 class="heading-title">Incident Reports </h4>
                     </div>
                     <div class="btn-option-info wd70">
                         <div class="search-filter">
@@ -35,7 +35,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    <a href="{{ route('services.feedbacks') }}" class="m-1 mx-3"><img
+                                    <a href="{{ route('services.incident_reports') }}" class="m-1 mx-3"><img
                                             src="{{ custom_asset('public/assets/admin-images/reset-icon.png') }}"
                                             style="height: 25px" alt=""></a>
 
@@ -47,7 +47,7 @@
 
                                                 <input type="date" name="date" id="date" class="form-control"
                                                     value="{{ request()->has('date') ? request('date') : '' }}"
-                                                    onchange="location.replace('{{ route('services.feedbacks') }}'+'?date='+this.value)">
+                                                    onchange="location.replace('{{ route('services.incident_reports') }}'+'?date='+this.value)">
                                             </div>
                                         </a>
 
@@ -69,48 +69,42 @@
 
                                     <th>Member Name</th>
                                     <th>Service Name</th>
-                                    <th>Ratings</th>
+                                    <th>Reports</th>
+                                    <th>Date</th>
 
 
                                 </tr>
                             </thead>
 
                             <tbody>
-                                @if ($ratings->isEmpty())
+                                @if ($reports->isEmpty())
                                     <tr>
                                         <td colspan="11" class="text-center">
                                             No record found
                                         </td>
                                     </tr>
-                                @elseif(!$ratings->isEmpty())
-                                    @foreach ($ratings as $val)
+                                @elseif(!$reports->isEmpty())
+                                    @foreach ($reports as $val)
                                         <tr>
-
-
                                             <td style="white-space: nowrap;">
-                                                {{ $val->member->fullname ?? 'N/A' }}
-                                            </td>
-
-                                            <td>
-                                                {{ $val->service->name ?? 'N/A' }}
+                                                {{ $val->member ?? 'N/A' }}
                                             </td>
                                             <td>
-
-                                                @foreach ($val->items as $item)
-                                                    <span>{{ $item['name'] }}:&nbsp;</span>
-
-                                                    <span>{{ $item['review'] }}({{ $item['rating'] }})</span><br>
-                                                @endforeach
+                                                {{ $val->service_name ?? 'N/A' }}
                                             </td>
-
-
+                                            <td>
+                                                {{ $val->details ?? 'N/A' }}
+                                            </td>
+                                            <td>
+                                                {{ date('Y-m-d', strtotime($val->date)) }}
+                                            </td>
 
 
                                         </tr>
                                     @endforeach
                                 @endif
                                 <div class="d-flex justify-content-left">
-                                    {{ $ratings->links('pagination::bootstrap-4') }}
+                                    {{ $reports->links('pagination::bootstrap-4') }}
                                 </div>
                             </tbody>
                         </table>

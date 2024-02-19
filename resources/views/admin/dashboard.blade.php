@@ -176,6 +176,7 @@
                                                             data-ownertype="{{ $item->client->ownertype }}"
                                                             data-client_notes="{{ $item->client->client_notes }}"
                                                             data-role="{{ $item->client->role }}"
+                                                            data-edit_client_url="{{ url('edit-client/' . encryptDecrypt('encrypt', $item->client->id)) }}"
                                                             data-client_tags="{{ $item->client->client_tags }}">info</b>
                                                     </div>
                                                 @endif
@@ -448,13 +449,13 @@
                                 </div>
                                 <div class="chat-panel-sidebar-list">
 
-                                    @if ($msgs->isEmpty())
+                                    @if (count($msgs) == 0)
 
 
                                         <div class="chat-panel-sidebar-item">
                                             No record found
                                         </div>
-                                    @elseif(!$msgs->isEmpty())
+                                    @elseif(count($msgs) != 0)
                                         @foreach ($msgs as $val)
                                             <div class="chat-panel-sidebar-item"
                                                 onclick="location.replace('{{ url('chat/' . encryptDecrypt('encrypt', $val->userid)) }}')">
@@ -495,7 +496,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h5 class="text-center"><span id="marital_text">Client</span> Details</h5>
+                    <h5 class="text-center d-flex  justify-content-between"> <span><span id="marital_text">Client</span>
+                            Details </span> <span>
+                            <a href="" id="client_edit_url" class="btn "
+                                style="background: #7BC043;color:white">edit</a>
+                        </span> </h5>
                     <table class="table">
                         <tr>
                             <td align="right">Name:</td>
@@ -550,6 +555,7 @@
             $("#ownertype").text(ele.getAttribute("data-ownertype"));
             $("#client_notes").text(ele.getAttribute("data-client_notes"));
             $("#client_tags").text(ele.getAttribute("data-client_tags"));
+            $("#client_edit_url").attr("href", ele.getAttribute("data-edit_client_url"));
 
         }
     </script>

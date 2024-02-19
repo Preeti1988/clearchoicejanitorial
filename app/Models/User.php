@@ -32,6 +32,7 @@ class User extends Authenticatable
         'designation_id',
         'marital_status',
         'DOB',
+        'dependents',
         'ownertype',
         'addres_notes',
         'contractor',

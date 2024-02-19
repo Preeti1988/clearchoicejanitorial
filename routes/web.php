@@ -34,7 +34,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('Home');
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('Homes');
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'dashboard'])->name('Dashboard');
-    Route::get('/calender', [App\Http\Controllers\HomeController::class, 'calender'])->name('calender');
+    Route::get('/calendar', [App\Http\Controllers\HomeController::class, 'calender'])->name('calender');
 
     Route::get('/client', [App\Http\Controllers\HomeController::class, 'clients'])->name('Clients');
     Route::get('/client-details/{id}', [App\Http\Controllers\HomeController::class, 'client_details'])->name('ClientDetails');
@@ -82,6 +82,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get("service-scheduler", [ServiceController::class, 'serviceScheduler'])->name('services.scheduler');
     Route::get("assign-member/{id}", [ServiceController::class, 'assignMember'])->name('services.assign');
     Route::post("assign-member", [ServiceController::class, 'assignMemberPost'])->name('services.assign.post');
+    Route::get("incident-reports", [ServiceController::class, 'incident_reports'])->name('services.incident_reports');
+
 
     Route::get("privacy", [SettingController::class, 'privacy'])->name('privacy');
     Route::post("privacy", [SettingController::class, 'privacySave'])->name('privacy.save');

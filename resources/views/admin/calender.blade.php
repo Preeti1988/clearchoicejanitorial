@@ -147,7 +147,7 @@
         <div class="overview-section">
             <div class="row">
                 <div class="col-md-12 bg-gray">
-                    <h2 class= "mb-2">Calender</h2>
+                    <h2 class= "mb-2">Calendar</h2>
                     <div id='calendar'></div>
                 </div>
             </div>

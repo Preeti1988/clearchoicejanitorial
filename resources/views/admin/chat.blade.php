@@ -36,13 +36,14 @@
                         </div>
                     </form>
                     <div class="chat-userlist-info">
-                        @if ($datas->isEmpty())
+
+                        @if (count($datas) == 0)
                             <tr>
                                 <td colspan="11" class="text-center">
                                     No record found
                                 </td>
                             </tr>
-                        @elseif(!$datas->isEmpty())
+                        @elseif(count($datas) != 0)
                             @foreach ($datas as $val)
                                 <a href="{{ url('chat/' . encryptDecrypt('encrypt', $val->userid)) }}">
                                     <div class="chat-userlist-item"

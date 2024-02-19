@@ -72,9 +72,20 @@ class HomeController extends Controller
         //     // Replace 'getCountByUserId' with the actual name of your helper function
         //     $query->selectRaw(CountMSG('users.userid') . ' as user_count')->orderBy('user_count', 'desc');
         // })->get();
-        $msgs = User::all()->sortByDesc(function ($user) {
-            return $user->getMessageCount();
-        });
+        // $msgs = User::where("userid", "!=", 1)->get()->sortByDesc(function ($user) {
+        //     return $user->getMessageCount();
+        // });
+        $userOrder = ChatCount::whereNotNull("sent_at")->where("sender_id", "!=", 1)->orderBy("sent_at", "desc")->groupBy("sender_id")->pluck("sender_id")->toArray();
+        $msgs = [];
+        foreach ($userOrder as $id) {
+            $msgs[] = User::find($id);
+        }
+        // Retrieve and display remaining users
+        $remainingUsers = User::whereNotIn('userid', $userOrder)->where("userid", "!=", 1)
+            ->get();
+        foreach ($remainingUsers as $id) {
+            $msgs[] = $id;
+        }
 
         $unassigned = $unassigned->orderBy("id", "desc")->get();
         $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
@@ -843,6 +854,7 @@ class HomeController extends Controller
                 $datas = User::where('fullname', 'like', '%' . $search . '%')->where('status', 1)->get()->sortByDesc(function ($user) {
                     return $user->getMessageCount();
                 });;
+
                 $firstData = $datas->first();
                 $servise_list = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get() : [];
                 $servise_first = $firstData ? ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first() : null;
@@ -852,7 +864,18 @@ class HomeController extends Controller
                 $datas = User::where('status', 1)->get()->sortByDesc(function ($user) {
                     return $user->getMessageCount();
                 });
-                $firstData = $datas->first();
+                $userOrder = ChatCount::whereNotNull("sent_at")->where("sender_id", "!=", 1)->orderBy("sent_at", "desc")->groupBy("sender_id")->pluck("sender_id")->toArray();
+                $datas = [];
+                foreach ($userOrder as $id) {
+                    $datas[] = User::find($id);
+                }
+                // Retrieve and display remaining users
+                $remainingUsers = User::whereNotIn('userid', $userOrder)->where("userid", "!=", 1)
+                    ->get();
+                foreach ($remainingUsers as $id) {
+                    $datas[] = $id;
+                }
+                $firstData = $datas[0];
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_first', 'servise_list'));
@@ -871,17 +894,25 @@ class HomeController extends Controller
                 $datas = User::where('status', 1)->where('fullname', 'like', '%' . $search . '%')->get()->sortByDesc(function ($user) {
                     return $user->getMessageCount();
                 });
-                $firstData = $datas->first();
+                $firstData = User::find($id);
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 return view('admin.chat', compact('datas', 'firstData', 'search', 'servise_list', 'servise_first'));
-            } else {    
+            } else {
                 $id = encryptDecrypt('decrypt', $id);
                 $search = '';
-                $datas = User::where('status', 1)->get()->sortByDesc(function ($user) {
-                    return $user->getMessageCount();
-                });
-                $firstData = $datas->first();
+                $userOrder = ChatCount::whereNotNull("sent_at")->where("sender_id", "!=", 1)->orderBy("sent_at", "desc")->groupBy("sender_id")->pluck("sender_id")->toArray();
+                $datas = [];
+                foreach ($userOrder as $userid) {
+                    $datas[] = User::find($userid);
+                }
+                // Retrieve and display remaining users
+                $remainingUsers = User::whereNotIn('userid', $userOrder)->where("userid", "!=", 1)
+                    ->get();
+                foreach ($remainingUsers as $item) {
+                    $datas[] = $item;
+                }
+                $firstData = User::find($id);
                 $servise_list = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->get();
                 $servise_first = ServiceMember::where('member_id', $firstData->userid)->orderBy('id', 'DESC')->first();
                 $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $id)->first();
@@ -1042,7 +1073,8 @@ class HomeController extends Controller
                 'end_time' => $record->end_time,
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
                 'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
-                'service_items' => $items
+                'service_items' => $items,
+                'service_name' => Service::find($record->service_id) ? Service::find($record->service_id)->name : ""
 
             ];
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Service;
 use App\Models\ServiceItemTimesheet;
 use App\Models\ServicesValue;
 use App\Models\ServiceTimesheet;
@@ -36,7 +37,7 @@ class TimesheetRequestController extends Controller
         }
         $requests = $requests->paginate(10);
 
-        $count = TimesheetRequest::where("status", "!=", "Pending")->count();
+        $count = TimesheetRequest::where("status", "Pending")->count();
 
         return view("admin.timesheet.requests", compact('requests',  'count'));
     }
@@ -150,8 +151,8 @@ class TimesheetRequestController extends Controller
                 'end_time' => $record->end_time,
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
                 'total_hours_worked_on_day_format' => formatTime($record->total_hours_worked_on_day_format),
-                'service_items' => $items
-
+                'service_items' => $items,
+                'service_name' => Service::find($record->service_id) ? Service::find($record->service_id)->name : ""
             ];
 
             // Update the total hours for the week

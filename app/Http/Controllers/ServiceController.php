@@ -6,9 +6,11 @@ use App\Models\Client;
 use App\Models\InScope;
 use App\Models\OutScope;
 use App\Models\Service;
+use App\Models\ServiceItemTimesheet;
 use App\Models\ServiceMember;
 use App\Models\ServiceRating;
 use App\Models\ServicesValue;
+use App\Models\User;
 use App\Traits\NotificationTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,7 +42,7 @@ class ServiceController extends Controller
         }
         $completed_services = $completed_services->orderBy("id", "desc")->get();
         $completed =  Service::where("status", 'completed')->count();
-        $earning = Service::where("status", 'completed')->sum("total_service_cost");
+        $earning = Service::where("status", 'ongoing')->count();
 
         return view("admin.services.index", compact('services', 'completed', "completed_services", 'earning'));
     }
@@ -287,11 +289,23 @@ class ServiceController extends Controller
 
     public function feedbacks()
     {
+        $emp_ids = [];
+        if (request()->has('search')) {
+            $keyword = trim(request('search'));
+            $emp_ids = User::where("fullname", "LIKE", "%$keyword%")->pluck("userid")->toArray();
+        }
         $ratings = ServiceRating::select('service_id', 'member_id')
             ->selectRaw('GROUP_CONCAT(service_item_id) AS grouped_service_items')
             ->selectRaw('GROUP_CONCAT(rating) AS ratings')
             ->selectRaw('GROUP_CONCAT(review) AS reviews')
             ->groupBy('service_id', 'member_id')
+            ->when(request()->has('date'), function ($query) {
+                return $query->whereDate("created_at", Carbon::parse(request('date')));
+            })
+            ->when(request()->has('search'), function ($query) use ($emp_ids) {
+                return $query->whereIn("member_id", $emp_ids);
+            })
+            ->orderBy("id")
             ->paginate(10);
 
         foreach ($ratings as $key => $value) {
@@ -310,5 +324,26 @@ class ServiceController extends Controller
         }
         // dd($ratings);
         return view("admin.services.feedbacks", compact('ratings'));
+    }
+    public function incident_reports()
+    {
+        $emp_ids = [];
+        if (request()->has('search')) {
+            $keyword = trim(request('search'));
+            $emp_ids = User::where("fullname", "LIKE", "%$keyword%")->pluck("userid")->toArray();
+        }
+        $reports = ServiceItemTimesheet::where("machine_type", "incident_report")
+            ->when(request()->has('date'), function ($query) {
+                return $query->whereDate("created_at", Carbon::parse(request('date')));
+            })
+            ->when(request()->has('search'), function ($query) use ($emp_ids) {
+                return $query->whereIn("assign_member_id", $emp_ids);
+            })->orderBy("id", "desc")->paginate(10);
+        foreach ($reports as $item) {
+
+            $item->service_name = Service::find($item->service_id) ? Service::find($item->service_id)->name : "N/A";
+            $item->member = User::find($item->assign_member_id) ? User::find($item->assign_member_id)->fullname : "N/A";
+        }
+        return view('admin.services.incident_reports', compact('reports'));
     }
 }
