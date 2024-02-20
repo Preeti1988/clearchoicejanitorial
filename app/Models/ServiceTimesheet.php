@@ -16,4 +16,8 @@ class ServiceTimesheet extends Model
     {
         return $this->belongsTo(Service::class);
     }
+    public function member()
+    {
+        return $this->belongsTo(User::class, 'assign_member_id');
+    }
 }

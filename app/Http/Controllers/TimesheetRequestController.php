@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Laravel\Ui\Presets\React;
 
 class TimesheetRequestController extends Controller
 {
@@ -198,5 +199,54 @@ class TimesheetRequestController extends Controller
 
 
         return $data;
+    }
+
+
+    public function timesheet(Request $request)
+    {
+
+
+        $start_date = date("Y-m-01");
+        $end_date =  date("Y-m-15");
+
+        if ($request->has("year")) {
+            $start_date = $request->year . "-" . $request->month . "-" . explode("-", $request->day)[0];
+            $end_date = $request->year . "-" . $request->month . "-" . explode("-", $request->day)[1];
+        }
+        $uids = [];
+        if ($request->has("search")) {
+            $keyword = trim($request->search);
+            $uids = User::where("fullname", "LIKE", "%$keyword%")->pluck("userid")->toArray();
+        }
+
+        $data = [];
+        $isApproved = TimesheetRequest::whereDate("start_date", Carbon::parse($start_date))->whereDate("end_date", Carbon::parse($end_date))->where("status", 'Approved')->count();
+
+        // dd($isApproved);
+        if ($isApproved) {
+            $timesheets = ServiceTimesheet::select(["*", DB::raw('SUM(TIME_TO_SEC(TIMEDIFF(end_time, start_time))) as total_hours_worked_on_day_format'),])->whereBetween('date', [$start_date, $end_date])
+                ->with('member')
+                ->when($request->has('search'), function ($query) use ($uids) {
+                    return $query->whereIn("assign_member_id", $uids);
+                })
+                ->groupBy('id', 'service_id', 'assign_member_id', 'date', 'on_the_way_time', 'start_time', 'end_time', 'status', 'created_at', 'updated_at')
+                ->get();
+
+            // Organize the data
+
+            foreach ($timesheets as $timesheet) {
+                $member_name = $timesheet->member->fullname;
+                $date = $timesheet->date;
+                $hours_worked = Carbon::parse($timesheet->end_time)->diffInHours(Carbon::parse($timesheet->start_time));
+
+                if (!isset($data[$member_name][$date])) {
+                    $data[$member_name][$date] = 0;
+                }
+                $data[$member_name][$date] += $timesheet->total_hours_worked_on_day_format;
+            }
+        }
+
+        // Pass the data to the view
+        return view("admin.timesheet.list", compact('data', 'start_date', 'end_date'));
     }
 }

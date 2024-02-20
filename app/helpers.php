@@ -150,6 +150,10 @@ if (!function_exists('formatTime')) {
             $formattedTime .= $seconds . ' seconds';
         }
 
+        if ($totalSeconds == 0) {
+            $formattedTime = "0 hours";
+        }
+
         return trim($formattedTime);
     }
 }

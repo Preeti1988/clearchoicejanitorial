@@ -95,6 +95,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get("timesheet-requests", [TimesheetRequestController::class, 'requests'])->name('timesheet.requests');
     Route::get("timesheet-requests/{id}", [TimesheetRequestController::class, 'detail'])->name('timesheet.detail');
     Route::post("timesheet-update", [TimesheetRequestController::class, 'update'])->name('timesheet.update');
+    Route::get("timesheet-list", [TimesheetRequestController::class, 'timesheet'])->name('timesheet.list');
+
 
     // service feedback
     Route::get('service-feedback', [ServiceController::class, 'feedbacks'])->name('services.feedbacks');
