@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->text('details')->nullable();
+            $table->text('redirect_url')->nullable();
+            $table->text('image')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->boolean('read')->default(false);
             $table->text('device_id')->nullable();

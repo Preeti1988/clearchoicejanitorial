@@ -15,6 +15,7 @@ use App\Models\Country;
 use App\Models\ChatCount;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Notification;
 use App\Models\ServiceItemTimesheet;
 use Carbon\Carbon;
 use App\Models\ServiceMember;
@@ -678,7 +679,17 @@ class HomeController extends Controller
         try {
             $userid = encryptDecrypt('decrypt', $id);
             $data = User::where('userid', $userid)->update(['status' => 1]);
+            // create notification
+            $notification = new Notification();
+            $notification->title = "Account Approved by admin";
+            // $notification->details = "By $user->fullname";
+            $notification->image = $data->profile_image != "" ? asset('public/upload/user-profile/' . $user->profile_image) : "";
+            $notification->redirect_url = null;
+            $notification->user_id = $data->id;
+            $notification->save();
             return redirect('/teams-active')->with('success', 'Team member approved successfully');
+
+            sendWebNotification($notification, []);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -1174,5 +1185,10 @@ class HomeController extends Controller
         }
 
         return view("admin.calender", compact('services'));
+    }
+    function clear_notifications()
+    {
+        DB::table("notifications")->where('user_id', 1)->update(['read' => 1]);
+        return redirect()->back();
     }
 }

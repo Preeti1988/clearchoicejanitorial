@@ -18,6 +18,7 @@ use App\Models\Designation;
 use App\Models\Review;
 use App\Models\ServiceTimesheet;
 use App\Models\ChatCount;
+use App\Models\Notification;
 use App\Models\ServiceItemTimesheet;
 use App\Models\ServiceRating;
 use App\Models\TimesheetRequest;
@@ -76,7 +77,11 @@ class UserController extends Controller
                 } else {
                     $success['resume'] = '';
                 }
-
+                if ($request->filled('device_key')) {
+                    $temp = User::find($user->userid);
+                    $temp->device_key = $request->device_key;
+                    $temp->save();
+                }
 
                 $success['resume_file_name'] = $user->resume_file_name;
                 if ($user->status == 0) {
@@ -168,7 +173,14 @@ class UserController extends Controller
         $success['created_date'] = $user->created_date;
         $success['designation'] = Designation::find($user->designation_id) ? Designation::find($user->designation_id)->name : '';
 
-
+        // create notification
+        $notification = new Notification();
+        $notification->title = "New Team member registered.";
+        $notification->details = "$user->fullname";
+        $notification->image = $user->profile_image != "" ? asset('public/upload/user-profile/' . $user->profile_image) : "";
+        $notification->redirect_url = route("TeamDetail", encryptDecrypt("encrypt", $user->userid));
+        $notification->user_id = 1;
+        $notification->save();
         return response()->json(["status" => true, "message" => "Registered successfully.", "data" => $success]);
         //return response()->json(['success' => $success], $this->successStatus);
     }
@@ -1419,6 +1431,15 @@ class UserController extends Controller
             }
             $sr->status = "Pending";
             $sr->save();
+
+            // create notification
+            $notification = new Notification();
+            $notification->title = "New Timesheet request submitted";
+            $notification->details = "By $user->fullname";
+            $notification->image = $user->profile_image != "" ? asset('public/upload/user-profile/' . $user->profile_image) : "";
+            $notification->redirect_url = route("timesheet.detail", $sr->id);
+            $notification->user_id = 1;
+            $notification->save();
         }
 
         return response()->json(["status" => true, "message" => "Timesheet is  Submitted successfully.", "data" => $user]);

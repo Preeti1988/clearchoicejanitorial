@@ -22,7 +22,6 @@ class NotificationController extends Controller
             if ($request->has('id')) {
                 $notification =   Notification::find($request->id);
                 $notification->read = 1;
-
                 $notification->save();
                 return response()->json(['message' => 'Notification updated successfully.', "success" => true,  'status' => 200], 200);
             } else {

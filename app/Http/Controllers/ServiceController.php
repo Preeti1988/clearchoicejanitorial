@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\InScope;
+use App\Models\Notification;
 use App\Models\OutScope;
 use App\Models\Service;
 use App\Models\ServiceItemTimesheet;
@@ -259,7 +260,15 @@ class ServiceController extends Controller
                     'details' => 'You are assigned to ' .  Service::find($request->service_id)->name,
                     'device_key' => null,
                 ];
-                $this->sendNotification($data);
+                // create notification
+                $notification = new Notification();
+                $notification->title = "Assigned to new service";
+                $notification->details = 'You are assigned to ' .  Service::find($request->service_id)->name;
+
+                $notification->user_id = $item->id;
+                $notification->save();
+
+                sendWebNotification($notification, []);
             }
 
             $serviceMember->shift_start_time = $item->shift_start_time;

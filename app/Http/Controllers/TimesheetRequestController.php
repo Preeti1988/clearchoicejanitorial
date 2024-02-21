@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Notification;
 use App\Models\Service;
 use App\Models\ServiceItemTimesheet;
 use App\Models\ServicesValue;
@@ -64,6 +65,16 @@ class TimesheetRequestController extends Controller
         $request = TimesheetRequest::find(request('id'));
         $request->status = request("status");
         $request->save();
+        // create notification
+        $notification = new Notification();
+        $notification->title = "Timesheet " . request("status") . " by admin";
+        $notification->details = "From $request->start_date to $request->end_date";
+
+        $notification->redirect_url = null;
+        $notification->user_id = $request->member_id;
+        $notification->save();
+
+        sendWebNotification($notification, []);
         return response()->json(['message' => "Timesheet $request->status Successfully."]);
     }
     public function timecard($item)

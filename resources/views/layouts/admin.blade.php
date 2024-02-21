@@ -40,6 +40,43 @@
             color: rgb(180, 178, 178) !important;
             /* Change this to your desired color */
         }
+
+        .notification-item {
+            display: flex;
+            padding: .75rem 1rem;
+        }
+
+        .notification-item:hover {
+            background-color: #f4f6f9;
+        }
+
+        .notification-item-icon {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            background: #FCE9E5;
+            margin-right: 10px;
+            text-align: center;
+            border-radius: 50%;
+            color: #FC4A26;
+        }
+
+        .notification-item-text {
+            flex: 1;
+        }
+
+        .notification-item-text h2 {
+            font-size: 14px !important;
+            margin: 0 0 10px 0;
+            color: #343A40;
+            padding: 0;
+        }
+
+        .notification-item-text p {
+            font-size: 12px;
+            color: #BCC4CF;
+            margin: 0;
+        }
     </style>
 
 </head>
@@ -470,16 +507,69 @@
                             </li>
                         </ul>
                         <ul class="navbar-nav">
+
                             <li class="nav-item noti-dropdown dropdown">
                                 <a class="nav-link  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <div class="noti-icon">
+                                    <div class="noti-icon" id="trigger-unseen">
                                         <img src="{{ custom_asset('public/assets/admin-images/notification.svg') }}"
                                             alt="user">
-                                        <span class="noti-badge">3</span>
+                                        @if (count(getNotification(true)) > 0)
+                                            <span class="noti-badge">{{ count(getNotification(true)) }}</span>
+                                        @endif
                                     </div>
                                 </a>
-                                <div class="dropdown-menu">
 
+                                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" data-bs-popper="none"
+                                    style="width: 300px !important;padding:10px">
+                                    <div class="notification-head">
+                                        <h2>Notifications</h2>
+                                    </div>
+                                    <div class="notification-body">
+
+                                        @forelse(getNotification() as $val)
+                                            <a href="{{ $val->redirect_url }}">
+                                                <div class="notification-item">
+                                                    @if ($val->image == '' || $val->image == null)
+                                                        <!-- <div class="notification-item-icon">
+                                                        <i class="la la-bell"></i>
+                                                    </div> -->
+                                                        <img src="{!! custom_asset('public/assets/admin-images/user-default.png') !!}" alt=""
+                                                            style="width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; line-height: 32px; text-align: center;">
+                                                    @else
+                                                        <img src="{{ $val->image }}" alt=""
+                                                            style="width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; line-height: 32px; text-align: center;">
+                                                    @endif
+                                                    <div class="notification-item-text">
+                                                        <h2>{{ $val->title ?? 'NA' }}</h2>
+                                                        <p style="color: #e0b220;">{{ $val->details ?? 'NA' }}</p>
+                                                        <p><span><i
+                                                                    class="fas fa-clock"></i>{{ date('d M, Y H:i A') }}</span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                                <div>
+                                                    <img src="{{ custom_asset('/assets/website-images/nodata.svg') }}"
+                                                        alt="">
+                                                </div>
+                                                <div class="font-weight-bold no-data-title">
+                                                    <p class="font-weight-bold" style="font-size: 1.2rem;">No
+                                                        notifications found </p>
+                                                </div>
+                                            </div>
+                                        @endforelse
+
+                                    </div>
+                                    @if (!empty(getNotification()) && count(getNotification()) > 0)
+                                        <a href="{{ route('clear.notifications') }}"
+                                            onclick="return confirm('Are you sure you want to clear all notifications?');">
+                                            <div class="notification-foot">
+                                                Clear All Notifications
+                                            </div>
+                                        </a>
+                                    @endif
                                 </div>
                             </li>
                             <li class="nav-item profile-dropdown dropdown">
@@ -514,6 +604,7 @@
                                             src="{{ custom_asset('public/assets/admin-images/menu-icon.svg') }}"></span>
                                 </button>
                             </li>
+
                         </ul>
                     </div>
                 </nav>

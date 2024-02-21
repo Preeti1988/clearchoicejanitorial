@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TimesheetRequestController;
@@ -100,6 +101,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     // service feedback
     Route::get('service-feedback', [ServiceController::class, 'feedbacks'])->name('services.feedbacks');
+    Route::get('notifications/clear', [HomeController::class, 'clear_notifications'])->name('clear.notifications');
 });
 // Listing Ajax request
 Route::get("fetch-client", [AjaxController::class, 'fetchClient'])->name('fetchClient');
