@@ -132,8 +132,17 @@
                 initialView: 'dayGridWeek',
                 events: events,
                 eventClick: function(info) {
-                    // Redirect to the specified URL when an event is clicked
-                    window.location.href = info.event.url;
+
+
+
+                    $("#addMarital").modal("show");
+                    $("#name").text(info.event.title);
+                    $("#client").text(info.event.extendedProps.client);
+
+                    console.log(info.extendedProps);
+                    $("#client_edit_url").attr("href", info.event.extendedProps.redirect_url);
+
+
                 },
 
 
@@ -149,6 +158,35 @@
                 <div class="col-md-12 bg-gray">
                     <h2 class= "mb-2">Calendar</h2>
                     <div id='calendar'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addMarital" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-center d-flex  justify-content-between"> <span><span id="marital_text">Service</span>
+                            Details </span> <span>
+                            <a href="" id="client_edit_url" class="btn "
+                                style="background: #7BC043;color:white">View</a>
+                        </span> </h5>
+                    <table class="table">
+                        <tr>
+                            <td align="right">Service Name:</td>
+                            <td align="left"> <b id="name"></b> </td>
+                        </tr>
+                        <tr>
+                            <td align="right">Client Name:</td>
+                            <td align="left"> <b id="client"></b> </td>
+                        </tr>
+
+                    </table>
                 </div>
             </div>
         </div>

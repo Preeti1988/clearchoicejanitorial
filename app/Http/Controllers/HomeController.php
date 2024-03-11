@@ -60,7 +60,7 @@ class HomeController extends Controller
         if (request()->has('search')) {
             $ongoing = $ongoing->where("name", "LIKE", "%" . trim(request('search')) . "%");
         }
-        $ongoing = $ongoing->orderBy("id", "desc")->get();
+        $ongoing = $ongoing->orderBy("id", "desc")->paginate(10);
 
         $unassigned = Service::doesntHave("members");
         if (request()->has('date')) {
@@ -88,7 +88,7 @@ class HomeController extends Controller
             $msgs[] = $id;
         }
 
-        $unassigned = $unassigned->orderBy("id", "desc")->get();
+        $unassigned = $unassigned->orderBy("id", "desc")->paginate(10);
         $request_members = User::where('status', 0)->where('userid', '!=', 1)->orderBy('userid', 'DESC')->count();
 
 
@@ -679,13 +679,15 @@ class HomeController extends Controller
         try {
             $userid = encryptDecrypt('decrypt', $id);
             $data = User::where('userid', $userid)->update(['status' => 1]);
+            $user = User::find($userid);
             // create notification
+
             $notification = new Notification();
             $notification->title = "Account Approved by admin";
             // $notification->details = "By $user->fullname";
-            $notification->image = $data->profile_image != "" ? asset('public/upload/user-profile/' . $user->profile_image) : "";
+            $notification->image = $user->profile_image != "" ? asset('public/upload/user-profile/' . $user->profile_image) : "";
             $notification->redirect_url = null;
-            $notification->user_id = $data->id;
+            $notification->user_id = $user->userid;
             $notification->save();
             return redirect('/teams-active')->with('success', 'Team member approved successfully');
 
@@ -1178,7 +1180,8 @@ class HomeController extends Controller
 
                 'start' => Carbon::createFromFormat('Y-m-d H:i:s', date("Y-m-d", strtotime($value->created_date)) . " " . $value->service_start_time),
                 'title' => $value->name,
-                'url' => route("services.edit", $value),
+                'redirect_url' => route("services.edit", $value),
+                'client' => $value->client->name,
 
 
             ];

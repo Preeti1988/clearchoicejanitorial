@@ -8,24 +8,23 @@
 
     <title> @yield('title', config('app.name'))</title>
     @stack('css')
-    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/header-footer.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/header-footer.css') }}">
     <link rel="stylesheet" type="text/css"
-        href="{{ custom_asset('public/assets/admin-plugins/OwlCarousel/assets/owl.carousel.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ custom_asset('public/assets/admin-css/responsive.css') }}">
+        href="{{ asset('public/assets/admin-plugins/OwlCarousel/assets/owl.carousel.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('public/assets/admin-css/responsive.css') }}">
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="{{ custom_asset('public/assets/admin-js/jquery-3.7.0.min.js') }}" type="text/javascript"></script>
-    <script src="{{ custom_asset('public/assets/admin-plugins/bootstrap/js/bootstrap.bundle.min.js') }}"
-        type="text/javascript"></script>
-    <script src="{{ custom_asset('public/assets/admin-plugins/OwlCarousel/owl.carousel.js') }}" type="text/javascript">
+    <script src="{{ asset('public/assets/admin-js/jquery-3.7.0.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('public/assets/admin-plugins/bootstrap/js/bootstrap.bundle.min.js') }}" type="text/javascript">
     </script>
-    <script src="{{ custom_asset('public/assets/admin-js/function.js') }}" type="text/javascript"></script>
-    <script src="{{ custom_asset('public/assets/admin-plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset('public/assets/admin-plugins/OwlCarousel/owl.carousel.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('public/assets/admin-js/function.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('public/assets/admin-plugins/jquery-validation/jquery.validate.min.js') }}"></script>
 
-    <script src="{{ custom_asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript">
-    </script>
-    <link rel="stylesheet"href="{{ custom_asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.css') }}"
-        type="text/css" />
+    <script src="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
+    <link rel="stylesheet"href="{{ asset('public/assets/admin-plugins/sweetalert2/sweetalert2.min.css') }}"
+        type="text/css">
 
     <style>
         .invalid-feedback {
@@ -84,7 +83,9 @@
 <body class="main-site ccj-panel">
     @php
         $currentURL = Route::currentRouteName();
+
     @endphp
+
     <div class="page-body-wrapper">
         <div class="sidebar-wrapper sidebar-offcanvas" id="sidebar">
             <div class="sidebar-logo">
@@ -612,14 +613,14 @@
             @yield('content')
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
-    @foreach ($errors->all() as $item)
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script> --}}
+    {{-- @foreach ($errors->all() as $item)
         <script>
             $(document).ready(function() {
                 toastr.error("{{ $item }}");
             });
         </script>
-    @endforeach
+    @endforeach --}}
     <script>
         var base_url = "{{ url('/') }}";
 
@@ -639,10 +640,10 @@
         });
         $(":input").inputmask();
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
         integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
 
     @stack('js')
 

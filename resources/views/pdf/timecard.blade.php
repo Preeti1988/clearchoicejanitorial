@@ -34,7 +34,7 @@
                     style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
                     Team Member Name:
                 </td>
-                <td colspan="8"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
+                <td colspan="12"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
                         {{ $name }}
                     </span></td>
 
@@ -45,7 +45,7 @@
                         style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
                         Service:
                     </td>
-                    <td colspan="8"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
+                    <td colspan="12"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
                             {{ $job_title }}
                         </span></td>
                 </tr>
@@ -115,7 +115,7 @@
                         colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
 
                     </td>
-                    <td colspan="4"></td>
+                    <td colspan="6"></td>
                 </tr>
             @endforeach
 
@@ -137,7 +137,7 @@
                     colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
 
                 </td>
-                <td colspan="4"></td>
+                <td colspan="6"></td>
             </tr>
             <tr>
                 <td style="padding: 15px;text-align: center;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px; padding:10px; background: #ffffff;font-weight: 600;"
@@ -156,21 +156,21 @@
                         colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
                         Scrubber
                     </td>
-                    <td
-                        colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
+                    <td colspan="1"
+                        style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
                         Burnisher
                     </td>
-                    <td
-                        colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
-                        Incident Report
-                    </td>
+
                     @foreach ($service_item_header as $text)
-                        <td colspan=""
-                            style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#ffffff;font-size:14px;text-align: center; padding:10px; background: black;font-weight: 600;">
+                        <td colspan="1"
+                            style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
                             {{ $text }}
                         </td>
                     @endforeach
-
+                    <td colspan="1"
+                        style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding:10px; background: #ffffff;font-weight: 600;">
+                        Incident Report
+                    </td>
 
 
                 </tr>
@@ -268,6 +268,17 @@
                                 @endif
                             @endforeach
                         @endforeach
+                        @php
+                            $count = count($service_item_header) - count($day['service_items']);
+                            for ($i = 0; $i < $count; $i++) {
+                                echo '<td
+                            colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: #ffffff;">
+                            <span
+                                style="border: 0;width: 80%;height: 100%; padding:10px;background-color: transparent;">
+                            </span>
+                        </td>';
+                            }
+                        @endphp
                         <td
                             colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: #ffffff;">
                             <span
@@ -278,6 +289,7 @@
                 @endforeach
             @endforeach
 
+
             <tr>
                 <td colspan="3"
                     style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center;padding: 10px; background: rgb(217, 217, 217);font-weight: 600;">
@@ -287,12 +299,12 @@
                     style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding: 10px; background: rgb(217, 217, 217);font-weight: 600;">
                     {{ $total_hours }}
                 </td>
-                <td colspan="@if ($service != '' && json_decode($service->service_items)) {{ count(json_decode($service->service_items)) + 2 }} @else 3 @endif"
-                    style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; background: black;">
+
+                <td colspan="{{ count($service_item_header) + 3 }}"
+                    style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: center; padding: 10px; background: rgb(217, 217, 217);font-weight: 600;">
 
                 </td>
             </tr>
-
 
             {{-- <table align="center" cellpadding="0" cellspacing="0" width="900"
                 style="background: #ffffff; margin: 0 auto; background-size: 100%;margin-top: 25px;">
