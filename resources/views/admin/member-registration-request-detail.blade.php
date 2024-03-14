@@ -101,8 +101,7 @@
                                             {{-- <p class="mb-size">{{ ucfirst($data->resume_file_size) ?? '' }} MB</p> --}}
                                         </div>
                                     </div>
-                                    <a href="{{ env('APP_URL') . 'public/upload/resume/' . $data->resume_file_name }}"
-                                        class="download-btn ms-5" target="_blank_">
+                                    <a href="{{ $data->resume_file_name }}" class="download-btn ms-5" target="_blank_">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                                             <path

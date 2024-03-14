@@ -45,6 +45,8 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|exists:user,email',
                 'password' => 'required',
+            ], [
+                'email' => 'The entered email is invalid'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -89,7 +91,7 @@ class UserController extends Controller
                 }
                 return response()->json(["status" => true, "message" => "Logged in successfully.", "data" => $success]);
             } else {
-                return response()->json(["status" => false, "message" => "Wrong Password."], 200);
+                return response()->json(["status" => false, "message" => "Please enter valid password."], 200);
             }
         } catch (\Exception $e) {
             return errorMsg("Exception -> " . $e->getMessage());
@@ -181,7 +183,7 @@ class UserController extends Controller
         $notification->redirect_url = route("TeamDetail", encryptDecrypt("encrypt", $user->userid));
         $notification->user_id = 1;
         $notification->save();
-        return response()->json(["status" => true, "message" => "Registered successfully.", "data" => $success]);
+        return response()->json(["status" => true, "message" => "Registration request sent successfully we will notify you once the admin approves the request.", "data" => $success]);
         //return response()->json(['success' => $success], $this->successStatus);
     }
 
@@ -249,7 +251,7 @@ class UserController extends Controller
         $success['status'] = $user->status;
         $success['profile_image'] = $user->profile_image ? asset('public/upload/user-profile', 'https') . "/" . $user->profile_image : '';
         $success['designation_id'] = ($user->designation_id) ?? '';
-        $success['DOB'] = ($user->DOB) ?? '';
+        $success['DOB'] =  ($user->DOB) ? date("m-d-Y", strtotime($user->DOB)) : '';
         $success['marital_status'] = ($user->marital_status) ?? '';
         $success['dependents'] = ($user->dependents) ?? '';
         $success['address'] = ($user->address) ?? '';
@@ -351,10 +353,16 @@ class UserController extends Controller
             $start_date = date("y-m-d", strtotime($service->created_date));
             $combinedDateTime = Carbon::parse(" $start_date $service->service_start_time");
             $temp['start']  = date("Y-m-d") . " " . $combinedDateTime->format('H:i:s');
+
+
             // $currentDate = Carbon::now()->toDateString();
             $end_date = date("y-m-d", strtotime($service->scheduled_end_date));
             $combinedDateTime = Carbon::parse("$end_date $service->service_end_time");
             $temp['end']  =  date("Y-m-d") . " " . $combinedDateTime->format('H:i:s');
+
+            $temp['service_end_time']  = date('h:i A', strtotime($service->service_end_time));
+            $temp['service_start_time'] =  date('h:i A', strtotime($service->service_start_time));
+
 
             $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $service->id)->whereDate('date', date('Y-m-d'))->first();
             if (!empty($timesheet)) {
@@ -375,9 +383,9 @@ class UserController extends Controller
 
             $temp['status'] = $status;
             $temp['status_id'] = $timesheet ? $timesheet->status : '';
-            $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
-            $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
-            $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
+            $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? date("h:i A", strtotime($timesheet->on_the_way_time))  : '';
+            $temp['start_time'] = isset($timesheet->start_time) ? date("h:i A", strtotime($timesheet->start_time)) : '';
+            $temp['finish_time'] = isset($timesheet->end_time) ? date("h:i A", strtotime($timesheet->end_time)) : '';
             $temp['service_image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
             $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
             $client = Client::where('id', $service->assigned_client_id)->first();
@@ -385,8 +393,9 @@ class UserController extends Controller
             $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
             $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(987)4563210';
             $temp['address'] = isset($client->street) ? $client->street : '';
-            $temp['lat'] = '28.23654';
-            $temp['long'] = '78.9654123';
+            $latlng = explode(',', $service->service_latlng);
+            $temp['lat'] =  count($latlng) > 0 ? $latlng[0] : "";
+            $temp['long'] = count($latlng) > 1 ? $latlng[1] : "";
             $response[] = $temp;
         }
         return response()->json(["status" => true, "message" => "Home page", "data" => $response]);
@@ -428,9 +437,9 @@ class UserController extends Controller
 
             $temp['status'] = $status;
             $temp['status_id'] = isset($timesheet->status) ? $timesheet->status : '';
-            $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
-            $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
-            $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
+            $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? date("h:i A", strtotime($timesheet->on_the_way_time))  : '';
+            $temp['start_time'] = isset($timesheet->start_time) ? date("h:i A", strtotime($timesheet->start_time)) : '';
+            $temp['finish_time'] = isset($timesheet->end_time) ? date("h:i A", strtotime($timesheet->end_time)) : '';
             $temp['service_image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
 
             $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
@@ -439,8 +448,9 @@ class UserController extends Controller
             $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
             $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(987)4563210';
             $temp['address'] = isset($client->street) ? $client->street : '';
-            $temp['lat'] = '28.23654';
-            $temp['long'] = '78.9654123';
+            $latlng = explode(',', $service->service_latlng);
+            $temp['lat'] =  count($latlng) > 0 ? $latlng[0] : "";
+            $temp['long'] = count($latlng) > 1 ? $latlng[1] : "";
             $response[] = $temp;
         }
         return response()->json(["status" => true, "message" => "Services Listing", "data" => $response]);
@@ -493,21 +503,22 @@ class UserController extends Controller
 
             $user = Auth::user();
 
-            $chat = ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)
+            $chat = ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)
                 // ->where('service_id', $request->service_id)
                 ->first();
 
             if (!empty($chat)) {
                 $count = 0;
-                ChatCount::where('sender_id', 1)->where('receiver_id', $user->userid)
+                ChatCount::where('sender_id', $user->userid)->where('receiver_id', 1)
                     // ->where('service_id', $request->service_id)
-                    ->update(['read_status' => $count]);
+                    ->update(['read_status' => $count, 'sent_at' => now()]);
             } else {
                 $ChatCount = new ChatCount;
                 $ChatCount->sender_id = $user->userid;
                 $ChatCount->receiver_id = 1;
                 // $ChatCount->service_id = $request->service_id;
                 $ChatCount->read_status = 0;
+                $ChatCount->sent_at = now();
                 $ChatCount->save();
             }
             return response()->json(["status" => true, "message" => "Message updated"]);
@@ -584,9 +595,10 @@ class UserController extends Controller
 
         $temp['status'] = $status;
         $temp['status_id'] = isset($timesheet->status) ? $timesheet->status : '';
-        $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? $timesheet->on_the_way_time : '';
-        $temp['start_time'] = isset($timesheet->start_time) ? $timesheet->start_time : '';
-        $temp['finish_time'] = isset($timesheet->end_time) ? $timesheet->end_time : '';
+        $temp['on_the_way_time'] = isset($timesheet->on_the_way_time) ? date("h:i A", strtotime($timesheet->on_the_way_time))  : '';
+        $temp['start_time'] = isset($timesheet->start_time) ? date("h:i A", strtotime($timesheet->start_time)) : '';
+        $temp['finish_time'] = isset($timesheet->end_time) ? date("h:i A", strtotime($timesheet->end_time)) : '';
+
         $temp['service_image'] = $service && $service->image ? asset('public/upload/services/' . $service->image, 'https') : asset('public/assets/admin-images/hbgimg.png', 'https');
         $temp['admin_name'] = User::where("admin", 1)->first() ? User::where("admin", 1)->first()->fullname : "Admin";
         $temp['client_id'] = isset($service->assigned_client_id) ? $service->assigned_client_id : '';
@@ -595,8 +607,9 @@ class UserController extends Controller
         $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
         $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(999)999999';
         $temp['address'] = isset($client->street) ? $client->street : '';
-        $temp['lat'] = '28.23654';
-        $temp['long'] = '78.9654123';
+        $latlng = explode(',', $service->service_latlng);
+        $temp['lat'] =  count($latlng) > 0 ? $latlng[0] : "";
+        $temp['long'] = count($latlng) > 1 ? $latlng[1] : "";
         $inscope = InScope::orderBy('id', 'DESC')->get();
         $outscope = OutScope::orderBy('id', 'DESC')->get();
         $services_values = ServicesValue::orderBy('id', 'DESC')->get();
@@ -746,6 +759,16 @@ class UserController extends Controller
 
             if (!empty($timesheet)) {
                 ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)->whereDate('date', Carbon::parse($request->date))->update(['status' => $request->status, $key => Carbon::parse($request->time)]);
+            } else {
+                $sheet = new ServiceTimesheet;
+                $sheet->assign_member_id = $user->userid;
+                $sheet->service_id = $request->service_id;
+                $sheet->date = Carbon::parse($request->date);
+                $sheet->on_the_way_time = Carbon::parse($request->time);
+                $sheet->start_time = null;
+                $sheet->end_time = null;
+                $sheet->status = 2;
+                $sheet->save();
             }
         } else {
             $timesheet = ServiceTimesheet::where('assign_member_id', $user->userid)->where('service_id', $request->service_id)
@@ -767,7 +790,7 @@ class UserController extends Controller
 
 
         //ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->update(['status'=>$request->status,$key=>$value]);
-        return response()->json(["status" => true, "message" => "Status updated."]);
+        return response()->json(["status" => true, "message" => "Time updated successfully"]);
     }
     public function UpdateServiceItemsStatus(Request $request)
     {
@@ -852,7 +875,7 @@ class UserController extends Controller
 
 
         //ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->update(['status'=>$request->status,$key=>$value]);
-        return response()->json(["status" => true, "message" => "Status updated."]);
+        return response()->json(["status" => true, "message" => "Updated successfully."]);
     }
 
     public function submit_review(Request $request)
@@ -954,7 +977,7 @@ class UserController extends Controller
             $success['resume'] = '';
         }
         $success['resume_file_name'] = $user->resume_file_name;
-        return response()->json(["status" => true, "message" => "Profile updated", "data" => $success]);
+        return response()->json(["status" => true, "message" => "Profile updated successfully", "data" => $success]);
     }
 
     public function country()
@@ -1071,7 +1094,7 @@ class UserController extends Controller
                     $result[] = [
                         'week_number' => $currentWeek,
                         'total_hours_in_week' => $totalHoursInWeek,
-                        'total_hours_in_week_format' => $this->formatTime($totalHoursInWeekFormat),
+                        'total_hours_in_week_format' => $totalHoursInWeekFormat ? $this->formatTime($totalHoursInWeekFormat) : '0 Hours',
                         'avg_hours_in_week' => $this->formatTime(intval($totalHoursInWeekFormat / count($daysInWeek))),
                         'days' => $daysInWeek,
                         'total_days_worked' => count($daysInWeek),
@@ -1083,6 +1106,8 @@ class UserController extends Controller
                 // Initialize for the new week
                 $currentWeek = $record->week_number;
                 $totalHoursInWeek = 0;
+                $totalHoursInWeekFormat = 0;
+
                 $daysInWeek = [];
             }
 
@@ -1186,11 +1211,11 @@ class UserController extends Controller
             ];
             // Record the details for the current day
             $daysInWeek[] = [
-                'date' => $record->formatted_date,
+                'date' => us_date($record->formatted_date),
                 'start_time' => date("h:i A", strtotime($record->start_time)),
                 'end_time' => date("h:i A", strtotime($record->end_time)),
                 'total_hours_worked_on_day' => $record->total_hours_worked_on_day,
-                'total_hours_worked_on_day_format' => $this->formatTime($record->total_hours_worked_on_day_format),
+                'total_hours_worked_on_day_format' =>  $this->formatTime($record->total_hours_worked_on_day_format),
                 'service_items' => $items,
                 'scrubber' => $scrubber,
                 'burnisher' => $burnisher,
@@ -1234,7 +1259,7 @@ class UserController extends Controller
             'job_location' =>  $service ? ($service->client ? $service->client->street : '') : "",
             'store_name' => $service ? ($service->client ? $service->client->name : '') : "",
             'store_number' => $service ? ($service->client ? $service->client->home_number : '') : '',
-            'timesheet' => $result, 'total_hours' => $this->formatTime($totalHoursInWeekFormat),
+            'timesheet' => $result, 'total_hours' =>  $this->formatTime($totalHours),
             "timesheet_submitted" => $timesheet_submitted ? true : false,
             "timesheet_status" => $timesheet_submitted ? $timesheet_submitted->status : "Pending",
             'service' => $service,
@@ -1272,7 +1297,9 @@ class UserController extends Controller
         if ($seconds > 0) {
             $formattedTime .= $seconds . ' seconds';
         }
-
+        if ($seconds < 0) {
+            $formattedTime .=  '0 Hours';
+        }
         return trim($formattedTime);
     }
     public function serviceLogs()

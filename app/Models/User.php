@@ -48,6 +48,8 @@ class User extends Authenticatable
         'resume_file_name',
         'password',
         'status',
+        'device_key',
+
     ];
 
     /**

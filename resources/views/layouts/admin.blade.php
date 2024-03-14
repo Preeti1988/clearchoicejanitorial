@@ -200,7 +200,7 @@
                                 <span class="menu-title">Teams</span>
                             </a>
                         </li>
-                        <li class="nav-item @if ($currentURL == 'timehseet.requests' || $currentURL == 'timehseet.detail') active @endif">
+                        <li class="nav-item @if ($currentURL == 'timesheet.requests' || $currentURL == 'timehseet.detail') active @endif">
 
                             <a class="nav-link" href="{{ route('timesheet.requests') }}">
                                 <span class="menu-icon">
@@ -216,7 +216,7 @@
                                 <span class="menu-title">Timesheet Requests</span>
                             </a>
                         </li>
-                        <li class="nav-item @if ($currentURL == 'timehseet.list') active @endif">
+                        <li class="nav-item @if ($currentURL == 'timesheet.list') active @endif">
 
                             <a class="nav-link" href="{{ route('timesheet.list') }}">
                                 <span class="menu-icon">

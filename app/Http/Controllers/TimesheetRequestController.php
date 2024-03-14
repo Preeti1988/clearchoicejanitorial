@@ -37,7 +37,7 @@ class TimesheetRequestController extends Controller
         } else {
             $requests = $requests->where("status", "!=", "Pending");
         }
-        $requests = $requests->paginate(10);
+        $requests = $requests->orderBy("id", "desc")->paginate(10);
 
         $count = TimesheetRequest::where("status", "Pending")->count();
 
@@ -232,6 +232,7 @@ class TimesheetRequestController extends Controller
 
         $data = [];
         $isApproved = TimesheetRequest::whereDate("start_date", Carbon::parse($start_date))->whereDate("end_date", Carbon::parse($end_date))->where("status", 'Approved')->count();
+        $member_ids = TimesheetRequest::whereDate("start_date", Carbon::parse($start_date))->whereDate("end_date", Carbon::parse($end_date))->where("status", 'Approved')->groupBy("member_id")->pluck("member_id")->toArray();
 
         // dd($isApproved);
         if ($isApproved) {
@@ -241,6 +242,7 @@ class TimesheetRequestController extends Controller
                     return $query->whereIn("assign_member_id", $uids);
                 })
                 ->groupBy('id', 'service_id', 'assign_member_id', 'date', 'on_the_way_time', 'start_time', 'end_time', 'status', 'created_at', 'updated_at')
+                ->whereIn("assign_member_id", $member_ids)
                 ->get();
 
             // Organize the data

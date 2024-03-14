@@ -76,7 +76,7 @@ class HomeController extends Controller
         // $msgs = User::where("userid", "!=", 1)->get()->sortByDesc(function ($user) {
         //     return $user->getMessageCount();
         // });
-        $userOrder = ChatCount::whereNotNull("sent_at")->where("sender_id", "!=", 1)->orderBy("sent_at", "desc")->groupBy("sender_id")->pluck("sender_id")->toArray();
+        $userOrder = ChatCount::where("sender_id", "!=", 1)->orderBy("sent_at", "desc")->groupBy("sender_id")->pluck("sender_id")->toArray();
         $msgs = [];
         foreach ($userOrder as $id) {
             $msgs[] = User::find($id);
@@ -670,6 +670,9 @@ class HomeController extends Controller
 
         if ($seconds > 0) {
             $formattedTime .= $seconds . ' seconds';
+        }
+        if ($seconds <= 0) {
+            $formattedTime .= '0 Hours';
         }
 
         return trim($formattedTime);

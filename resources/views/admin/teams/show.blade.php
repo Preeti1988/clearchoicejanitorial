@@ -114,7 +114,11 @@
                                         $date = now()->setDay($day);
                                         $dayOfWeek = $date->format('D');
                                         $formattedDate = $date->format('d');
-                                        $arr[] = ['w' => $dayOfWeek, 'd' => $formattedDate, 'date' => date('Y-m-d', strtotime($date))];
+                                        $arr[] = [
+                                            'w' => $dayOfWeek,
+                                            'd' => $formattedDate,
+                                            'date' => date('Y-m-d', strtotime($date)),
+                                        ];
                                     }
                                 @endphp
                                 @foreach ($arr as $item)
@@ -454,9 +458,9 @@
                     <div class="col-md-4">
                         <div class="team-panel-sidebar side-bar-1">
                             <h6 class="mb-0 pb-0">This Week Worked </h6>
-                            <p class="hour-info text-center mt-0">{{ $this_week }} </p>
+                            <p class="hour-info text-center mt-0">{{ $this_week ?? '0 Hours' }} </p>
                             <h6 class="mb-0 pb-0 mt-3">Total Assigned Service Worked </h6>
-                            <p class="hour-info text-center mt-0">{{ $total_hours }}</p>
+                            <p class="hour-info text-center mt-0">{{ $total_hours ?? '0 Hours' }}</p>
                             <br>
                             <p class="hour-info text-center mt-0" style="cursor: pointer"
                                 onclick="location.replace('{{ route('timecard', $data->userid) }}')">

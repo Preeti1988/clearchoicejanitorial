@@ -91,10 +91,10 @@
                                         '12' => 'December',
                                     ];
                                     foreach ($months as $key => $month) {
-                                        if (Request::has('month') && request('month') == $key) {
+                                        if (request()->has('month') && request('month') == $key) {
                                             echo "<option value='$key' selected>$month</option>";
                                         } else {
-                                            if (date('m') == $key) {
+                                            if (!request()->has('month') && date('m') == $key) {
                                                 echo "<option value='$key' selected>$month</option>";
                                             } else {
                                                 echo "<option value='$key'>$month</option>";
@@ -107,6 +107,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <select id="day" class="form-control" name="day"></select>
@@ -154,7 +155,7 @@
                                         @php
                                             $currentDate = strtotime($start_date);
                                             while ($currentDate <= strtotime($end_date)) {
-                                                $date = date('Y-m-d', $currentDate);
+                                                $date = date('m-d-Y', $currentDate);
                                                 $totalHours = isset($dates[$date]) ? $dates[$date] : 0;
                                                 $formatted = formatTime($totalHours);
                                                 echo "<td>  $formatted</td>";
@@ -356,13 +357,20 @@
             function populateDays(year, month) {
                 // Get the last day of the selected month
                 var lastDay = new Date(year, month, 0).getDate();
+                var selected = {{ request()->has('day') ? (request('day') == '01-15' ? 1 : 0) : 3 }};
+                var first_selected = selected == 1 ? 'selected' : '';
+                var second_selected = selected == 0 ? 'selected' : '';
+
+
                 // Clear existing options
                 $('#day').show();
                 $('#day').empty();
                 // Populate days
-                $('#day').append('<option value="01-15">from 01 ' + $('#month option:selected').text() + ' to 15 ' +
+                $('#day').append('<option value="01-15" ' + first_selected + '>from 01 ' + $(
+                        '#month option:selected').text() + ' to 15 ' +
                     $('#month option:selected').text() + '</option>');
-                $('#day').append('<option value="16-' + lastDay + '">from 16 ' + $('#month option:selected')
+                $('#day').append('<option value="16-' + lastDay + '"   ' + second_selected + '>from 16 ' + $(
+                        '#month option:selected')
                     .text() + ' to ' + lastDay + ' ' + $('#month option:selected').text() + '</option>');
             }
 
@@ -376,7 +384,12 @@
             // Initially populate days based on current year and month
             var currentYear = new Date().getFullYear();
             var currentMonth = new Date().getMonth() + 1;
-            populateDays(currentYear, currentMonth);
+            @if (request()->has('month'))
+                populateDays(currentYear, {{ request('month') }});
+            @else
+                populateDays(currentYear, currentMonth);
+            @endif
+
         });
 
 

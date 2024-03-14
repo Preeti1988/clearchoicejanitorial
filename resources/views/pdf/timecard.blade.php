@@ -25,7 +25,7 @@
                     {{-- <input type="text" id="surname" name="surname" value=""
                         style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;"> --}}
                     <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
-                        {{ $start_period }} - {{ $end_period }}
+                        {{ date('m-d-Y', strtotime($start_period)) }} - {{ date('m-d-Y', strtotime($end_period)) }}
                     </span>
                 </td>
             </tr>
@@ -34,7 +34,7 @@
                     style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
                     Team Member Name:
                 </td>
-                <td colspan="12"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
+                <td colspan="8"> <span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
                         {{ $name }}
                     </span></td>
 
@@ -61,7 +61,7 @@
                 <tr>
                     <td
                         style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                        Property Name:
+                        Client Name:
                     </td>
                     <td colspan="8"><span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
                             {{ $store_name }}
@@ -70,7 +70,7 @@
                 <tr>
                     <td
                         style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                        Property Number:
+                        Client Number:
                     </td>
                     <td colspan="8"><span style="border: 0;width: 80%;height: 100%;padding: 9px;font-weight: 600;">
                             {{ $store_number }}
@@ -78,23 +78,14 @@
                 </tr>
             @endif
 
-            <tr>
-                <td style="padding: 15px;" colspan="8"></td>
-            </tr>
+
             <tr>
                 <td></td>
                 <td colspan="2"
                     style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                    Regular
+                    Total Hours
                 </td>
-                <td
-                    colspan="1"style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                    Overtime
-                </td>
-                <td
-                    colspan="1"style="font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-                    Other
-                </td>
+
                 <td colspan="4"></td>
             </tr>
             @foreach ($timesheet as $item)
@@ -107,15 +98,8 @@
                         style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
                         {{ $item['total_hours_in_week_format'] }}
                     </td>
-                    <td
-                        colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
 
-                    </td>
-                    <td
-                        colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-
-                    </td>
-                    <td colspan="6"></td>
+                    <td colspan="4"></td>
                 </tr>
             @endforeach
 
@@ -129,15 +113,8 @@
                     style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
                     {{ $total_hours }}
                 </td>
-                <td
-                    colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
 
-                </td>
-                <td
-                    colspan="1"style="width: 10%;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px;text-align: right; padding:10px; background: #ffffff;font-weight: 600;">
-
-                </td>
-                <td colspan="6"></td>
+                <td colspan="4"></td>
             </tr>
             <tr>
                 <td style="padding: 15px;text-align: center;font-family: Arial, Helvetica, sans-serif;color:#1d1d1e;font-size:14px; padding:10px; background: #ffffff;font-weight: 600;"

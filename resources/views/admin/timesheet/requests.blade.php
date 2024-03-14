@@ -93,15 +93,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <h6>Employee Id</h6>
                                     <p class="mt-2">{{ $val->member->userid ?? '' }}</p>
                                 </div>
                                 <div class="col-md-2">
                                     <h6>Duration</h6>
-                                    <p class="mt-2">{{ $val->start_date }} TO {{ $val->end_date }} </p>
+                                    <p class="mt-2">{{ us_date($val->start_date) }} TO {{ us_date($val->end_date) }}
+                                    </p>
                                 </div>
-                                <div class="col-md-3 account-status">
+                                <div class="col-md-2 account-status">
                                     <h6>Request Status</h6>
                                     <p class="mt-2"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                                             fill="currentColor" class="bi bi-circle-fill me-2" viewBox="0 0 16 16">
@@ -109,6 +110,13 @@
                                         </svg>{{ $val->status }}</p>
 
 
+                                </div>
+                                <div class="col-md-2 account-status">
+                                    <h6>Submission Date</h6>
+                                    <p class="mt-2"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            fill="currentColor" class="bi bi-circle-fill me-2" viewBox="0 0 16 16">
+                                            <circle cx="6" cy="6" r="6" />
+                                        </svg>{{ us_date($val->created_at) }}</p>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="text-end">

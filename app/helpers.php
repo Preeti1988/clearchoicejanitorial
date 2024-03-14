@@ -216,3 +216,9 @@ if (!function_exists('sendWebNotification')) {
         // dd($result);
     }
 }
+if (!function_exists('us_date')) {
+    function us_date($date)
+    {
+        return $date ? date("m-d-Y", strtotime($date)) : "";
+    }
+}
