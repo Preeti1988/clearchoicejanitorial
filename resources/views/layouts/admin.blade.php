@@ -82,6 +82,7 @@
 
 <body class="main-site ccj-panel">
     @php
+
         $currentURL = Route::currentRouteName();
 
     @endphp

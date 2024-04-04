@@ -52,7 +52,17 @@ class UserController extends Controller
                 return errorMsg($validator->errors()->first());
             }
             if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+
                 $user = Auth::user();
+
+                //  check for user status
+                if ($user->status == 0) {
+                    return response()->json(["status" => false, "message" => "Your approval is pending. We will notify you once the Admin approves the request."], 200);
+                }
+                if ($user->status == 2) {
+                    return response()->json(["status" => false, "message" => "Your request for account creation has been rejected by Admin"], 200);
+                }
+
                 $token = $user->createToken('clear-choicejanitorial')->plainTextToken;
                 $success['token'] = $token;
                 $success['userId'] = $user->userid;
@@ -86,9 +96,7 @@ class UserController extends Controller
                 }
 
                 $success['resume_file_name'] = $user->resume_file_name;
-                if ($user->status == 0) {
-                    return response()->json(["status" => false, "message" => "You are not approved by admin."]);
-                }
+
                 return response()->json(["status" => true, "message" => "Logged in successfully.", "data" => $success]);
             } else {
                 return response()->json(["status" => false, "message" => "Please enter valid password."], 200);
@@ -183,7 +191,7 @@ class UserController extends Controller
         $notification->redirect_url = route("TeamDetail", encryptDecrypt("encrypt", $user->userid));
         $notification->user_id = 1;
         $notification->save();
-        return response()->json(["status" => true, "message" => "Registration request sent successfully we will notify you once the admin approves the request.", "data" => $success]);
+        return response()->json(["status" => true, "message" => "Registration request sent successfully. We will notify you once the admin approves the request.", "data" => $success]);
         //return response()->json(['success' => $success], $this->successStatus);
     }
 
@@ -392,7 +400,8 @@ class UserController extends Controller
             $temp['clientname'] = isset($client->name) ? $client->name : '';
             $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
             $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(987)4563210';
-            $temp['address'] = isset($client->street) ? $client->street : '';
+            $temp['address'] = isset($service->service_address) ? $service->service_address : '';
+
             $latlng = explode(',', $service->service_latlng);
             $temp['lat'] =  count($latlng) > 0 ? $latlng[0] : "";
             $temp['long'] = count($latlng) > 1 ? $latlng[1] : "";
@@ -447,7 +456,7 @@ class UserController extends Controller
             $temp['clientname'] = isset($client->name) ? $client->name : '';
             $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
             $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(987)4563210';
-            $temp['address'] = isset($client->street) ? $client->street : '';
+            $temp['address'] = isset($service->service_address) ? $service->service_address : '';
             $latlng = explode(',', $service->service_latlng);
             $temp['lat'] =  count($latlng) > 0 ? $latlng[0] : "";
             $temp['long'] = count($latlng) > 1 ? $latlng[1] : "";
@@ -606,7 +615,7 @@ class UserController extends Controller
         $temp['clientname'] = isset($client->name) ? $client->name : '';
         $temp['clientemail'] = isset($client->email_address) ? $client->email_address : '';
         $temp['clientphone'] = isset($client->mobile_number) ? $client->mobile_number : '+(999)999999';
-        $temp['address'] = isset($client->street) ? $client->street : '';
+        $temp['address'] = isset($service->service_address) ? $service->service_address : '';
         $latlng = explode(',', $service->service_latlng);
         $temp['lat'] =  count($latlng) > 0 ? $latlng[0] : "";
         $temp['long'] = count($latlng) > 1 ? $latlng[1] : "";
@@ -875,7 +884,11 @@ class UserController extends Controller
 
 
         //ServiceMember::where('member_id',$user->userid)->where('service_id',$request->service_id)->update(['status'=>$request->status,$key=>$value]);
-        return response()->json(["status" => true, "message" => "Updated successfully."]);
+        if ($request->machine_type == 'incident_report') {
+            return response()->json(["status" => true, "message" => "Incident report submitted."]);
+        } else {
+            return response()->json(["status" => true, "message" => "Time updated successfully."]);
+        }
     }
 
     public function submit_review(Request $request)
@@ -914,7 +927,7 @@ class UserController extends Controller
         $user =  User::where('userid', $user->userid)->first();
         $user->fullname = $request->fullname;
         $user->email = $request->email;
-        $user->DOB = $request->DOB;
+        $user->DOB = Carbon::parse($request->DOB);
         $user->gender = $request->gender;
 
         $user->marital_status = $request->marital_status;
@@ -1256,7 +1269,7 @@ class UserController extends Controller
             'end_period' => $endPeriod,
             'name' => $member->fullname,
             'job_title' => $service->name ?? "",
-            'job_location' =>  $service ? ($service->client ? $service->client->street : '') : "",
+            'job_location' =>  $service ? $service->service_address  : "",
             'store_name' => $service ? ($service->client ? $service->client->name : '') : "",
             'store_number' => $service ? ($service->client ? $service->client->home_number : '') : '',
             'timesheet' => $result, 'total_hours' =>  $this->formatTime($totalHours),

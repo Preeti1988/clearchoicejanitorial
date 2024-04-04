@@ -96,7 +96,7 @@
                                                 {{ $val->details ?? 'N/A' }}
                                             </td>
                                             <td>
-                                                {{ date('Y-m-d', strtotime($val->date)) }}
+                                                {{ date('m-d-Y', strtotime($val->date)) }}
                                             </td>
 
 

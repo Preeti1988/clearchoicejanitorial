@@ -17,7 +17,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    'server_key' => '',
+    'server_key' => 'AAAACUIe0vA:APA91bHUuIS1QU2oyxsfGr8MXbLqbZ5bXGWXZRGZO5FaeWVUHWxe9WzIasBuA_pefBMPG5x2a9LQOSvfcQYl_2bn_bXcA6HNzp8kNVkor4OEPJzcx0GiApWBiPX_G8Z4g1S3PGUyJMxn',
     /*
     |--------------------------------------------------------------------------
     | Application Environment

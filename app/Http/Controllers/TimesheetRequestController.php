@@ -30,7 +30,7 @@ class TimesheetRequestController extends Controller
         $requests = TimesheetRequest::when(request()->has('search'), function ($query) use ($emp_ids) {
             return $query->whereIn("member_id", $emp_ids);
         })->when(request()->has('start_date') && request()->has('end_date'), function ($query) {
-            return $query->whereDate("start_date", ">=", Carbon::parse(request("start_date")))->whereDate("end_date", "<=", Carbon::parse(request("end_date")));
+            return $query->whereDate("created_at", ">=", Carbon::parse(request("start_date")))->whereDate("created_at", "<=", Carbon::parse(request("end_date")));
         });
         if (request()->has('filter')) {
             $requests = $requests->where("status", "Pending");
